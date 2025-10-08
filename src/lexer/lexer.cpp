@@ -31,7 +31,7 @@ bool isSingleCharInstruction(const char& c){
 
 bool isDigit(const char& c){
 
-    if(
+    if (
         c == '0' ||
         c == '1' ||
         c == '2' ||
@@ -42,15 +42,15 @@ bool isDigit(const char& c){
         c == '7' ||
         c == '8' ||
         c == '9'
-    )
-    return true;
-    else return false'
+        )
+        return true;
+    else return false;
 
 }
 
 void Lexer::handleMultipleCharInstruction(){
 
-    if(source[cur_index])
+    if(source[cur_index]){}
 
 }
 
