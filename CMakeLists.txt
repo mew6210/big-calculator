@@ -4,6 +4,6 @@ project(Big_calc)
 set(SOURCES 
 "src/main.cpp"
 "src/lexer/lexer.cpp"
-)
+ "src/bigint/bigint.cpp")
 
 add_executable(${PROJECT_NAME} ${SOURCES})

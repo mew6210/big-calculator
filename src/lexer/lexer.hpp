@@ -10,12 +10,12 @@ enum class TokenType{
     MultipOp = 5,
     DivOp = 6,
     numLiteral = 7,
-    varName = 8,
-    assignOp = 9
+    identifier = 8,
+    assignOp = 9,
+    undefined = 10
 };
 
 struct Token{
-
     TokenType type;
     std::string value;
 };
@@ -32,8 +32,11 @@ class Lexer{
 
     Token parseToken();
     std::vector<Token> parseTokens();
+    Token handleNumberLiteralToken(const std::string& tok);
+    Token handleIdentifierToken(const std::string& tok);
+    Token handleMultipleCharInstruction();
 public:
     void getTokensFromString(const std::string& s);
     void printTokens();
-    void handleMultipleCharInstruction();
+    
 };
