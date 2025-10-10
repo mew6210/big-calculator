@@ -20,15 +20,11 @@ struct Token{
     std::string value;
 };
 
-
-
-
 class Lexer{
     std::string source;
     std::string cur_token;
     int cur_index = 0;
     std::vector<Token> tokens;
-
 
     Token parseToken();
     std::vector<Token> parseTokens();
@@ -38,5 +34,4 @@ class Lexer{
 public:
     void getTokensFromString(const std::string& s);
     void printTokens();
-    
 };

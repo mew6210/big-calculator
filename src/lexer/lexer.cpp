@@ -26,7 +26,6 @@ bool isSingleCharInstruction(const char& c){
         singleOpsToEnumMap.count(c)
     ) return true;
     else return false;
-
 }
 
 bool isDigit(const char& c){
@@ -45,7 +44,6 @@ bool isDigit(const char& c){
         )
         return true;
     else return false;
-
 }
 
 Token Lexer::handleNumberLiteralToken(const std::string& tok) {
