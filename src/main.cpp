@@ -3,7 +3,6 @@
 
 int main(){
 
-
     Lexer lexer = Lexer();
     
     std::string line = "";
