@@ -103,18 +103,20 @@ Token Lexer::parseToken(){
     }
 }
 
-std::vector<Token> Lexer::parseTokens(){
+void Lexer::parseTokens(){
 
     while(cur_index < source.size()){
         auto token = parseToken();
         tokens.push_back(token);
     }
-    return {};
 }
 
-void Lexer::getTokensFromString(const std::string& s){
+std::vector<Token> Lexer::getTokensFromString(const std::string& s){
+    tokens.clear();
+    cur_index = 0;
     source = s;
     parseTokens();
+    return tokens;
 }
 
 void Lexer::printTokens(){

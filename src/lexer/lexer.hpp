@@ -22,16 +22,16 @@ struct Token{
 
 class Lexer{
     std::string source;
-    std::string cur_token;
     int cur_index = 0;
     std::vector<Token> tokens;
 
     Token parseToken();
-    std::vector<Token> parseTokens();
+    void parseTokens();
     Token handleNumberLiteralToken(const std::string& tok);
     Token handleIdentifierToken(const std::string& tok);
     Token handleMultipleCharInstruction();
 public:
-    void getTokensFromString(const std::string& s);
+    std::vector<Token> Lexer::getTokensFromString(const std::string& s);
     void printTokens();
+    std::vector<Token> getTokens() { return tokens; };
 };
