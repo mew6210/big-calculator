@@ -6,10 +6,10 @@
 std::unordered_map<char,TokenType> singleOpsToEnumMap = {
     {'(',TokenType::openParen},
     {')',TokenType::closeParen},
-    {'+',TokenType::addOp},
-    {'-',TokenType::SubtrOp},
-    {'*',TokenType::MultipOp},
-    {'/',TokenType::DivOp},
+    {'+',TokenType::plusSign},
+    {'-',TokenType::minusSign},
+    {'*',TokenType::MultipSign},
+    {'/',TokenType::DivSign},
     {'=',TokenType::assignOp}
 };
 
@@ -125,10 +125,10 @@ void Lexer::printTokens(){
         switch(token.type){
         case TokenType::openParen:  std::cout << "open paren\n";        break;
         case TokenType::closeParen: std::cout << "close paren\n";       break;
-        case TokenType::addOp:      std::cout << "addition\n";          break;
-        case TokenType::SubtrOp:    std::cout << "subtraction\n";       break;
-        case TokenType::MultipOp:   std::cout << "multiplication\n";    break;
-        case TokenType::DivOp:      std::cout << "division\n";          break;
+        case TokenType::plusSign:      std::cout << "addition\n";          break;
+        case TokenType::minusSign:    std::cout << "subtraction\n";       break;
+        case TokenType::MultipSign:   std::cout << "multiplication\n";    break;
+        case TokenType::DivSign:      std::cout << "division\n";          break;
         case TokenType::numLiteral: std::cout << "some number with a value of: "<<token.value<<"\n";       break;
         case TokenType::identifier: std::cout << "some variable named: "<<token.value<<"\n";     break;
         case TokenType::assignOp:   std::cout << "assign operation\n";  break;
