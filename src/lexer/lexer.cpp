@@ -46,13 +46,34 @@ bool isDigit(const char& c){
     else return false;
 }
 
-Token Lexer::handleNumberLiteralToken(const std::string& tok,const uint64_t& startPos) {
+void printError(const std::string& src,const uint64_t& errorPos, const std::string& errorMsg){
+    std::cout<<src<<"\n";
+    for(int j = 0;j<3;j++){
+    for(int i = 0;i<src.size();i++){
+        if(j == 0 && i == errorPos){
+            std::cout<<"^";
+            continue;
+        }
+        if(i==errorPos){
+            std::cout<<"|";
+        }
+        else std::cout<<" ";
+    }
+    std::cout<<"\n";
+    }
+    std::cout<<"Lexer error: "<<errorMsg<<"\n";
+    exit(1);
+}
 
+Token Lexer::handleNumberLiteralToken(const std::string& tok,const uint64_t& startPos) {
+    uint64_t errorPos = startPos;
     //check if everything is a digit
     for (auto& c : tok) {
         if (!isDigit(c)) {
-            throw std::runtime_error("not every character in a number literal are digits");
+            printError(source,errorPos,"found a character in a digit, invalid number literal");
+            //throw std::runtime_error("not every character in a number literal are digits");
         }
+        errorPos++;
     }
     
     return Token{ TokenType::numLiteral, tok,startPos,tok.size()};
