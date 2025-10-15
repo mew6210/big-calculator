@@ -6,6 +6,7 @@ set(SOURCES
 "src/lexer/lexer.cpp"
 "src/bigint/bigint.cpp" 
 "src/parser/parser.cpp"
+"src/core/core.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

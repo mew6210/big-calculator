@@ -1,8 +1,10 @@
 #include "lexer/lexer.hpp"
+#include "core/core.hpp"
 #include <iostream>
 
 int main(){
 
+    initApp();
     Lexer lexer = Lexer();
     
     std::string line = "";
