@@ -120,21 +120,29 @@ std::vector<Token> Lexer::getTokensFromString(const std::string& s){
     return tokens;
 }
 
+std::string printTokenPosAndLength(const Token& tok){
+    std::string tokString = "";
+    tokString.append("position: ");
+    tokString.append(std::to_string(tok.startPos));
+    tokString.append(" length: ");
+    tokString.append(std::to_string(tok.length));
 
+    return tokString;
+}
 
 void Lexer::printTokens(){
 
     for(auto& token: tokens){
         switch(token.type){
-        case TokenType::openParen:  std::cout << "open paren"<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";        break;
-        case TokenType::closeParen: std::cout << "close paren"<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";       break;
-        case TokenType::plusSign:   std::cout << "addition"<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";          break;
-        case TokenType::minusSign:  std::cout << "subtraction"<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";       break;
-        case TokenType::MultipSign: std::cout << "multiplication"<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";    break;
-        case TokenType::DivSign:    std::cout << "division"<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";          break;
-        case TokenType::numLiteral: std::cout << "some number with a value of: "<<token.value<<""<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";       break;
-        case TokenType::identifier: std::cout << "some variable named: "<<token.value<<""<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";     break;
-        case TokenType::assignOp:   std::cout << "assign operation"<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";  break;
+        case TokenType::openParen:  std::cout << "open paren"<<printTokenPosAndLength(token)<<"\n";        break;
+        case TokenType::closeParen: std::cout << "close paren"<<printTokenPosAndLength(token)<<"\n";       break;
+        case TokenType::plusSign:   std::cout << "addition"<<printTokenPosAndLength(token)<<"\n";          break;
+        case TokenType::minusSign:  std::cout << "subtraction"<<printTokenPosAndLength(token)<<"\n";       break;
+        case TokenType::MultipSign: std::cout << "multiplication"<<printTokenPosAndLength(token)<<"\n";    break;
+        case TokenType::DivSign:    std::cout << "division"<<printTokenPosAndLength(token)<<"\n";          break;
+        case TokenType::numLiteral: std::cout << "some number with a value of: "<<token.value<<""<<printTokenPosAndLength(token)<<"\n";       break;
+        case TokenType::identifier: std::cout << "some variable named: "<<token.value<<""<<printTokenPosAndLength(token)<<"\n";     break;
+        case TokenType::assignOp:   std::cout << "assign operation"<<printTokenPosAndLength(token)<<"\n";  break;
         case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";   break;
         }
     }
