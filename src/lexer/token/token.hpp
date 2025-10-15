@@ -15,4 +15,6 @@ enum class TokenType {
 struct Token {
     TokenType type;
     std::string value;
+    uint64_t startPos;
+    uint64_t length;
 };

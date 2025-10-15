@@ -5,13 +5,13 @@
 
 class Lexer{
     std::string source;
-    int cur_index = 0;
+    uint64_t cur_index = 0;
     std::vector<Token> tokens;
 
     Token parseToken();
     void parseTokens();
-    Token handleNumberLiteralToken(const std::string& tok);
-    Token handleIdentifierToken(const std::string& tok);
+    Token handleNumberLiteralToken(const std::string& tok,const uint64_t& startPos);
+    Token handleIdentifierToken(const std::string& tok,const uint64_t& startPos);
     Token handleMultipleCharInstruction();
 public:
     std::vector<Token> Lexer::getTokensFromString(const std::string& s);

@@ -46,7 +46,7 @@ bool isDigit(const char& c){
     else return false;
 }
 
-Token Lexer::handleNumberLiteralToken(const std::string& tok) {
+Token Lexer::handleNumberLiteralToken(const std::string& tok,const uint64_t& startPos) {
 
     //check if everything is a digit
     for (auto& c : tok) {
@@ -55,16 +55,17 @@ Token Lexer::handleNumberLiteralToken(const std::string& tok) {
         }
     }
     
-    return Token{ TokenType::numLiteral, tok };
+    return Token{ TokenType::numLiteral, tok,startPos,tok.size()};
 }
 
-Token Lexer::handleIdentifierToken(const std::string& tok) {
-    return Token{ TokenType::identifier,tok };
+Token Lexer::handleIdentifierToken(const std::string& tok,const uint64_t& startPos) {
+    return Token{ TokenType::identifier,tok,startPos,tok.size()};
 }
 
 Token Lexer::handleMultipleCharInstruction() {
 
     std::string nameBuf = "";
+    uint64_t startingPos = cur_index;
     //load name into buffer
     while (!isSingleCharInstruction(source[cur_index]) && !isSpace(source[cur_index]) && cur_index != source.size()) {
         nameBuf += source[cur_index];
@@ -77,10 +78,10 @@ Token Lexer::handleMultipleCharInstruction() {
     }
 
     if (isDigit(nameBuf[0])) {
-        return handleNumberLiteralToken(nameBuf);
+        return handleNumberLiteralToken(nameBuf,startingPos);
     }
     else {
-        return handleIdentifierToken(nameBuf);
+        return handleIdentifierToken(nameBuf,startingPos);
     }
 }
 
@@ -92,7 +93,7 @@ Token Lexer::parseToken(){
     }
 
     if(isSingleCharInstruction(source[cur_index])){
-        Token token = Token{singleOpsToEnumMap[source[cur_index]]," "};
+        Token token = Token{singleOpsToEnumMap[source[cur_index]]," ",cur_index,1};
         cur_index++;
         return token;
     }
@@ -119,19 +120,21 @@ std::vector<Token> Lexer::getTokensFromString(const std::string& s){
     return tokens;
 }
 
+
+
 void Lexer::printTokens(){
 
     for(auto& token: tokens){
         switch(token.type){
-        case TokenType::openParen:  std::cout << "open paren\n";        break;
-        case TokenType::closeParen: std::cout << "close paren\n";       break;
-        case TokenType::plusSign:      std::cout << "addition\n";          break;
-        case TokenType::minusSign:    std::cout << "subtraction\n";       break;
-        case TokenType::MultipSign:   std::cout << "multiplication\n";    break;
-        case TokenType::DivSign:      std::cout << "division\n";          break;
-        case TokenType::numLiteral: std::cout << "some number with a value of: "<<token.value<<"\n";       break;
-        case TokenType::identifier: std::cout << "some variable named: "<<token.value<<"\n";     break;
-        case TokenType::assignOp:   std::cout << "assign operation\n";  break;
+        case TokenType::openParen:  std::cout << "open paren"<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";        break;
+        case TokenType::closeParen: std::cout << "close paren"<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";       break;
+        case TokenType::plusSign:   std::cout << "addition"<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";          break;
+        case TokenType::minusSign:  std::cout << "subtraction"<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";       break;
+        case TokenType::MultipSign: std::cout << "multiplication"<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";    break;
+        case TokenType::DivSign:    std::cout << "division"<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";          break;
+        case TokenType::numLiteral: std::cout << "some number with a value of: "<<token.value<<""<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";       break;
+        case TokenType::identifier: std::cout << "some variable named: "<<token.value<<""<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";     break;
+        case TokenType::assignOp:   std::cout << "assign operation"<<" position: "<<token.startPos<<" length: "<<token.length<<"\n";  break;
         case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";   break;
         }
     }
