@@ -114,7 +114,7 @@ Token Lexer::parseToken(){
     }
 
     if(isSingleCharInstruction(source[cur_index])){
-        Token token = Token{singleOpsToEnumMap[source[cur_index]]," ",cur_index,1};
+        Token token = Token{ singleOpsToEnumMap[source[cur_index]],std::string{source[cur_index]},cur_index,1 };
         cur_index++;
         return token;
     }
