@@ -17,7 +17,6 @@ bool isSpace(const char& c){
 
     if(c == ' ' || c == '\n' || c == '\r' || c == '\t') return true;
     else return false;
-
 }
 
 bool isSingleCharInstruction(const char& c){
@@ -151,7 +150,6 @@ std::string printTokenPosAndLength(const Token& tok){
     tokString.append(std::to_string(tok.startPos));
     tokString.append(" length: ");
     tokString.append(std::to_string(tok.length));
-
     return tokString;
 }
 
