@@ -17,7 +17,6 @@ bool isSpace(const char& c){
 
     if(c == ' ' || c == '\n' || c == '\r' || c == '\t') return true;
     else return false;
-
 }
 
 bool isSingleCharInstruction(const char& c){
@@ -70,8 +69,12 @@ Token Lexer::handleNumberLiteralToken(const std::string& tok,const uint64_t& sta
     //check if everything is a digit
     for (auto& c : tok) {
         if (!isDigit(c)) {
-            printError(source,errorPos,"found a character in a digit, invalid number literal");
-            //throw std::runtime_error("not every character in a number literal are digits");
+            if (c != '.' && c != ',') {
+                printError(source, errorPos, "found a character in a digit, invalid number literal");
+            }
+            else {
+                printError(source, errorPos, "found a comma or a dot, this calculator only supports integers");
+            }
         }
         errorPos++;
     }
@@ -87,7 +90,7 @@ Token Lexer::handleMultipleCharInstruction() {
 
     std::string nameBuf = "";
     uint64_t startingPos = cur_index;
-    //load name into buffer
+    //load name into nameBuf
     while (!isSingleCharInstruction(source[cur_index]) && !isSpace(source[cur_index]) && cur_index != source.size()) {
         nameBuf += source[cur_index];
         cur_index++;
@@ -114,7 +117,7 @@ Token Lexer::parseToken(){
     }
 
     if(isSingleCharInstruction(source[cur_index])){
-        Token token = Token{singleOpsToEnumMap[source[cur_index]]," ",cur_index,1};
+        Token token = Token{ singleOpsToEnumMap[source[cur_index]],std::string{source[cur_index]},cur_index,1 };
         cur_index++;
         return token;
     }
@@ -147,7 +150,6 @@ std::string printTokenPosAndLength(const Token& tok){
     tokString.append(std::to_string(tok.startPos));
     tokString.append(" length: ");
     tokString.append(std::to_string(tok.length));
-
     return tokString;
 }
 
@@ -164,7 +166,7 @@ void Lexer::printTokens(){
         case TokenType::numLiteral: std::cout << "some number with a value of: "<<token.value<<""<<printTokenPosAndLength(token)<<"\n";       break;
         case TokenType::identifier: std::cout << "some variable named: "<<token.value<<""<<printTokenPosAndLength(token)<<"\n";     break;
         case TokenType::assignOp:   std::cout << "assign operation"<<printTokenPosAndLength(token)<<"\n";  break;
-        case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";   break;
+        case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";                                      break;
         }
     }
 }
