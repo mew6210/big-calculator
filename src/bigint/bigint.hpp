@@ -10,4 +10,5 @@ class BigInt {
 
 public:
 	BigInt(const std::string&);
+	void inspectChunks();
 };
