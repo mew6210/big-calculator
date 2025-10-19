@@ -16,9 +16,16 @@ class BigInt {
 	bool isPositive;
 
 public:
+	//constructors
 	BigInt(const std::string& s);
 	BigInt(const uint64_t& u64Val);
 	BigInt();
+
+	//arithmetic
 	void addUint64(uint64_t val);
+	void addUint64(uint64_t val, uint64_t startChunk);
+	void addBigInt(BigInt& bi);
+
+
 	void inspectChunks(chunkDisplayMode cdm);
 };

@@ -1,15 +1,22 @@
 #include "bigint.hpp"
 #include <iomanip>
+
 void checkBigInt() {
 
-	BigInt a = BigInt();
-	BigInt b = BigInt("");
+	BigInt a = BigInt(0);
+	BigInt b = BigInt(0);
 	BigInt c = BigInt(UINT64_MAX);
 
-	for (int i = 0; i < 20; i++) {
-		c.addUint64(UINT64_MAX);
-		c.inspectChunks(chunkDisplayMode::hex);
+	for (uint64_t i = 0; i < 5; i++) {
+		a.addUint64(UINT64_MAX);
 	}
+	a.inspectChunks(chunkDisplayMode::decimal);
+	for (uint64_t i = 0; i < 3; i++) {
+		b.addUint64(UINT64_MAX);
+	}
+	b.inspectChunks(chunkDisplayMode::decimal);
+	a.addBigInt(b);
+	a.inspectChunks(chunkDisplayMode::decimal);
 }
 
 BigInt::BigInt(const std::string& s) {
@@ -63,4 +70,32 @@ void BigInt::addUint64(uint64_t val) {
 		chunks[i] = sum;
 		i++;
 	}
+}
+
+void BigInt::addUint64(uint64_t val, uint64_t startChunk) {
+	uint64_t carry = val;
+	size_t i = startChunk; //start from a different chunk than the first one
+
+	while (carry != 0) {
+		if (i == chunks.size())
+			chunks.push_back(0);
+
+		uint64_t sum = chunks[i] + carry;
+		carry = (sum < chunks[i]) ? 1 : 0;
+		chunks[i] = sum;
+		i++;
+	}
+}
+
+
+void BigInt::addBigInt(BigInt& bi) {
+
+	chunks.resize(std::max(chunks.size(), bi.chunks.size()));
+
+	for (int i = 0; i < bi.chunks.size(); i++) {
+		addUint64(bi.chunks[i], i);
+	}
+
+
+
 }
