@@ -5,6 +5,11 @@
 
 void checkBigInt();
 
+enum class chunkDisplayMode {
+	decimal,
+	hex
+};
+
 class BigInt {
 
 	std::vector<uint64_t> chunks;
@@ -14,5 +19,6 @@ public:
 	BigInt(const std::string& s);
 	BigInt(const uint64_t& u64Val);
 	BigInt();
-	void inspectChunks();
+	void addUint64(uint64_t val);
+	void inspectChunks(chunkDisplayMode cdm);
 };
