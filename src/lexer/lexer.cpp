@@ -13,38 +13,41 @@ std::unordered_map<char,TokenType> singleOpsToEnumMap = {
     {'=',TokenType::assignOp}
 };
 
-bool isSpace(const char& c){
+namespace {
 
-    if(c == ' ' || c == '\n' || c == '\r' || c == '\t') return true;
-    else return false;
+    bool isSpace(const char& c) {
+
+        if (c == ' ' || c == '\n' || c == '\r' || c == '\t') return true;
+        else return false;
+    }
+
+    bool isSingleCharInstruction(const char& c) {
+
+        if (
+            singleOpsToEnumMap.count(c)
+            ) return true;
+        else return false;
+    }
+
+    bool isDigit(const char& c) {
+
+        if (
+            c == '0' ||
+            c == '1' ||
+            c == '2' ||
+            c == '3' ||
+            c == '4' ||
+            c == '5' ||
+            c == '6' ||
+            c == '7' ||
+            c == '8' ||
+            c == '9'
+            )
+            return true;
+        else return false;
+    }
+
 }
-
-bool isSingleCharInstruction(const char& c){
-
-    if(
-        singleOpsToEnumMap.count(c)
-    ) return true;
-    else return false;
-}
-
-bool isDigit(const char& c){
-
-    if (
-        c == '0' ||
-        c == '1' ||
-        c == '2' ||
-        c == '3' ||
-        c == '4' ||
-        c == '5' ||
-        c == '6' ||
-        c == '7' ||
-        c == '8' ||
-        c == '9'
-        )
-        return true;
-    else return false;
-}
-
 void printError(const std::string& src,const uint64_t& errorPos, const std::string& errorMsg){
     std::cout<<src<<"\n";
     for(int j = 0;j<3;j++){

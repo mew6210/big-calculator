@@ -55,7 +55,6 @@ void BigInt::inspectChunks(chunkDisplayMode cdm){
 	std::cout << "------------\n";
 }
 
-
 void BigInt::addUint64(uint64_t val) {
 
 	uint64_t carry = val;
@@ -87,7 +86,6 @@ void BigInt::addUint64(uint64_t val, uint64_t startChunk) {
 	}
 }
 
-
 void BigInt::addBigInt(BigInt& bi) {
 
 	chunks.resize(std::max(chunks.size(), bi.chunks.size()));
@@ -95,7 +93,4 @@ void BigInt::addBigInt(BigInt& bi) {
 	for (int i = 0; i < bi.chunks.size(); i++) {
 		addUint64(bi.chunks[i], i);
 	}
-
-
-
 }
