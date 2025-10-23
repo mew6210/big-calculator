@@ -22,7 +22,7 @@ class BigInt {
 public:
 	//constructors
 	BigInt(const std::string& s);
-	BigInt(const chunkInt& u64Val);
+	BigInt(const chunkInt& val);
 	BigInt();
 
 	//arithmetic
