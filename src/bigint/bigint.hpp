@@ -6,7 +6,6 @@
 #include <limits>
 
 void checkBigInt();
-
 typedef uint64_t chunkInt;
 
 enum class chunkDisplayMode {
@@ -32,4 +31,9 @@ public:
 
 
 	void inspectChunks(chunkDisplayMode cdm);
+};
+
+struct uint128Emul {
+	uint64_t high;
+	uint64_t low;
 };

@@ -96,3 +96,24 @@ void BigInt::addBigInt(BigInt& bi) {
 		addChunkInt(bi.chunks[i], i);
 	}
 }
+
+uint128Emul mult64to128(uint64_t op1, uint64_t op2, uint64_t& hi, uint64_t& lo) {
+	uint64_t u1 = (op1 & 0xffffffff);
+	uint64_t v1 = (op2 & 0xffffffff);
+	uint64_t t = (u1 * v1);
+	uint64_t w3 = (t & 0xffffffff);
+	uint64_t k = (t >> 32);
+
+	op1 >>= 32;
+	t = (op1 * v1) + k;
+	k = (t & 0xffffffff);
+	uint64_t w1 = (t >> 32);
+
+	op2 >>= 32;
+	t = (u1 * op2) + k;
+	k = (t >> 32);
+
+	hi = (op1 * op2) + w1 + k;
+	lo = (t << 32) + w3;
+	return uint128Emul{ hi,lo };
+}
