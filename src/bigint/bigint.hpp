@@ -1,9 +1,13 @@
+#pragma once
 #include <vector>
 #include <utility>
 #include <string>
 #include <iostream>
+#include <limits>
 
 void checkBigInt();
+
+typedef uint64_t chunkInt;
 
 enum class chunkDisplayMode {
 	decimal,
@@ -12,18 +16,18 @@ enum class chunkDisplayMode {
 
 class BigInt {
 
-	std::vector<uint64_t> chunks;
+	std::vector<chunkInt> chunks;
 	bool isPositive;
 
 public:
 	//constructors
 	BigInt(const std::string& s);
-	BigInt(const uint64_t& u64Val);
+	BigInt(const chunkInt& val);
 	BigInt();
 
 	//arithmetic
-	void addUint64(uint64_t val);
-	void addUint64(uint64_t val, uint64_t startChunk);
+	void addChunkInt(chunkInt val);
+	void addChunkInt(chunkInt val, chunkInt startChunk);
 	void addBigInt(BigInt& bi);
 
 

@@ -1,22 +1,24 @@
 #include "bigint.hpp"
 #include <iomanip>
 
+std::numeric_limits<chunkInt> CHUNKINTLIMIT;
+
 void checkBigInt() {
 
 	BigInt a = BigInt(0);
 	BigInt b = BigInt(0);
-	BigInt c = BigInt(UINT64_MAX);
+	BigInt c = BigInt(CHUNKINTLIMIT.max());
 
-	for (uint64_t i = 0; i < 5; i++) {
-		a.addUint64(UINT64_MAX);
+	for (uint64_t i = 0; i < 5000000000; i++) {
+		a.addChunkInt(CHUNKINTLIMIT.max());
 	}
-	a.inspectChunks(chunkDisplayMode::decimal);
+	a.inspectChunks(chunkDisplayMode::hex);
 	for (uint64_t i = 0; i < 3; i++) {
-		b.addUint64(UINT64_MAX);
+		b.addChunkInt(CHUNKINTLIMIT.max());
 	}
-	b.inspectChunks(chunkDisplayMode::decimal);
+	b.inspectChunks(chunkDisplayMode::hex);
 	a.addBigInt(b);
-	a.inspectChunks(chunkDisplayMode::decimal);
+	a.inspectChunks(chunkDisplayMode::hex);
 }
 
 BigInt::BigInt(const std::string& s) {
@@ -24,9 +26,9 @@ BigInt::BigInt(const std::string& s) {
 	isPositive = true;
 }
 
-BigInt::BigInt(const uint64_t& u64Val){
+BigInt::BigInt(const chunkInt& val) {
 	chunks.resize(2);
-	chunks[0] = u64Val;
+	chunks[0] = val;
 	isPositive = true;
 }
 
@@ -35,18 +37,18 @@ BigInt::BigInt() {
 	isPositive = true;
 }
 
-void uint64ToHex(uint64_t x) {
-	std::cout << std::setw(16) << std::setfill('0') << std::hex << x;
+void chunkIntToHex(chunkInt x) {
+	std::cout << std::setw(sizeof(chunkInt)*2) << std::setfill('0') << std::hex << x;
 }
 
-void BigInt::inspectChunks(chunkDisplayMode cdm){
-	if(chunks.size()==0) return;
+void BigInt::inspectChunks(chunkDisplayMode cdm) {
+	if (chunks.size() == 0) return;
 	std::cout << "------------\n";
-	for(int i=0;i<chunks.size();i++){
+	for (int i = 0; i < chunks.size(); i++) {
 		std::cout << "chunk " << i << ": ";
 
 		switch (cdm) {
-		case chunkDisplayMode::hex: uint64ToHex(chunks[i]); break;
+		case chunkDisplayMode::hex: chunkIntToHex(chunks[i]); break;
 		case chunkDisplayMode::decimal: std::cout << chunks[i]; break;
 		}
 
@@ -55,31 +57,31 @@ void BigInt::inspectChunks(chunkDisplayMode cdm){
 	std::cout << "------------\n";
 }
 
-void BigInt::addUint64(uint64_t val) {
+void BigInt::addChunkInt(chunkInt val) {
 
-	uint64_t carry = val;
+	chunkInt carry = val;
 	size_t i = 0;
 
 	while (carry != 0) {
 		if (i == chunks.size())
 			chunks.push_back(0);
 
-		uint64_t sum = chunks[i] + carry;
+		chunkInt sum = chunks[i] + carry;
 		carry = (sum < chunks[i]) ? 1 : 0;
 		chunks[i] = sum;
 		i++;
 	}
 }
 
-void BigInt::addUint64(uint64_t val, uint64_t startChunk) {
-	uint64_t carry = val;
+void BigInt::addChunkInt(chunkInt val, chunkInt startChunk) {
+	chunkInt carry = val;
 	size_t i = startChunk; //start from a different chunk than the first one
 
 	while (carry != 0) {
 		if (i == chunks.size())
 			chunks.push_back(0);
 
-		uint64_t sum = chunks[i] + carry;
+		chunkInt sum = chunks[i] + carry;
 		carry = (sum < chunks[i]) ? 1 : 0;
 		chunks[i] = sum;
 		i++;
@@ -91,6 +93,6 @@ void BigInt::addBigInt(BigInt& bi) {
 	chunks.resize(std::max(chunks.size(), bi.chunks.size()));
 
 	for (int i = 0; i < bi.chunks.size(); i++) {
-		addUint64(bi.chunks[i], i);
+		addChunkInt(bi.chunks[i], i);
 	}
 }
