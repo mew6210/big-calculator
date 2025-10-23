@@ -92,12 +92,12 @@ void BigInt::addBigInt(BigInt& bi) {
 
 	chunks.resize(std::max(chunks.size(), bi.chunks.size()));
 
-	for (int i = 0; i < bi.chunks.size(); i++) {
+	for (size_t i = 0; i < bi.chunks.size(); i++) {
 		addChunkInt(bi.chunks[i], i);
 	}
 }
 
-uint128Emul mult64to128(uint64_t op1, uint64_t op2, uint64_t& hi, uint64_t& lo) {
+uint128Emul mult64to128(uint64_t op1, uint64_t op2) {	//stack overflow came in clutch
 	uint64_t u1 = (op1 & 0xffffffff);
 	uint64_t v1 = (op2 & 0xffffffff);
 	uint64_t t = (u1 * v1);
@@ -113,7 +113,15 @@ uint128Emul mult64to128(uint64_t op1, uint64_t op2, uint64_t& hi, uint64_t& lo) 
 	t = (u1 * op2) + k;
 	k = (t >> 32);
 
-	hi = (op1 * op2) + w1 + k;
-	lo = (t << 32) + w3;
+ 	uint64_t hi = (op1 * op2) + w1 + k;
+ 	uint64_t lo = (t << 32) + w3;
 	return uint128Emul{ hi,lo };
+}
+
+void BigInt::multiplyChunkInt(chunkInt val) {
+	for (size_t i = 0; i<chunks.size();i++) {
+		uint128Emul sum = mult64to128(chunks[i], val);
+		chunks[i] = sum.low;
+		addChunkInt(sum.high, i+1);
+	}
 }

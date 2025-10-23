@@ -29,6 +29,7 @@ public:
 	void addChunkInt(chunkInt val, chunkInt startChunk);
 	void addBigInt(BigInt& bi);
 
+	void multiplyChunkInt(chunkInt val);
 
 	void inspectChunks(chunkDisplayMode cdm);
 };
