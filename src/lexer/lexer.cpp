@@ -48,7 +48,8 @@ namespace {
     }
 
 }
-void printError(const std::string& src,const uint64_t& errorPos, const std::string& errorMsg){
+
+void printError(const std::string& src,const uint64_t& errorPos, const std::string& errorMsg, const std::string& errorNote){
     std::cout<<src<<"\n";
     for(int j = 0;j<3;j++){
     for(int i = 0;i<src.size();i++){
@@ -63,7 +64,8 @@ void printError(const std::string& src,const uint64_t& errorPos, const std::stri
     }
     std::cout<<"\n";
     }
-    std::cout<<"Lexer error: "<<errorMsg<<"\n";
+    std::cout<<"\nLexer error: "<<errorMsg<<"\n";   //lexer output
+    std::cout << "Note: " << errorNote << "\n";     //guiding instruction
     exit(1);
 }
 
@@ -73,10 +75,10 @@ Token Lexer::handleNumberLiteralToken(const std::string& tok,const uint64_t& sta
     for (auto& c : tok) {
         if (!isDigit(c)) {
             if (c != '.' && c != ',') {
-                printError(source, errorPos, "found a character in a digit, invalid number literal");
+                printError(source, errorPos, "Found a character in a digit, invalid number literal","Fix the number");
             }
             else {
-                printError(source, errorPos, "found a comma or a dot, this calculator only supports integers");
+                printError(source, errorPos, "Found a comma or a dot, this calculator only supports integers","Use whole numbers only");
             }
         }
         errorPos++;
