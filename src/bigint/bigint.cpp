@@ -140,8 +140,8 @@ void BigInt::multiplyChunkInt32(chunkInt val) {
 void BigInt::multiplyChunkInt(chunkInt val) {
 	
 	switch (sizeof(chunkInt)) {
-	case 8: multiplyChunkInt64(val);
-	case 4: multiplyChunkInt32(val);
+	case 8: multiplyChunkInt64(val); break; //uint64_t
+	case 4: multiplyChunkInt32(val); break; //uint32_t
 	}
 
 }
