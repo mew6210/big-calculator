@@ -162,15 +162,15 @@ void Lexer::printTokens(){
 
     for(auto& token: tokens){
         switch(token.type){
-        case TokenType::openParen:  std::cout << "open paren"<<printTokenPosAndLength(token)<<"\n";        break;
-        case TokenType::closeParen: std::cout << "close paren"<<printTokenPosAndLength(token)<<"\n";       break;
-        case TokenType::plusSign:   std::cout << "addition"<<printTokenPosAndLength(token)<<"\n";          break;
-        case TokenType::minusSign:  std::cout << "subtraction"<<printTokenPosAndLength(token)<<"\n";       break;
-        case TokenType::MultipSign: std::cout << "multiplication"<<printTokenPosAndLength(token)<<"\n";    break;
-        case TokenType::DivSign:    std::cout << "division"<<printTokenPosAndLength(token)<<"\n";          break;
-        case TokenType::numLiteral: std::cout << "some number with a value of: "<<token.value<<""<<printTokenPosAndLength(token)<<"\n";       break;
-        case TokenType::identifier: std::cout << "some variable named: "<<token.value<<""<<printTokenPosAndLength(token)<<"\n";     break;
-        case TokenType::assignOp:   std::cout << "assign operation"<<printTokenPosAndLength(token)<<"\n";  break;
+        case TokenType::openParen:  std::cout << "open paren "<<printTokenPosAndLength(token)<<"\n";        break;
+        case TokenType::closeParen: std::cout << "close paren "<<printTokenPosAndLength(token)<<"\n";       break;
+        case TokenType::plusSign:   std::cout << "addition "<<printTokenPosAndLength(token)<<"\n";          break;
+        case TokenType::minusSign:  std::cout << "subtraction "<<printTokenPosAndLength(token)<<"\n";       break;
+        case TokenType::MultipSign: std::cout << "multiplication "<<printTokenPosAndLength(token)<<"\n";    break;
+        case TokenType::DivSign:    std::cout << "division "<<printTokenPosAndLength(token)<<"\n";          break;
+        case TokenType::numLiteral: std::cout << "some number with a value of: "<<token.value<<" "<<printTokenPosAndLength(token)<<"\n";       break;
+        case TokenType::identifier: std::cout << "some variable named: "<<token.value<<" "<<printTokenPosAndLength(token)<<"\n";     break;
+        case TokenType::assignOp:   std::cout << "assign operation "<<printTokenPosAndLength(token)<<"\n";  break;
         case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";                                      break;
         }
     }
