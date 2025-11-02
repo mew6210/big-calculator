@@ -6,6 +6,7 @@
 #include <limits>
 
 void checkBigInt();
+void checkmultip();
 typedef uint64_t chunkInt;
 
 enum class chunkDisplayMode {
@@ -17,6 +18,9 @@ class BigInt {
 
 	std::vector<chunkInt> chunks;
 	bool isPositive;
+
+	void multiplyChunkInt64(chunkInt val);
+	void multiplyChunkInt32(chunkInt val);
 
 public:
 	//constructors

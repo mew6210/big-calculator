@@ -27,7 +27,7 @@ BigInt::BigInt(const std::string& s) {
 }
 
 BigInt::BigInt(const chunkInt& val) {
-	chunks.resize(2);
+	chunks.resize(1);
 	chunks[0] = val;
 	isPositive = true;
 }
@@ -118,10 +118,37 @@ uint128Emul mult64to128(uint64_t op1, uint64_t op2) {	//stack overflow came in c
 	return uint128Emul{ hi,lo };
 }
 
-void BigInt::multiplyChunkInt(chunkInt val) {
-	for (size_t i = 0; i<chunks.size();i++) {
+void BigInt::multiplyChunkInt64(chunkInt val) {
+	uint64_t originalSize = chunks.size();
+	for (size_t i = 0; i < originalSize; i++) {
 		uint128Emul sum = mult64to128(chunks[i], val);
 		chunks[i] = sum.low;
-		addChunkInt(sum.high, i+1);
+		addChunkInt(sum.high, i + 1);
 	}
+}
+
+void BigInt::multiplyChunkInt32(chunkInt val) {
+	uint64_t carry = 0;
+	for (size_t i = 0; i < chunks.size(); ++i) {
+		uint64_t prod = (uint64_t)chunks[i] * (uint64_t)val + carry;	//multip result
+		chunks[i] = static_cast<chunkInt>(prod & 0xFFFFFFFFu);		//set current chunk to low 32 bits
+		carry = prod >> 32;	//set carry to high 32 bits
+	}
+
+	if (carry) addChunkInt(static_cast<chunkInt>(carry), chunks.size());	//push high 32-bits to the next chunk
+}
+
+void BigInt::multiplyChunkInt(chunkInt val) {
+	
+	switch (sizeof(chunkInt)) {
+	case 8: multiplyChunkInt64(val); break; //uint64_t
+	case 4: multiplyChunkInt32(val); break; //uint32_t
+	}
+
+}
+
+void checkmultip() {
+	BigInt a = BigInt(UINT64_MAX);
+	a.multiplyChunkInt(5);
+	a.inspectChunks(chunkDisplayMode::hex);
 }
