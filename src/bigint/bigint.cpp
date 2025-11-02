@@ -122,12 +122,22 @@ uint128Emul mult64to128(uint64_t op1, uint64_t op2) {	//stack overflow came in c
 }
 
 void BigInt::multiplyChunkInt64(chunkInt val) {
+	std::vector<Remainder> remainders = {};
+
 	uint64_t originalSize = chunks.size();
 	for (size_t i = 0; i < originalSize; i++) {
 		uint128Emul sum = mult64to128(chunks[i], val);
 		chunks[i] = sum.low;
-		addChunkInt(sum.high, i + 1);
+		remainders.push_back(Remainder{ sum.high,i + 1 });
 	}
+	sumUpRemainders(remainders);
+}
+
+void BigInt::sumUpRemainders(std::vector<Remainder>& remainders) {
+	for (auto& remainder : remainders) {
+		addChunkInt(remainder.value, remainder.chunkPos);
+	}
+	remainders.clear();
 }
 
 void BigInt::multiplyChunkInt32(chunkInt val) {
@@ -160,13 +170,13 @@ BigInt::BigInt(const std::string& s) {
 	for (char c : s) { //slow, should be replaced with a chunk-based approach later, better for bigger strings
 		if (toSkip) { toSkip = false; continue; } 
 		int d = c - '0'; //get numerical vaue of c 
-		multiplyChunkInt(10); 
+		multiplyChunkInt64(10);
 		addChunkInt(d);
 	} 
 }
 
 void checkmultip() {
-	BigInt a = BigInt("150");
-	a.multiplyChunkInt(5);
+	BigInt a = BigInt("999999999999999999999999999999999999999999999999");
+	//a.multiplyChunkInt(5);
 	a.inspectChunks(chunkDisplayMode::decimal);
 }
