@@ -13,12 +13,17 @@ enum class chunkDisplayMode {
 	decimal,
 	hex
 };
+struct Remainder {
+	uint64_t value;
+	uint64_t chunkPos;
+};
 
 class BigInt {
 
 	std::vector<chunkInt> chunks;
 	bool isPositive;
 
+	void sumUpRemainders(std::vector<Remainder>& remainders);
 	void multiplyChunkInt64(chunkInt val);
 	void multiplyChunkInt32(chunkInt val);
 
