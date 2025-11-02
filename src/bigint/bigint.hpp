@@ -7,7 +7,7 @@
 
 void checkBigInt();
 void checkmultip();
-typedef uint32_t chunkInt;
+typedef uint64_t chunkInt;
 
 enum class chunkDisplayMode {
 	decimal,
