@@ -21,11 +21,6 @@ void checkBigInt() {
 	a.inspectChunks(chunkDisplayMode::hex);
 }
 
-BigInt::BigInt(const std::string& s) {
-	chunks = {};
-	isPositive = true;
-}
-
 BigInt::BigInt(const chunkInt& val) {
 	chunks.resize(1);
 	chunks[0] = val;
@@ -42,8 +37,16 @@ void chunkIntToHex(chunkInt x) {
 }
 
 void BigInt::inspectChunks(chunkDisplayMode cdm) {
-	if (chunks.size() == 0) return;
 	std::cout << "------------\n";
+	std::cout << "sign: ";
+	if (isPositive) std::cout << "+\n";
+	else std::cout << "-\n";
+	if (chunks.size() == 0) {
+		std::cout << "no chunks to display, empty bigint\n";
+		std::cout << "------------\n";
+		return;
+	} 
+	
 	for (int i = 0; i < chunks.size(); i++) {
 		std::cout << "chunk " << i << ": ";
 
@@ -146,9 +149,24 @@ void BigInt::multiplyChunkInt(chunkInt val) {
 	}
 
 }
+/*
+	- input correctness is checked by lexer, so no need to check if everything is a digit here
+*/
+BigInt::BigInt(const std::string& s) {
+	chunks = {}; 
+	isPositive = true; 
+	bool toSkip = false; 
+	if (s[0] == '-') { isPositive = false; toSkip = true; }; 
+	for (char c : s) { //slow, should be replaced with a chunk-based approach later, better for bigger strings
+		if (toSkip) { toSkip = false; continue; } 
+		int d = c - '0'; //get numerical vaue of c 
+		multiplyChunkInt(10); 
+		addChunkInt(d);
+	} 
+}
 
 void checkmultip() {
-	BigInt a = BigInt(UINT64_MAX);
+	BigInt a = BigInt("150");
 	a.multiplyChunkInt(5);
-	a.inspectChunks(chunkDisplayMode::hex);
+	a.inspectChunks(chunkDisplayMode::decimal);
 }
