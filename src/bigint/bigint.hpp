@@ -7,7 +7,9 @@
 
 void checkBigInt();
 void checkmultip();
-typedef uint64_t chunkInt;
+void checkComparsions();
+typedef uint64_t uChunkInt;
+typedef int64_t chunkInt;
 
 enum class chunkDisplayMode {
 	decimal,
@@ -20,12 +22,16 @@ struct Remainder {
 
 class BigInt {
 
-	std::vector<chunkInt> chunks;
+	std::vector<uChunkInt> chunks;
 	bool isPositive;
 
+	int compareChunks(const BigInt& bi);
+	bool areSignsDifferent(const BigInt& bi);
+	bool compareSigns(const BigInt& bi);
+
 	void sumUpRemainders(std::vector<Remainder>& remainders);
-	void multiplyChunkInt64(chunkInt val);
-	void multiplyChunkInt32(chunkInt val);
+	void multiplyChunkInt64(uChunkInt val);
+	void multiplyChunkInt32(uChunkInt val);
 
 public:
 	//constructors
@@ -33,13 +39,18 @@ public:
 	BigInt(const chunkInt& val);
 	BigInt();
 
+	//comparsions
+	bool biggerThan(const BigInt& bi);
+	bool smallerThan(const BigInt& bi);
+	bool equals(const BigInt& bi);
+
 	//arithmetic
-	void addChunkInt(chunkInt val);
-	void addChunkInt(chunkInt val, chunkInt startChunk);
+	void addChunkInt(uChunkInt val);
+	void addChunkInt(uChunkInt val, uChunkInt startChunk);
 	void addBigInt(BigInt& bi);
 
-	void multiplyChunkInt(chunkInt val);
-
+	void multiplyChunkInt(uChunkInt val);
+	
 	void inspectChunks(chunkDisplayMode cdm);
 };
 
