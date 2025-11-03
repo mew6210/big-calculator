@@ -1,4 +1,4 @@
-#include "bigint.hpp"
+#include "../bigint.hpp"
 
 /*
 	@brief internal helper function
