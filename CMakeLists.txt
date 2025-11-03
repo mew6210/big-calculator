@@ -7,6 +7,6 @@ set(SOURCES
 "src/bigint/bigint.cpp" 
 "src/parser/parser.cpp"
 "src/core/core.cpp"
-)
+ "src/bigint/comparsions.cpp")
 
 add_executable(${PROJECT_NAME} ${SOURCES})

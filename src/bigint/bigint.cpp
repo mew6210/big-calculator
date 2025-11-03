@@ -1,7 +1,7 @@
 #include "bigint.hpp"
 #include <iomanip>
 
-std::numeric_limits<chunkInt> CHUNKINTLIMIT;
+std::numeric_limits<uChunkInt> CHUNKINTLIMIT;
 
 void checkBigInt() {
 
@@ -23,8 +23,10 @@ void checkBigInt() {
 
 BigInt::BigInt(const chunkInt& val) {
 	chunks.resize(1);
-	chunks[0] = val;
-	isPositive = true;
+	chunks[0] = abs(val);
+	if (val > 0) isPositive = true;
+	else if (val < 0) isPositive = false;
+	else isPositive = true;
 }
 
 BigInt::BigInt() {
@@ -32,8 +34,8 @@ BigInt::BigInt() {
 	isPositive = true;
 }
 
-void chunkIntToHex(chunkInt x) {
-	std::cout << std::setw(sizeof(chunkInt)*2) << std::setfill('0') << std::hex << x;
+void chunkIntToHex(uChunkInt x) {
+	std::cout << std::setw(sizeof(uChunkInt)*2) << std::setfill('0') << std::hex << x;
 }
 
 void BigInt::inspectChunks(chunkDisplayMode cdm) {
@@ -60,31 +62,31 @@ void BigInt::inspectChunks(chunkDisplayMode cdm) {
 	std::cout << "------------\n";
 }
 
-void BigInt::addChunkInt(chunkInt val) {
+void BigInt::addChunkInt(uChunkInt val) {
 
-	chunkInt carry = val;
+	uChunkInt carry = val;
 	size_t i = 0;
 
 	while (carry != 0) {
 		if (i == chunks.size())
 			chunks.push_back(0);
 
-		chunkInt sum = chunks[i] + carry;
+		uChunkInt sum = chunks[i] + carry;
 		carry = (sum < chunks[i]) ? 1 : 0;
 		chunks[i] = sum;
 		i++;
 	}
 }
 
-void BigInt::addChunkInt(chunkInt val, chunkInt startChunk) {
-	chunkInt carry = val;
+void BigInt::addChunkInt(uChunkInt val, uChunkInt startChunk) {
+	uChunkInt carry = val;
 	size_t i = startChunk; //start from a different chunk than the first one
 
 	while (carry != 0) {
 		if (i == chunks.size())
 			chunks.push_back(0);
 
-		chunkInt sum = chunks[i] + carry;
+		uChunkInt sum = chunks[i] + carry;
 		carry = (sum < chunks[i]) ? 1 : 0;
 		chunks[i] = sum;
 		i++;
@@ -121,7 +123,7 @@ uint128Emul mult64to128(uint64_t op1, uint64_t op2) {	//stack overflow came in c
 	return uint128Emul{ hi,lo };
 }
 
-void BigInt::multiplyChunkInt64(chunkInt val) {
+void BigInt::multiplyChunkInt64(uChunkInt val) {
 	std::vector<Remainder> remainders = {};
 
 	uint64_t originalSize = chunks.size();
@@ -140,20 +142,20 @@ void BigInt::sumUpRemainders(std::vector<Remainder>& remainders) {
 	remainders.clear();
 }
 
-void BigInt::multiplyChunkInt32(chunkInt val) {
+void BigInt::multiplyChunkInt32(uChunkInt val) {
 	uint64_t carry = 0;
 	for (size_t i = 0; i < chunks.size(); ++i) {
 		uint64_t prod = (uint64_t)chunks[i] * (uint64_t)val + carry;	//multip result
-		chunks[i] = static_cast<chunkInt>(prod & 0xFFFFFFFFu);		//set current chunk to low 32 bits
+		chunks[i] = static_cast<uChunkInt>(prod & 0xFFFFFFFFu);		//set current chunk to low 32 bits
 		carry = prod >> 32;	//set carry to high 32 bits
 	}
 
-	if (carry) addChunkInt(static_cast<chunkInt>(carry), chunks.size());	//push high 32-bits to the next chunk
+	if (carry) addChunkInt(static_cast<uChunkInt>(carry), chunks.size());	//push high 32-bits to the next chunk
 }
 
-void BigInt::multiplyChunkInt(chunkInt val) {
+void BigInt::multiplyChunkInt(uChunkInt val) {
 	
-	switch (sizeof(chunkInt)) {
+	switch (sizeof(uChunkInt)) {
 	case 8: multiplyChunkInt64(val); break; //uint64_t
 	case 4: multiplyChunkInt32(val); break; //uint32_t
 	}
@@ -179,46 +181,4 @@ void checkmultip() {
 	BigInt a = BigInt("999999999999999999999999999999999999999999999999");
 	//a.multiplyChunkInt(5);
 	a.inspectChunks(chunkDisplayMode::decimal);
-}
-
-/*
-internal helper function
-	- returns 1 if `this` bigint is bigger
-	- returns 0 if both bigints are equal
-	- returns -1 if argument bigint is bigger
-*/
-int BigInt::compareChunks(const BigInt& bi) {
-	if (chunks.size() > bi.chunks.size()) return 1; //if chunks size vary, one is clearly bigger
-	else if (chunks.size() < bi.chunks.size()) return -1;
-
-	else {	//if not, compare values of chunks, start from most significant chunk
-		for (size_t i = chunks.size(); i-- > 0;) {	//possible for loop overflow(size_t)
-			if (chunks[i] > bi.chunks[i]) return 1;
-			else if (chunks[i] < bi.chunks[i]) return -1;
-		}
-	}
-
-	return 0; //otherwise they are equal
-}
-
-bool BigInt::biggerThan(const BigInt& bi) {
-	return compareChunks(bi) == 1;
-}
-
-bool BigInt::smallerThan(const BigInt& bi) {
-	return compareChunks(bi) == -1;
-}
-
-bool BigInt::equals(const BigInt& bi) {
-	return compareChunks(bi) == 0;
-}
-
-void checkComparsions() {
-	BigInt a = BigInt(28);
-	BigInt b = BigInt(5);
-
-	if (a.biggerThan(b)) std::cout << "a is bigger than b";
-	if (a.smallerThan(b)) std::cout << "a is smaller than b";
-	if (a.equals(b)) std::cout << "a equals b";
-
 }
