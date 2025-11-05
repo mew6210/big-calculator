@@ -31,6 +31,7 @@ class BigInt {
 	bool areSignsDifferent(const BigInt& bi);
 	bool compareSigns(const BigInt& bi);
 	void trimTrailingChunks();
+	void resizeBigInts(BigInt& bi);
 
 	void sumUpRemainders(std::vector<Remainder>& remainders);
 	void multiplyChunkInt64(uChunkInt val);
@@ -53,7 +54,7 @@ public:
 	void addBigInt(BigInt& bi);
 
 	void subtractChunkInt(uChunkInt val);
-
+	void subtractBigInt(BigInt& bi);
 	void multiplyChunkInt(uChunkInt val);
 	
 	void inspectChunks(chunkDisplayMode cdm);

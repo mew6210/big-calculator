@@ -27,3 +27,23 @@ void BigInt::subtractChunkInt(uChunkInt val) {
 	}
 	trimTrailingChunks();
 }
+
+void BigInt::subtractBigInt(BigInt& bi) {
+
+	if (chunks.size() != bi.chunks.size()) resizeBigInts(bi);
+
+	for (size_t i = 0; i < chunks.size();i++) {		//potential overflow for very big bigints
+
+		if (bi.chunks[i] <= chunks[i]) {
+			chunks[i] -= bi.chunks[i];
+		}
+		else {
+			borrow(i + 1);
+			uint64_t diff = CHUNKINTLIMIT2.max() - bi.chunks[i] + 1;
+			chunks[i] += diff;
+		}
+	}
+	trimTrailingChunks();
+
+}
+

@@ -54,6 +54,12 @@ void BigInt::trimTrailingChunks() {
 		chunks.pop_back();
 }
 
+void BigInt::resizeBigInts(BigInt& bi) {
+	size_t maxSize = std::max(chunks.size(), bi.chunks.size());
+	chunks.resize(maxSize, 0);
+	bi.chunks.resize(maxSize, 0);
+}
+
 void checkmultip() {
 	BigInt a = BigInt("999999999999999999999999999999999999999999999999");
 	//a.multiplyChunkInt(5);
@@ -62,8 +68,9 @@ void checkmultip() {
 
 void checkSubtr() {
 
-	BigInt a = BigInt("115792089237316195423570985008687907853269984665640564039457584007913129639936");
-	//BigInt b = BigInt(32);
-	a.subtractChunkInt(1);
+	BigInt a = BigInt("100");
+	BigInt b = BigInt("50");
+	
+	a.subtractBigInt(b);
 	a.inspectChunks(chunkDisplayMode::decimal);
 }
