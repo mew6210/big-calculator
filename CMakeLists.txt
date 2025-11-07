@@ -10,6 +10,7 @@ set(SOURCES
  "src/bigint/operations/comparsions.cpp" 
  "src/bigint/operations/add.cpp" 
  "src/bigint/operations/multiply.cpp" 
- "src/bigint/helpers.cpp")
+ "src/bigint/helpers.cpp" 
+ "src/bigint/operations/subtract.cpp")
 
 add_executable(${PROJECT_NAME} ${SOURCES})

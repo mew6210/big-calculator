@@ -8,6 +8,7 @@
 void checkBigInt();
 void checkmultip();
 void checkComparsions();
+void checkSubtr();
 typedef uint64_t uChunkInt;
 typedef int64_t chunkInt;
 
@@ -25,9 +26,12 @@ class BigInt {
 	std::vector<uChunkInt> chunks;
 	bool isPositive;
 
+	void borrow(size_t pos);	//potential overflow for very big bigints
 	int compareChunks(const BigInt& bi);
 	bool areSignsDifferent(const BigInt& bi);
 	bool compareSigns(const BigInt& bi);
+	void trimTrailingChunks();
+	void resizeBigInts(BigInt& bi);
 
 	void sumUpRemainders(std::vector<Remainder>& remainders);
 	void multiplyChunkInt64(uChunkInt val);
@@ -49,6 +53,8 @@ public:
 	void addChunkInt(uChunkInt val, uChunkInt startChunk);
 	void addBigInt(BigInt& bi);
 
+	void subtractChunkInt(uChunkInt val);
+	void subtractBigInt(BigInt& bi);
 	void multiplyChunkInt(uChunkInt val);
 	
 	void inspectChunks(chunkDisplayMode cdm);

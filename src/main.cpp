@@ -7,6 +7,8 @@ int main(){
     initApp();
     Lexer lexer = Lexer();
 
+    checkSubtr();
+
     std::string line = "";
     std::vector<Token> curTokens;
     while (true) {
