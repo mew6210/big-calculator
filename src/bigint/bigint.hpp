@@ -26,7 +26,7 @@ class BigInt {
 	std::vector<uChunkInt> chunks;
 	bool isPositive;
 
-	void borrow(size_t pos);	//potential overflow for very big bigints
+	void borrow(size_t pos);
 	int compareChunks(const BigInt& bi);
 	bool areSignsDifferent(const BigInt& bi);
 	bool compareSigns(const BigInt& bi);

@@ -2,6 +2,9 @@
 
 std::numeric_limits<uChunkInt> CHUNKINTLIMIT2;
 
+/*
+	@brief helper function for borrowing when doing subtraction
+*/
 void BigInt::borrow(size_t pos) {
 	
 	if (chunks[pos] != 0) {
@@ -13,9 +16,12 @@ void BigInt::borrow(size_t pos) {
 	}
 }
 
+/*
+	@brief subtracts small val from current bigint
+*/
 void BigInt::subtractChunkInt(uChunkInt val) {
 	
-	if (chunks.size() == 0) return;
+	if (chunks.size() == 0) return;		//something went wrong
 
 	if (val <= chunks[0]) {
 		chunks[0] -= val;	//if val is smaller than first chunk, we can easily subtract it
@@ -28,11 +34,15 @@ void BigInt::subtractChunkInt(uChunkInt val) {
 	trimTrailingChunks();
 }
 
+
+/*
+	@brief subtracts bigint from current bigint
+*/
 void BigInt::subtractBigInt(BigInt& bi) {
 
 	if (chunks.size() != bi.chunks.size()) resizeBigInts(bi);
 
-	for (size_t i = 0; i < chunks.size();i++) {		//potential overflow for very big bigints
+	for (size_t i = 0; i < chunks.size();i++) {
 
 		if (bi.chunks[i] <= chunks[i]) {
 			chunks[i] -= bi.chunks[i];
@@ -44,6 +54,5 @@ void BigInt::subtractBigInt(BigInt& bi) {
 		}
 	}
 	trimTrailingChunks();
-
 }
 
