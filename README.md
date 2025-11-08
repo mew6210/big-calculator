@@ -9,7 +9,7 @@ Arbitrary-precision Integer Calculator
 
 ## Basic arithmetic operations
 - [x] Addition
-- [ ] Subtraction
-- [ ] Multiplication
+- [x] Subtraction
+- [x] Multiplication
 - [ ] Division
 - [ ] Powers
