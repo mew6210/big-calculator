@@ -55,8 +55,10 @@ public:
 
 	void subtractChunkInt(uChunkInt val);
 	void subtractBigInt(BigInt& bi);
-	void multiplyChunkInt(uChunkInt val);
 	
+	void multiplyChunkInt(uChunkInt val);
+	void multiplyBigInt(BigInt& bi);
+
 	void inspectChunks(chunkDisplayMode cdm);
 };
 
