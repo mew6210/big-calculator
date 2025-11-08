@@ -41,7 +41,7 @@ void BigInt::multiplyChunkInt64(uChunkInt val) {
 	in anonymous namespace for extra clarity, they should not be used outside multiplication.
 */
 namespace {
-
+	//almost the same as 'addChunkInt'
 	void addChunkIntExternal(Chunks& chunks, uChunkInt val, uChunkInt startChunk) {
 		uChunkInt carry = val;
 		size_t i = startChunk; //start from a different chunk than the first one
@@ -56,7 +56,7 @@ namespace {
 			i++;
 		}
 	}
-
+	//almost the same as 'multiplyChunkInt64'
 	Chunks multiplyChunkInt64External(const Chunks& chunks, uChunkInt val) {
 		std::vector<Remainder> remainders = {};
 		Chunks subsituteChunks = chunks;
