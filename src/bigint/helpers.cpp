@@ -61,8 +61,11 @@ void BigInt::resizeBigInts(BigInt& bi) {
 }
 
 void checkmultip() {
-	BigInt a = BigInt("999999999999999999999999999999999999999999999999");
-	//a.multiplyChunkInt(5);
+	BigInt a = BigInt("999999999999999999");
+	a.inspectChunks(chunkDisplayMode::decimal);
+	BigInt b = BigInt("999999999999999999");
+	b.inspectChunks(chunkDisplayMode::decimal);
+	a.multiplyBigInt(b);
 	a.inspectChunks(chunkDisplayMode::decimal);
 }
 
