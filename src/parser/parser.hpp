@@ -14,6 +14,9 @@ enum class OperatorType {
 
 OperatorType tokenToOper(const Token& tok);
 
+/*
+	@brief base class for other nodes
+*/
 class ExprNode {
 
 public:
@@ -23,6 +26,9 @@ public:
 	virtual void print(int ident = 0) = 0;
 };
 
+/*
+	@brief node for number literals like `46123512`
+*/
 class BigIntNode : public ExprNode {
 
 	BigInt val;
@@ -33,6 +39,9 @@ public:
 	void print(int indent) override;
 };
 
+/*
+	@brief node for expressions like `2+3`
+*/
 class BinaryExprNode : public ExprNode {
 	std::unique_ptr<ExprNode> lhs, rhs;
 	OperatorType op;
@@ -42,6 +51,9 @@ public:
 	void print(int indent) override;
 };
 
+/*
+	@brief node for variables like `a`
+*/
 class VariableExprNode : public ExprNode {
 
 	std::string name;
@@ -53,10 +65,13 @@ public:
 	void print(int indent) override;
 };
 
+/*
+	@brief node for function calls like pow(2,3)
+*/
 class CallExprNode : public ExprNode {
 
 	std::string funcName; //callee
-	std::vector<std::unique_ptr<ExprNode>> args;
+	std::vector<std::unique_ptr<ExprNode>> args;	//not tokens or strings, cause user can input pow(2+3,3) which requires evaluation
 
 public:
 	CallExprNode(const Token& nameT,std::vector<std::unique_ptr<ExprNode>>& argsT): funcName(nameT.value),args(std::move(argsT)){}
@@ -85,9 +100,6 @@ class Parser {
 	std::unique_ptr<ExprNode> parseBinOpRHS(int exprPrec,std::unique_ptr<ExprNode> lhs);
 	std::unique_ptr<ExprNode> parseTopLevelExpr();
 	std::unique_ptr<ExprNode> parseExpression();
-	void initCurTok() {
-		curTok = tokens[0];
-	}
 public:
 	std::unique_ptr<ExprNode> parse();
 	Parser(std::vector<Token>& tokensT) :curTok(tokens[0]),tokens(std::move(tokensT)){}
