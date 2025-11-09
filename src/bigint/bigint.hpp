@@ -42,6 +42,8 @@ public:
 	BigInt(const std::string& s);
 	BigInt(const chunkInt& val);
 	BigInt();
+	BigInt(BigInt&&) noexcept = default;
+	BigInt(const BigInt&) = default;
 
 	//comparsions
 	bool biggerThan(const BigInt& bi);
@@ -60,6 +62,7 @@ public:
 	void multiplyBigInt(BigInt& bi);
 
 	void inspectChunks(chunkDisplayMode cdm);
+	void inspectChunks(chunkDisplayMode cdm, int indent);
 };
 
 struct uint128Emul {

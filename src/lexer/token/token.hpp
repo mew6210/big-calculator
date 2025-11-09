@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 enum class TokenType {
     openParen = 1,
@@ -9,7 +10,9 @@ enum class TokenType {
     numLiteral = 7,
     identifier = 8,
     assignOp = 9,
-    undefined = 10
+    comma = 10,
+    undefined = 11,
+    tokEOF = 12
 };
 
 struct Token {

@@ -1,6 +1,7 @@
 #include "lexer/lexer.hpp"
 #include "core/core.hpp"
 #include "bigint/bigint.hpp"
+#include "parser/parser.hpp"
 
 int main(){
 
@@ -15,6 +16,9 @@ int main(){
         
         curTokens = lexer.getTokensFromString(line);
         lexer.printTokens();
+        Parser p = Parser(curTokens, line);
+        auto root = p.parse();
+        root->print();
     }
     return 0;
 }
