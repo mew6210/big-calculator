@@ -10,7 +10,8 @@ std::unordered_map<char,TokenType> singleOpsToEnumMap = {
     {'-',TokenType::minusSign},
     {'*',TokenType::MultipSign},
     {'/',TokenType::DivSign},
-    {'=',TokenType::assignOp}
+    {'=',TokenType::assignOp},
+    {',',TokenType::comma}
 };
 
 namespace {
@@ -171,7 +172,8 @@ void Lexer::printTokens(){
         case TokenType::numLiteral: std::cout << "some number with a value of: "<<token.value<<" "<<printTokenPosAndLength(token)<<"\n";       break;
         case TokenType::identifier: std::cout << "some variable named: "<<token.value<<" "<<printTokenPosAndLength(token)<<"\n";     break;
         case TokenType::assignOp:   std::cout << "assign operation "<<printTokenPosAndLength(token)<<"\n";  break;
-        case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";                                      break;
+        case TokenType::comma:      std::cout << "comma " << printTokenPosAndLength(token) << "\n";         break;
+        case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";                                       break;
         }
     }
 }
