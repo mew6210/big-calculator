@@ -21,6 +21,11 @@ Token Parser::getNextToken() {
 	return curTok = tokens[curTokIndex];
 }
 
+/*
+	@brief parses number literals
+
+	internally it just wraps it into a BigInt using its string constructor
+*/
 unique_ptr<ExprNode> Parser::parseNumberExpr() {
 	auto result = make_unique<BigIntNode>(curTok);
 	getNextToken(); //eat token
@@ -74,7 +79,6 @@ unique_ptr<ExprNode> Parser::parseIdentifierExpr() {
 		}
 	}
 
-	//TODO: FINISH FUNCTION PARSING WHEN ADDED COMMA TO A LEXER
 	getNextToken();	//eat )
 
 	return make_unique<CallExprNode>(idName, args);
@@ -96,6 +100,10 @@ int Parser::getTokPrecedence() {
 	return tokPrecedence;
 }
 
+/*
+	@brief parses expressions like `2+3*6` based on its precedence
+
+*/
 unique_ptr<ExprNode> Parser::parseExpression() {
 	auto lhs = parsePrimary();
 	if (!lhs) return nullptr;

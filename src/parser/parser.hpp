@@ -82,7 +82,7 @@ public:
 };
 
 class Parser {
-	std::vector<Token> tokens;
+	std::vector<Token> tokens;	//token stream from lexer
 	Token curTok;
 	size_t curTokIndex = 0;
 	std::map<TokenType, int> precedenceMap = {
@@ -102,14 +102,11 @@ class Parser {
 	int getTokPrecedence();
 	std::unique_ptr<ExprNode> parseBinOpRHS(int exprPrec,std::unique_ptr<ExprNode> lhs);
 	std::unique_ptr<ExprNode> parseTopLevelExpr();
-	
+	std::unique_ptr<ExprNode> parseExpression();
 	void initCurTok() {
 		curTok = tokens[0];
 	}
 public:
 	std::unique_ptr<ExprNode> parse();
-	std::unique_ptr<ExprNode> parseExpression();
-	Parser(std::vector<Token>& tokens) :tokens(std::move(tokens)) {
-		initCurTok();
-	}
+	Parser(std::vector<Token>& tokensT) :curTok(tokens[0]),tokens(std::move(tokensT)){}
 };

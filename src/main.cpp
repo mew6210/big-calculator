@@ -1,6 +1,7 @@
 #include "lexer/lexer.hpp"
 #include "core/core.hpp"
 #include "bigint/bigint.hpp"
+#include "parser/parser.hpp"
 
 int main(){
 
