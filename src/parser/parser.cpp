@@ -58,7 +58,22 @@ unique_ptr<ExprNode> Parser::parseIdentifierExpr() {
 	//else its a function call
 
 	getNextToken(); //eat (
-	std::vector<Token> args;
+	std::vector<unique_ptr<ExprNode>> args;
+	if (curTok.type != TokenType::closeParen) {
+		while (true) {
+			if (auto arg = parseExpression()) {
+				args.push_back(std::move(arg));
+			}
+			else return nullptr;
+			
+			if (curTok.type == TokenType::closeParen) break;
+
+			if (curTok.type != TokenType::comma) std::cout << "TODO: ERROR EXPECTED ) OR , IN ARGUMENT LIST";
+
+			getNextToken();
+		}
+	}
+
 	//TODO: FINISH FUNCTION PARSING WHEN ADDED COMMA TO A LEXER
 	getNextToken();	//eat )
 

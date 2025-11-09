@@ -68,12 +68,16 @@ public:
 class CallExprNode : public ExprNode {
 
 	std::string funcName; //callee
-	std::vector<Token> args;
+	std::vector<std::unique_ptr<ExprNode>> args;
 
 public:
-	CallExprNode(const Token& nameT, const std::vector<Token>& argsT): funcName(nameT.value),args(argsT){}
+	CallExprNode(const Token& nameT,std::vector<std::unique_ptr<ExprNode>>& argsT): funcName(nameT.value),args(std::move(argsT)){}
 	void print(int indent = 0) override {
 		std::cout << std::string(indent, ' ') << "CallExprNode: " << funcName << "\n";
+		for (size_t i = 0; i < args.size(); i++) {
+			std::cout << std::string(indent, ' ') << "Arg" << i << ": ";
+			args[i]->print(indent+4);
+		}
 	}
 };
 
@@ -98,11 +102,12 @@ class Parser {
 	int getTokPrecedence();
 	std::unique_ptr<ExprNode> parseBinOpRHS(int exprPrec,std::unique_ptr<ExprNode> lhs);
 	std::unique_ptr<ExprNode> parseTopLevelExpr();
-	std::unique_ptr<ExprNode> parse();
+	
 	void initCurTok() {
 		curTok = tokens[0];
 	}
 public:
+	std::unique_ptr<ExprNode> parse();
 	std::unique_ptr<ExprNode> parseExpression();
 	Parser(std::vector<Token>& tokens) :tokens(std::move(tokens)) {
 		initCurTok();
