@@ -2,7 +2,7 @@
 #include <map>
 #include "../bigint/bigint.hpp"
 #include "../lexer/token/token.hpp"
-
+#include "../helpers/helpers.hpp"
 enum class OperatorType {
 	add,
 	subtract,
@@ -80,6 +80,7 @@ public:
 
 class Parser {
 	std::vector<Token> tokens;	//token stream from lexer
+	std::string src;	//for nice error messages
 	Token curTok;
 	size_t curTokIndex = 0;
 	std::map<TokenType, int> precedenceMap = {
@@ -100,7 +101,9 @@ class Parser {
 	std::unique_ptr<ExprNode> parseBinOpRHS(int exprPrec,std::unique_ptr<ExprNode> lhs);
 	std::unique_ptr<ExprNode> parseTopLevelExpr();
 	std::unique_ptr<ExprNode> parseExpression();
+
+	std::unique_ptr<ExprNode> parseErrorLog(const std::string& msg,const std::string& note);
 public:
 	std::unique_ptr<ExprNode> parse();
-	Parser(std::vector<Token>& tokensT) :curTok(tokens[0]),tokens(std::move(tokensT)){}
+	Parser(std::vector<Token>& tokensT,const std::string& src) :curTok(tokens[0]),tokens(std::move(tokensT)),src(src){}
 };

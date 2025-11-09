@@ -13,6 +13,6 @@ set(SOURCES
  "src/bigint/helpers.cpp" 
  "src/bigint/operations/subtract.cpp"
  "src/parser/nodeprints.cpp"
-)
+ "src/helpers/helpers.cpp")
 
 add_executable(${PROJECT_NAME} ${SOURCES})

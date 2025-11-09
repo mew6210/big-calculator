@@ -3,6 +3,11 @@
 using std::unique_ptr;
 using std::make_unique;
 
+std::unique_ptr<ExprNode> Parser::parseErrorLog(const std::string& msg,const std::string& note) {
+	printError(src, curTok.startPos, msg, note);
+	return nullptr;
+}
+
 OperatorType tokenToOper(const Token& tok) {
 	switch (tok.type) {
 	case TokenType::plusSign: return OperatorType::add;
@@ -42,7 +47,7 @@ unique_ptr<ExprNode> Parser::parseParenExpr() {
 	auto v = parseExpression();		//handle expression inside ()
 	if (!v) return nullptr;
 	
-	if (curTok.type != TokenType::closeParen) std::cout << "TODO ERROR `EXPECTED ) `";
+	if (curTok.type != TokenType::closeParen) parseErrorLog("Did not find matching `)` `","insert )");
 
 	getNextToken(); //eat )
 	return v;
@@ -73,7 +78,7 @@ unique_ptr<ExprNode> Parser::parseIdentifierExpr() {
 			
 			if (curTok.type == TokenType::closeParen) break;
 
-			if (curTok.type != TokenType::comma) std::cout << "TODO: ERROR EXPECTED ) OR , IN ARGUMENT LIST";
+			if (curTok.type != TokenType::comma) parseErrorLog("Expected `)` or `,` in argument list","you are probably missing , or ) there");
 
 			getNextToken();
 		}
@@ -89,7 +94,7 @@ unique_ptr<ExprNode> Parser::parsePrimary() {
 	case TokenType::identifier: return parseIdentifierExpr();
 	case TokenType::numLiteral: return parseNumberExpr();
 	case TokenType::openParen: return parseParenExpr();
-	default: std::cout << "TODO MAKE ERROR FOR UNKOWN TOKEN";
+	default: parseErrorLog("Something went very wrong","i dont know man");
 	}
 }
 
@@ -143,6 +148,7 @@ unique_ptr<ExprNode> Parser::parse() {
 	
 	while (true) {
 		switch (curTok.type) {
+		case TokenType::tokEOF: return nullptr;
 		default: return parseTopLevelExpr();
 		}
 	}

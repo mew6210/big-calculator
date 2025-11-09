@@ -11,7 +11,8 @@ enum class TokenType {
     identifier = 8,
     assignOp = 9,
     comma = 10,
-    undefined = 11
+    undefined = 11,
+    tokEOF = 12
 };
 
 struct Token {

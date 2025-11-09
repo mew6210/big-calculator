@@ -16,6 +16,9 @@ int main(){
         
         curTokens = lexer.getTokensFromString(line);
         lexer.printTokens();
+        Parser p = Parser(curTokens, line);
+        auto root = p.parse();
+        root->print();
     }
     return 0;
 }
