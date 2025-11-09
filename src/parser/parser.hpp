@@ -30,11 +30,7 @@ public:
 	BigIntNode(Token& tok) : val(tok.value){}
 	BigIntNode(BigIntNode&&) noexcept = default;
 	BigIntNode(const BigIntNode&) = default;
-	void print(int indent = 0) override {
-		std::cout << std::string(indent, ' ') << "BigIntNode: "<<'\n';
-		val.inspectChunks(chunkDisplayMode::decimal,indent);
-		std::cout<< "\n";
-	}
+	void print(int indent) override;
 };
 
 class BinaryExprNode : public ExprNode {
@@ -43,11 +39,7 @@ class BinaryExprNode : public ExprNode {
 
 public: 
 	BinaryExprNode(std::unique_ptr<ExprNode>& lhsT, std::unique_ptr<ExprNode>& rhsT, OperatorType& opT) : lhs(std::move(lhsT)), rhs(std::move(rhsT)), op(opT) {}
-	void print(int indent = 0) override {
-		std::cout << std::string(indent, ' ') << "BinaryExprNode" << " op: " << (int)op<<'\n';
-		lhs->print(indent + 4);
-		rhs->print(indent + 4);
-	}
+	void print(int indent) override;
 };
 
 class VariableExprNode : public ExprNode {
@@ -58,11 +50,7 @@ class VariableExprNode : public ExprNode {
 public:
 	VariableExprNode(){}
 	VariableExprNode(std::string& name) : name(name){}
-	void print(int indent = 0) override {
-		std::cout << std::string(indent, ' ') << "VariableExprNode: " << name << "\n";
-		val.inspectChunks(chunkDisplayMode::decimal,indent);
-		std::cout << "\n";
-	}
+	void print(int indent) override;
 };
 
 class CallExprNode : public ExprNode {
@@ -72,13 +60,7 @@ class CallExprNode : public ExprNode {
 
 public:
 	CallExprNode(const Token& nameT,std::vector<std::unique_ptr<ExprNode>>& argsT): funcName(nameT.value),args(std::move(argsT)){}
-	void print(int indent = 0) override {
-		std::cout << std::string(indent, ' ') << "CallExprNode: " << funcName << "\n";
-		for (size_t i = 0; i < args.size(); i++) {
-			std::cout << std::string(indent, ' ') << "Arg" << i << ": ";
-			args[i]->print(indent+4);
-		}
-	}
+	void print(int indent) override;
 };
 
 class Parser {
