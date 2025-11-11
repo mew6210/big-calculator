@@ -8,8 +8,8 @@ enum class OperatorType {
 	subtract,
 	multiply,
 	divide,
+	exponentiate,
 	undefined
-	//exponentiate
 };
 
 OperatorType tokenToOper(const Token& tok);
