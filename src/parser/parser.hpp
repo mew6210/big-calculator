@@ -86,8 +86,9 @@ class Parser {
 	std::map<TokenType, int> precedenceMap = {
 		{TokenType::plusSign,10},
 		{TokenType::minusSign,10},
-		{TokenType::MultipSign,20},
-		{TokenType::DivSign,20}
+		{TokenType::multipSign,20},
+		{TokenType::divSign,20},
+		{TokenType::exponentSign,30}
 	};
 
 	Token getNextToken();
