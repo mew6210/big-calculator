@@ -10,6 +10,7 @@ std::unique_ptr<ExprNode> Parser::parseErrorLog(const std::string& msg,const std
 
 OperatorType tokenToOper(const Token& tok) {
 	switch (tok.type) {
+	case TokenType::assignOp: return OperatorType::assign;
 	case TokenType::plusSign: return OperatorType::add;
 	case TokenType::minusSign: return OperatorType::subtract;
 	case TokenType::multipSign: return OperatorType::multiply;
@@ -95,7 +96,7 @@ unique_ptr<ExprNode> Parser::parsePrimary() {
 	case TokenType::identifier: return parseIdentifierExpr();
 	case TokenType::numLiteral: return parseNumberExpr();
 	case TokenType::openParen: return parseParenExpr();
-	default: parseErrorLog("Something went very wrong","i dont know man");
+	default: return parseErrorLog("Something went very wrong","i dont know man");
 	}
 }
 

@@ -4,6 +4,7 @@
 #include "../lexer/token/token.hpp"
 #include "../helpers/helpers.hpp"
 enum class OperatorType {
+	assign,
 	add,
 	subtract,
 	multiply,
@@ -84,6 +85,7 @@ class Parser {
 	Token curTok;
 	size_t curTokIndex = 0;
 	std::map<TokenType, int> precedenceMap = {
+		{TokenType::assignOp,1},
 		{TokenType::plusSign,10},
 		{TokenType::minusSign,10},
 		{TokenType::multipSign,20},

@@ -1,7 +1,16 @@
 #include "parser.hpp"
 
 void BinaryExprNode::print(int indent = 0) {
-	std::cout << std::string(indent, ' ') << "BinaryExprNode" << " op: " << (int)op << '\n';
+	static std::map<OperatorType, std::string> binOpToStringMap = {
+		{OperatorType::assign,"assign"},
+		{OperatorType::add,"add"},
+		{OperatorType::subtract,"subtract"},
+		{OperatorType::multiply,"multiply"},
+		{OperatorType::divide,"divide"},
+		{OperatorType::exponentiate,"exponentiate"},
+		{OperatorType::undefined,"undefined"}
+	};
+	std::cout << std::string(indent, ' ') << "BinaryExprNode" << " op: " << binOpToStringMap[op]<< '\n';
 	lhs->print(indent + 4);
 	rhs->print(indent + 4);
 }
@@ -9,13 +18,11 @@ void BinaryExprNode::print(int indent = 0) {
 void BigIntNode::print(int indent = 0) {
 	std::cout << std::string(indent, ' ') << "BigIntNode: " << '\n';
 	val.inspectChunks(chunkDisplayMode::decimal, indent);
-	std::cout << "\n";
 }
 
 void VariableExprNode::print(int indent = 0) {
 	std::cout << std::string(indent, ' ') << "VariableExprNode: " << name << "\n";
 	val.inspectChunks(chunkDisplayMode::decimal, indent);
-	std::cout << "\n";
 }
 
 void CallExprNode::print(int indent = 0) {
