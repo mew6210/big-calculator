@@ -12,8 +12,8 @@ OperatorType tokenToOper(const Token& tok) {
 	switch (tok.type) {
 	case TokenType::plusSign: return OperatorType::add;
 	case TokenType::minusSign: return OperatorType::subtract;
-	case TokenType::MultipSign: return OperatorType::multiply;
-	case TokenType::DivSign: return OperatorType::divide;
+	case TokenType::multipSign: return OperatorType::multiply;
+	case TokenType::divSign: return OperatorType::divide;
 	default: return OperatorType::undefined;
 	}
 }
