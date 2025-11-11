@@ -5,14 +5,15 @@ enum class TokenType {
     closeParen = 2,
     plusSign = 3,
     minusSign = 4,
-    MultipSign = 5,
-    DivSign = 6,
+    multipSign = 5,
+    divSign = 6,
     numLiteral = 7,
     identifier = 8,
     assignOp = 9,
     comma = 10,
     undefined = 11,
-    tokEOF = 12
+    exponentSign = 12,
+    tokEOF = 13
 };
 
 struct Token {

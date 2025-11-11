@@ -9,10 +9,11 @@ std::unordered_map<char,TokenType> singleOpsToEnumMap = {
     {')',TokenType::closeParen},
     {'+',TokenType::plusSign},
     {'-',TokenType::minusSign},
-    {'*',TokenType::MultipSign},
-    {'/',TokenType::DivSign},
+    {'*',TokenType::multipSign},
+    {'/',TokenType::divSign},
     {'=',TokenType::assignOp},
-    {',',TokenType::comma}
+    {',',TokenType::comma},
+    {'^',TokenType::exponentSign}
 };
 
 namespace {
@@ -149,12 +150,13 @@ void Lexer::printTokens(){
         case TokenType::closeParen: std::cout << "close paren "<<printTokenPosAndLength(token)<<"\n";       break;
         case TokenType::plusSign:   std::cout << "addition "<<printTokenPosAndLength(token)<<"\n";          break;
         case TokenType::minusSign:  std::cout << "subtraction "<<printTokenPosAndLength(token)<<"\n";       break;
-        case TokenType::MultipSign: std::cout << "multiplication "<<printTokenPosAndLength(token)<<"\n";    break;
-        case TokenType::DivSign:    std::cout << "division "<<printTokenPosAndLength(token)<<"\n";          break;
+        case TokenType::multipSign: std::cout << "multiplication "<<printTokenPosAndLength(token)<<"\n";    break;
+        case TokenType::divSign:    std::cout << "division "<<printTokenPosAndLength(token)<<"\n";          break;
         case TokenType::numLiteral: std::cout << "some number with a value of: "<<token.value<<" "<<printTokenPosAndLength(token)<<"\n";       break;
         case TokenType::identifier: std::cout << "some variable named: "<<token.value<<" "<<printTokenPosAndLength(token)<<"\n";     break;
         case TokenType::assignOp:   std::cout << "assign operation "<<printTokenPosAndLength(token)<<"\n";  break;
         case TokenType::comma:      std::cout << "comma " << printTokenPosAndLength(token) << "\n";         break;
+        case TokenType::exponentSign: std::cout << "exponent sign" << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";                                       break;
         }
     }
