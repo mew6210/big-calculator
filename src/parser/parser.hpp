@@ -3,6 +3,7 @@
 #include "../bigint/bigint.hpp"
 #include "../lexer/token/token.hpp"
 #include "../helpers/helpers.hpp"
+
 enum class OperatorType {
 	assign,
 	add,

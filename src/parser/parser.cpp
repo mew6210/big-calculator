@@ -3,11 +3,18 @@
 using std::unique_ptr;
 using std::make_unique;
 
+/*
+	@brief helper function for printing error messages during parsing stage
+
+*/
 std::unique_ptr<ExprNode> Parser::parseErrorLog(const std::string& msg,const std::string& note) {
 	printError(src, curTok.startPos, msg, note);
 	return nullptr;
 }
 
+/*
+	@brief helper function for narrowing tokens used for operations to a specific OperatorType enum
+*/
 OperatorType tokenToOper(const Token& tok) {
 	switch (tok.type) {
 	case TokenType::assignOp: return OperatorType::assign;
@@ -20,6 +27,13 @@ OperatorType tokenToOper(const Token& tok) {
 	}
 }
 
+/*
+	@brief helper function for advancing to the next token
+
+	protects from advancing out of a vector
+
+	also returns curTok, but its never really used
+*/
 Token Parser::getNextToken() {
 	if (curTokIndex == tokens.size()-1) {
 		return curTok;
@@ -38,9 +52,9 @@ unique_ptr<ExprNode> Parser::parseNumberExpr() {
 	getNextToken(); //eat token
 	return std::move(result);
 }
-/*
-	@brief handles `( expression)`
 
+/*
+	@brief handles `(...)`
 */
 unique_ptr<ExprNode> Parser::parseParenExpr() {
 
@@ -57,7 +71,6 @@ unique_ptr<ExprNode> Parser::parseParenExpr() {
 
 /*
 	@brief handles either `identifier` or `identifier(expression)`
-
 */
 unique_ptr<ExprNode> Parser::parseIdentifierExpr() {
 
@@ -73,24 +86,26 @@ unique_ptr<ExprNode> Parser::parseIdentifierExpr() {
 	std::vector<unique_ptr<ExprNode>> args;
 	if (curTok.type != TokenType::closeParen) {
 		while (true) {
-			if (auto arg = parseExpression()) {
+			if (auto arg = parseExpression()) {	//parse argument like an expression
 				args.push_back(std::move(arg));
 			}
 			else return nullptr;
 			
-			if (curTok.type == TokenType::closeParen) break;
+			if (curTok.type == TokenType::closeParen) break;	//if token is ')', then we finished parsing arguments
 
-			if (curTok.type != TokenType::comma) parseErrorLog("Expected `)` or `,` in argument list","you are probably missing , or ) there");
+			if (curTok.type != TokenType::comma) parseErrorLog("Expected `)` or `,` in argument list","you are probably missing `,` or `)` there");
 
 			getNextToken();
 		}
 	}
 
 	getNextToken();	//eat )
-
 	return make_unique<CallExprNode>(idName, args);
 }
 
+/*
+	@brief parses most basic expressions, like 'a' or '5' or '(...)'
+*/
 unique_ptr<ExprNode> Parser::parsePrimary() {
 	switch (curTok.type) {
 	case TokenType::identifier: return parseIdentifierExpr();
@@ -100,6 +115,11 @@ unique_ptr<ExprNode> Parser::parsePrimary() {
 	}
 }
 
+/*
+	@brief returns a precedence value of current token based on its type
+
+	returns -1 if token is not recognized as an operation with precedence
+*/
 int Parser::getTokPrecedence() {
 
 	int tokPrecedence = precedenceMap[curTok.type];
@@ -118,6 +138,11 @@ unique_ptr<ExprNode> Parser::parseExpression() {
 	return parseBinOpRHS(0, std::move(lhs));
 }
 
+/*
+	@brief simplified operator-precendence parser
+
+	inspired by - llvm kaleidoscope tutorial
+*/
 unique_ptr<ExprNode> Parser::parseBinOpRHS(int exprPrec, unique_ptr<ExprNode> lhs){
 
 	while (true) {
