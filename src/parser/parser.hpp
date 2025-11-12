@@ -48,7 +48,7 @@ class BinaryExprNode : public ExprNode {
 	OperatorType op;
 
 public: 
-	BinaryExprNode(std::unique_ptr<ExprNode>& lhsT, std::unique_ptr<ExprNode>& rhsT, OperatorType& opT) : lhs(std::move(lhsT)), rhs(std::move(rhsT)), op(opT) {}
+	BinaryExprNode(std::unique_ptr<ExprNode>&& lhsT, std::unique_ptr<ExprNode>&& rhsT, OperatorType& opT) : lhs(std::move(lhsT)), rhs(std::move(rhsT)), op(opT) {}
 	void print(int indent) override;
 };
 
