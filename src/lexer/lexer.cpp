@@ -3,7 +3,9 @@
 #include <unordered_map>
 #include "../helpers/helpers.hpp"
 
-
+/*
+    @brief all tokens that are single chars
+*/
 std::unordered_map<char,TokenType> singleOpsToEnumMap = {
     {'(',TokenType::openParen},
     {')',TokenType::closeParen},
@@ -16,6 +18,9 @@ std::unordered_map<char,TokenType> singleOpsToEnumMap = {
     {'^',TokenType::exponentSign}
 };
 
+/*
+    @brief functions that are used only by lexer
+*/
 namespace {
 
     bool isSpace(const char& c) {
@@ -52,6 +57,11 @@ namespace {
 
 }
 
+/*
+    @brief converts strings like `5` to their respective numLiteral tokens
+
+    checks if inside a number there are not-digit chars, and displays an error if there are
+*/
 Token Lexer::handleNumberLiteralToken(const std::string& tok,const uint64_t& startPos) {
     uint64_t errorPos = startPos;
     //check if everything is a digit
@@ -70,10 +80,20 @@ Token Lexer::handleNumberLiteralToken(const std::string& tok,const uint64_t& sta
     return Token{ TokenType::numLiteral, tok,startPos,tok.size()};
 }
 
+/*
+    @brief converts identifiers to their respective identifier tokens
+*/
 Token Lexer::handleIdentifierToken(const std::string& tok,const uint64_t& startPos) {
     return Token{ TokenType::identifier,tok,startPos,tok.size()};
 }
 
+/*
+    @brief handles any strings that arent single-char tokens
+
+    if it starts with a digit, then lexes it as if it was a number literal
+
+    otherwise handles it as an identifier
+*/
 Token Lexer::handleMultipleCharInstruction() {
 
     std::string nameBuf = "";
@@ -124,6 +144,9 @@ void Lexer::parseTokens(){
     }
 }
 
+/*
+    @brief creates tokens from a given string, and also appends End Of File token at the end of the tokens
+*/
 std::vector<Token> Lexer::getTokensFromString(const std::string& s){
     tokens.clear();
     cur_index = 0;
@@ -133,6 +156,9 @@ std::vector<Token> Lexer::getTokensFromString(const std::string& s){
     return tokens;
 }
 
+/*
+    @brief helper function for assembling a string with tokens position and length
+*/
 std::string printTokenPosAndLength(const Token& tok){
     std::string tokString = "";
     tokString.append("position: ");
@@ -157,6 +183,7 @@ void Lexer::printTokens(){
         case TokenType::assignOp:   std::cout << "assign operation "<<printTokenPosAndLength(token)<<"\n";  break;
         case TokenType::comma:      std::cout << "comma " << printTokenPosAndLength(token) << "\n";         break;
         case TokenType::exponentSign: std::cout << "exponent sign" << printTokenPosAndLength(token) << "\n"; break;
+        case TokenType::tokEOF: std::cout << "end of file token\n";
         case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";                                       break;
         }
     }
