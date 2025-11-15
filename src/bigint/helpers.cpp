@@ -101,3 +101,12 @@ void checkSubtr() {
 	a.subtractBigInt(b);
 	a.inspectChunks(chunkDisplayMode::decimal);
 }
+
+void checkDiv() {
+
+	BigInt a = BigInt("55340232221128654850");
+	uint64_t b = 5;
+	a.divideChunkInt(b);
+
+	a.inspectChunks(chunkDisplayMode::decimal);
+}

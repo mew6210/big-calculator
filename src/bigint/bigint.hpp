@@ -9,6 +9,7 @@ void checkBigInt();
 void checkmultip();
 void checkComparsions();
 void checkSubtr();
+void checkDiv();
 typedef uint64_t uChunkInt;
 typedef int64_t chunkInt;
 
@@ -60,6 +61,8 @@ public:
 	
 	void multiplyChunkInt(uChunkInt val);
 	void multiplyBigInt(BigInt& bi);
+
+	void divideChunkInt(uChunkInt val);
 
 	void inspectChunks(chunkDisplayMode cdm);
 	void inspectChunks(chunkDisplayMode cdm, int indent);
