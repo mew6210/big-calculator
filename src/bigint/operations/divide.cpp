@@ -129,3 +129,14 @@ void BigInt::divideChunkInt(uChunkInt val) {
     chunks = chunksStored;
     trimTrailingChunks();
 }
+
+uChunkInt BigInt::moduloChunkInt(uChunkInt val) {
+    uint64_t remainder = 0;
+    uint64_t* remptr = &remainder;
+
+    for (size_t i = chunks.size(); i-- > 0;) {
+        divllu(remainder, chunks[i], val, remptr);       //function for dividing 128bit number by 64bit number
+    }
+
+    return remainder;
+}
