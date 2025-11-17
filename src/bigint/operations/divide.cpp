@@ -110,6 +110,13 @@ uint64_t divllu(uint64_t numhi, uint64_t numlo, uint64_t den, uint64_t* r)
     return ((uint64_t)q1 << 32) | q0;
 }
 
+/*
+    @brief divides bigint by uChunkInt
+
+    divides each chunk by val, and handles carrying remainders
+
+    spits out a warning if there is a reminder, this calc only supports whole numbers
+*/
 void BigInt::divideChunkInt(uChunkInt val) {
 
     uint64_t remainder = 0;
@@ -130,6 +137,13 @@ void BigInt::divideChunkInt(uChunkInt val) {
     trimTrailingChunks();
 }
 
+/*
+    @brief returns remainder, basically % operation
+
+    divides number n times by val, and only return remainder
+
+    slimmed down version of divideChunkInt
+*/
 uChunkInt BigInt::moduloChunkInt(uChunkInt val) {
     uint64_t remainder = 0;
     uint64_t* remptr = &remainder;
