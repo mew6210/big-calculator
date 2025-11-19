@@ -10,7 +10,7 @@
  * 
  * taken from https://ridiculousfish.com/blog/posts/labor-of-division-episode-v.html.
  * 
- * modified to use std::countl_zero, instead of builtin compiler function so that its compatible.
+ * modified to use std::countl_zero, instead of builtin compiler function so that its compatible. all comments left as they were
  * 
  * Perform a narrowing division: 128 / 64 -> 64, and 64 / 32 -> 32.
  * The dividend's low and high words are given by \p numhi and \p numlo, respectively.
