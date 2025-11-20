@@ -8,7 +8,12 @@ using std::make_unique;
 
 */
 std::unique_ptr<ExprNode> Parser::parseErrorLog(const std::string& msg,const std::string& note) {
-	printError(src, curTok.startPos, msg, note);
+	printError(ErrMsg{ 
+		src, 
+		curTok.startPos, 
+		msg, 
+		note
+		});
 	return nullptr;
 }
 

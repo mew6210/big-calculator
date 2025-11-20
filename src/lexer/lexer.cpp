@@ -1,7 +1,7 @@
 #include "lexer.hpp"
 #include <iostream>
 #include <unordered_map>
-#include "../helpers/helpers.hpp"
+#include "../logging/logging.hpp"
 
 /*
     @brief all tokens that are single chars
@@ -68,10 +68,19 @@ Token Lexer::handleNumberLiteralToken(const std::string& tok,const uint64_t& sta
     for (auto& c : tok) {
         if (!isDigit(c)) {
             if (c != '.' && c != ',') {
-                printError(source, errorPos, "Found a character in a digit, invalid number literal","Fix the number");
+                printError(ErrMsg{ source, 
+                    errorPos, 
+                    "Found a character in a digit, invalid number literal",
+                    "Fix the number" 
+                    });
             }
             else {
-                printError(source, errorPos, "Found a comma or a dot, this calculator only supports integers","Use whole numbers only");
+                printError(ErrMsg{ 
+                    source, 
+                    errorPos, 
+                    "Found a comma or a dot, this calculator only supports integers",
+                    "Use whole numbers only"
+                    });
             }
         }
         errorPos++;
