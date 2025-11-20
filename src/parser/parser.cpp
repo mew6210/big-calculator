@@ -12,7 +12,8 @@ std::unique_ptr<ExprNode> Parser::parseErrorLog(const std::string& msg,const std
 		src, 
 		curTok.startPos, 
 		msg, 
-		note
+		note,
+		ErrType::Parser
 		});
 	return nullptr;
 }

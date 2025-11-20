@@ -2,11 +2,20 @@
 #include <string>
 #include <iostream>
 
+enum class ErrType {
+	Lexer,
+	Parser,
+	Evaluator
+};
+
 struct ErrMsg {
-	const std::string ctx;
-	const uint64_t pointerPos;
-	const std::string msg;
-	const std::string& note;
+	std::string ctx;
+	uint64_t pointerPos;
+	std::string msg;
+	std::string note;
+	ErrType type;
+	ErrMsg(const std::string& c,const uint64_t p,const std::string& m,const std::string& n,const ErrType e): 
+		ctx(c),pointerPos(p),msg(m),note(n),type(e){}
 };
 
 void printError(const ErrMsg& ErrMsg);

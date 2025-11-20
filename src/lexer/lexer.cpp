@@ -68,10 +68,12 @@ Token Lexer::handleNumberLiteralToken(const std::string& tok,const uint64_t& sta
     for (auto& c : tok) {
         if (!isDigit(c)) {
             if (c != '.' && c != ',') {
-                printError(ErrMsg{ source, 
+                printError(ErrMsg{ 
+                    source, 
                     errorPos, 
                     "Found a character in a digit, invalid number literal",
-                    "Fix the number" 
+                    "Fix the number",
+                    ErrType::Lexer
                     });
             }
             else {
@@ -79,7 +81,8 @@ Token Lexer::handleNumberLiteralToken(const std::string& tok,const uint64_t& sta
                     source, 
                     errorPos, 
                     "Found a comma or a dot, this calculator only supports integers",
-                    "Use whole numbers only"
+                    "Use whole numbers only",
+                    ErrType::Lexer
                     });
             }
         }
@@ -192,7 +195,7 @@ void Lexer::printTokens(){
         case TokenType::assignOp:   std::cout << "assign operation "<<printTokenPosAndLength(token)<<"\n";  break;
         case TokenType::comma:      std::cout << "comma " << printTokenPosAndLength(token) << "\n";         break;
         case TokenType::exponentSign: std::cout << "exponent sign" << printTokenPosAndLength(token) << "\n"; break;
-        case TokenType::tokEOF: std::cout << "end of file token\n";
+        case TokenType::tokEOF: std::cout << "end of file token\n";                                         break;
         case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";                                       break;
         }
     }
