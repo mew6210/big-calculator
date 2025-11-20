@@ -28,3 +28,20 @@ BigInt::BigInt(const std::string& s) {
 		addChunkInt(d);
 	} 
 }
+
+std::string BigInt::toString() {
+	std::string ret = "";
+	std::vector<uChunkInt> zero = { 0 };
+	BigInt selfCopy = BigInt();
+	selfCopy.chunks = chunks;
+	selfCopy.isPositive = isPositive;
+	size_t i = 0;
+	while (!selfCopy.chunks.empty()) {
+		uChunkInt mod = selfCopy.moduloChunkInt(10);
+		selfCopy.divideChunkInt(10);
+		char toAdd = mod + '0';
+		ret.push_back(toAdd);
+	}
+	std::reverse(ret.begin(), ret.end());
+	return ret;
+}

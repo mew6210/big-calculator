@@ -71,6 +71,8 @@ public:
 
 	void exponentiateChunkInt(uChunkInt val);
 	
+
+	std::string toString();
 	void inspectChunks(chunkDisplayMode cdm);
 	void inspectChunks(chunkDisplayMode cdm, int indent);
 };
