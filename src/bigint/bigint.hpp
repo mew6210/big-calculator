@@ -11,6 +11,7 @@ void checkComparsions();
 void checkSubtr();
 void checkDiv();
 void checkMod();
+void checkExp();
 typedef uint64_t uChunkInt;
 typedef int64_t chunkInt;
 
@@ -34,6 +35,7 @@ class BigInt {
 	bool compareSigns(const BigInt& bi);
 	void trimTrailingChunks();
 	void resizeBigInts(BigInt& bi);
+	void naiveExponentiation(uChunkInt val);
 
 	void sumUpRemainders(std::vector<Remainder>& remainders);
 	void multiplyChunkInt64(uChunkInt val);
@@ -63,10 +65,14 @@ public:
 	void multiplyChunkInt(uChunkInt val);
 	void multiplyBigInt(BigInt& bi);
 
-	void divideChunkInt(uChunkInt val);
+	void divideChunkInt(uChunkInt val, bool toMute = false);
 
 	uChunkInt moduloChunkInt(uChunkInt val);
 
+	void exponentiateChunkInt(uChunkInt val);
+	
+
+	std::string toString();
 	void inspectChunks(chunkDisplayMode cdm);
 	void inspectChunks(chunkDisplayMode cdm, int indent);
 };

@@ -117,7 +117,7 @@ uint64_t divllu(uint64_t numhi, uint64_t numlo, uint64_t den, uint64_t* r)
 
     spits out a warning if there is a reminder, this calc only supports whole numbers
 */
-void BigInt::divideChunkInt(uChunkInt val) {
+void BigInt::divideChunkInt(uChunkInt val, bool toMute) {
 
     uint64_t remainder = 0;
     uint64_t* remptr = &remainder;
@@ -128,9 +128,10 @@ void BigInt::divideChunkInt(uChunkInt val) {
         uint64_t res = divllu(remainder, chunks[i], val, remptr);       //function for dividing 128bit number by 64bit number
         chunksStored.push_back(res);
     }
-
-    if (remainder != 0) {
-        std::cout << "Warning: division did not produce a whole number. Remainder: "<<remainder<<"\n";
+    if (!toMute) {
+        if (remainder != 0) {
+            std::cout << "Warning: division did not produce a whole number. Remainder: " << remainder << "\n";
+        }
     }
     std::reverse(chunksStored.begin(),chunksStored.end());
     chunks = chunksStored;
