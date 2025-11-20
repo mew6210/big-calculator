@@ -14,7 +14,7 @@ class Lexer{
     Token handleIdentifierToken(const std::string& tok,const uint64_t& startPos);
     Token handleMultipleCharInstruction();
 public:
-    std::vector<Token> Lexer::getTokensFromString(const std::string& s);
+    std::vector<Token> getTokensFromString(const std::string& s);
     void printTokens();
     std::vector<Token> getTokens() { return tokens; };
 };
