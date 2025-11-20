@@ -101,3 +101,20 @@ void checkSubtr() {
 	a.subtractBigInt(b);
 	a.inspectChunks(chunkDisplayMode::decimal);
 }
+
+void checkDiv() {
+
+	BigInt a = BigInt("55340232221128654850");
+	uint64_t b = 5;
+	a.divideChunkInt(b);
+
+	a.inspectChunks(chunkDisplayMode::decimal);
+}
+
+void checkMod() {
+	BigInt a = BigInt("55340232221128654851");
+	uint64_t b = 234;
+
+	uint64_t remainder = a.moduloChunkInt(b);
+	std::cout << "remainder: " << remainder;
+}

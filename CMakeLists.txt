@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
 project(Big_calc)
 
+set(CMAKE_CXX_STANDARD 20)
+
 set(SOURCES 
  "src/main.cpp"
  "src/lexer/lexer.cpp"
@@ -13,6 +15,7 @@ set(SOURCES
  "src/bigint/helpers.cpp" 
  "src/bigint/operations/subtract.cpp"
  "src/parser/nodeprints.cpp"
- "src/helpers/helpers.cpp")
+ "src/helpers/helpers.cpp" 
+ "src/bigint/operations/divide.cpp")
 
 add_executable(${PROJECT_NAME} ${SOURCES})
