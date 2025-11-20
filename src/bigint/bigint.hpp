@@ -65,7 +65,7 @@ public:
 	void multiplyChunkInt(uChunkInt val);
 	void multiplyBigInt(BigInt& bi);
 
-	void divideChunkInt(uChunkInt val);
+	void divideChunkInt(uChunkInt val, bool toMute = false);
 
 	uChunkInt moduloChunkInt(uChunkInt val);
 

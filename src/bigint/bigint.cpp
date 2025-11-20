@@ -38,7 +38,7 @@ std::string BigInt::toString() {
 	size_t i = 0;
 	while (!selfCopy.chunks.empty()) {
 		uChunkInt mod = selfCopy.moduloChunkInt(10);
-		selfCopy.divideChunkInt(10);
+		selfCopy.divideChunkInt(10,true);
 		char toAdd = mod + '0';
 		ret.push_back(toAdd);
 	}
