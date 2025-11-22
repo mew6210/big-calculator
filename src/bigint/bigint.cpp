@@ -29,6 +29,10 @@ BigInt::BigInt(const std::string& s) {
 	} 
 }
 
+/*
+
+	TODO: DOESNT WORK YET FOR NEGATIVE NUMBERS
+*/
 std::string BigInt::toString() {
 	std::string ret = "";
 	std::vector<uChunkInt> zero = { 0 };
