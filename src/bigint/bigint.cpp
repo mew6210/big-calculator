@@ -49,3 +49,7 @@ std::string BigInt::toString() {
 	std::reverse(ret.begin(), ret.end());
 	return ret;
 }
+
+void BigInt::print() {
+	std::cout << this->toString() << "\n";
+}

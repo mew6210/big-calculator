@@ -26,6 +26,7 @@ public:
 	ExprNode() = default;
 	ExprNode(const ExprNode&) = default;
 	virtual void print(int ident = 0) = 0;
+	virtual BigInt eval() = 0;
 };
 
 /*
@@ -39,6 +40,7 @@ public:
 	BigIntNode(BigIntNode&&) noexcept = default;
 	BigIntNode(const BigIntNode&) = default;
 	void print(int indent) override;
+	BigInt eval() override;
 };
 
 /*
@@ -51,6 +53,7 @@ class BinaryExprNode : public ExprNode {
 public: 
 	BinaryExprNode(std::unique_ptr<ExprNode>&& lhsT, std::unique_ptr<ExprNode>&& rhsT, OperatorType& opT) : lhs(std::move(lhsT)), rhs(std::move(rhsT)), op(opT) {}
 	void print(int indent) override;
+	BigInt eval() override;
 };
 
 /*
@@ -65,6 +68,7 @@ public:
 	VariableExprNode(){}
 	VariableExprNode(std::string& name) : name(name){}
 	void print(int indent) override;
+	BigInt eval() override;
 };
 
 /*
@@ -78,6 +82,7 @@ class CallExprNode : public ExprNode {
 public:
 	CallExprNode(const Token& nameT,std::vector<std::unique_ptr<ExprNode>>& argsT): funcName(nameT.value),args(std::move(argsT)){}
 	void print(int indent) override;
+	BigInt eval() override;
 };
 
 class Parser {

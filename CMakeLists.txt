@@ -16,6 +16,9 @@ set(SOURCES
  "src/bigint/operations/subtract.cpp"
  "src/parser/nodeprints.cpp"
  "src/logging/logging.cpp" 
- "src/bigint/operations/divide.cpp" "src/bigint/operations/exponentiate.cpp")
+ "src/bigint/operations/divide.cpp" 
+ "src/bigint/operations/exponentiate.cpp" 
+ "src/parser/eval.cpp"
+)
 
 add_executable(${PROJECT_NAME} ${SOURCES})

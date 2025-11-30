@@ -15,10 +15,10 @@ int main(){
         std::getline(std::cin, line);
         
         curTokens = lexer.getTokensFromString(line);
-        lexer.printTokens();
         Parser p = Parser(curTokens, line);
         auto root = p.parse();
-        root->print();
+        auto res = root->eval();
+        res.print();
     }
     return 0;
 }

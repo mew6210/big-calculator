@@ -75,6 +75,7 @@ public:
 	std::string toString();
 	void inspectChunks(chunkDisplayMode cdm);
 	void inspectChunks(chunkDisplayMode cdm, int indent);
+	void print();
 };
 
 struct uint128Emul {
