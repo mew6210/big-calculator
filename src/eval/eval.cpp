@@ -1,4 +1,11 @@
+#include "eval.hpp"
 #include "../astnodes/astnodes.hpp"
+#include "../logging/logging.hpp"
+
+void Evaluator::eval() {
+	BigInt res = ASTRoot->eval();
+	res.print();
+}
 
 BigInt BigIntNode::eval() {
 	return val;

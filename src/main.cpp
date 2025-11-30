@@ -2,6 +2,7 @@
 #include "core/core.hpp"
 #include "bigint/bigint.hpp"
 #include "parser/parser.hpp"
+#include "eval/eval.hpp"
 
 int main(){
 
@@ -17,8 +18,9 @@ int main(){
         curTokens = lexer.getTokensFromString(line);
         Parser p = Parser(curTokens, line);
         auto root = p.parse();
-        auto res = root->eval();
-        res.print();
+        
+        Evaluator ev = Evaluator(line, root);
+        ev.eval();
     }
     return 0;
 }
