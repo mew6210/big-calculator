@@ -1,4 +1,4 @@
-#include "parser.hpp"
+#include "../astnodes/astnodes.hpp"
 
 BigInt BigIntNode::eval() {
 	return val;

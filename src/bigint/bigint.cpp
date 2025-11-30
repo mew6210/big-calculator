@@ -39,7 +39,6 @@ std::string BigInt::toString() {
 	BigInt selfCopy = BigInt();
 	selfCopy.chunks = chunks;
 	selfCopy.isPositive = isPositive;
-	size_t i = 0;
 	while (!selfCopy.chunks.empty()) {
 		uChunkInt mod = selfCopy.moduloChunkInt(10);
 		selfCopy.divideChunkInt(10,true);
