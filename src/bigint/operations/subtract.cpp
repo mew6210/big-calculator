@@ -34,25 +34,30 @@ void BigInt::subtractChunkInt(uChunkInt val) {
 	trimTrailingChunks();
 }
 
+BigInt subtract(BigInt& a, BigInt& b){
+
+	if (a.chunks.size() != b.chunks.size()) a.resizeBigInts(b);
+
+	for (size_t i = 0; i < a.chunks.size(); i++) {
+
+		if (b.chunks[i] <= a.chunks[i]) {
+			a.chunks[i] -= b.chunks[i];
+		}
+		else {
+			a.borrow(i + 1);
+			uint64_t diff = CHUNKINTLIMIT2.max() - b.chunks[i] + 1;
+			a.chunks[i] += diff;
+		}
+	}
+	a.trimTrailingChunks();
+	return a;
+}
 
 /*
 	@brief subtracts bigint from current bigint
 */
 void BigInt::subtractBigInt(BigInt& bi) {
-
-	if (chunks.size() != bi.chunks.size()) resizeBigInts(bi);
-
-	for (size_t i = 0; i < chunks.size();i++) {
-
-		if (bi.chunks[i] <= chunks[i]) {
-			chunks[i] -= bi.chunks[i];
-		}
-		else {
-			borrow(i + 1);
-			uint64_t diff = CHUNKINTLIMIT2.max() - bi.chunks[i] + 1;
-			chunks[i] += diff;
-		}
-	}
-	trimTrailingChunks();
+	bi.isPositive = !bi.isPositive;
+	addBigInt(bi);
 }
 

@@ -31,11 +31,42 @@ void BigInt::addChunkInt(uChunkInt val, uChunkInt startChunk) {
 	}
 }
 
-void BigInt::addBigInt(BigInt& bi) {
+BigInt add(BigInt& a, BigInt& b) {
+	a.chunks.resize(std::max(a.chunks.size(), b.chunks.size()));
 
-	chunks.resize(std::max(chunks.size(), bi.chunks.size()));
-
-	for (size_t i = 0; i < bi.chunks.size(); i++) {
-		addChunkInt(bi.chunks[i], i);
+	for (size_t i = 0; i < b.chunks.size(); i++) {
+		a.addChunkInt(b.chunks[i], i);
 	}
+	return a;
+}
+
+BigInt abs(BigInt& a) {
+	BigInt b = BigInt(0);
+	b.chunks = a.chunks;
+	b.isPositive = true;
+	return b;
+}
+
+void BigInt::addBigInt(BigInt& bi) {
+	
+	BigInt absA = abs(*this);
+	BigInt absB = abs(bi);
+	if (isPositive == bi.isPositive) { 
+		BigInt temp = add(absA, absB); 
+		chunks = temp.chunks; 
+		return; 
+	}
+	else {
+		if (absA.biggerThan(absB)) { 
+			BigInt temp = subtract(absA, absB); 
+			chunks = temp.chunks;
+		}
+		else if (abs(*this).smallerThan(abs(bi))) {
+			BigInt temp = subtract(absB, absA);
+			chunks = temp.chunks;
+			isPositive = bi.isPositive;
+		}
+		else { chunks = { 0 }; return; };
+	}
+
 }

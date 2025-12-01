@@ -190,6 +190,7 @@ std::vector<Token> Lexer::getTokensFromString(const std::string& s){
     source = s;
     parseTokens();
     tokens.push_back(Token{ TokenType::tokEOF,"",cur_index-1,1});
+    lastTokenType = TokenType::undefined;
     return tokens;
 }
 
