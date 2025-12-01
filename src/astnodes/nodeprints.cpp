@@ -1,4 +1,6 @@
-#include "parser.hpp"
+#include "astnodes.hpp"
+#include <map>
+#include <iostream>
 
 void BinaryExprNode::print(int indent = 0) {
 	static std::map<OperatorType, std::string> binOpToStringMap = {

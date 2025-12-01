@@ -2,6 +2,7 @@
 #include "core/core.hpp"
 #include "bigint/bigint.hpp"
 #include "parser/parser.hpp"
+#include "eval/eval.hpp"
 
 int main(){
 
@@ -15,10 +16,11 @@ int main(){
         std::getline(std::cin, line);
         
         curTokens = lexer.getTokensFromString(line);
-        lexer.printTokens();
         Parser p = Parser(curTokens, line);
         auto root = p.parse();
-        root->print();
+        
+        Evaluator ev = Evaluator(line, root);
+        ev.eval();
     }
     return 0;
 }

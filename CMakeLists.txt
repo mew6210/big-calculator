@@ -14,8 +14,11 @@ set(SOURCES
  "src/bigint/operations/multiply.cpp" 
  "src/bigint/helpers.cpp" 
  "src/bigint/operations/subtract.cpp"
- "src/parser/nodeprints.cpp"
+ "src/astnodes/nodeprints.cpp"
  "src/logging/logging.cpp" 
- "src/bigint/operations/divide.cpp" "src/bigint/operations/exponentiate.cpp")
+ "src/bigint/operations/divide.cpp" 
+ "src/bigint/operations/exponentiate.cpp" 
+ "src/eval/eval.cpp"
+ "src/astnodes/astoper.cpp")
 
 add_executable(${PROJECT_NAME} ${SOURCES})
