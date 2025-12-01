@@ -3,6 +3,17 @@
 #include "../logging/logging.hpp"
 #include <optional>
 
+
+/*
+	@brief helper exception for eval errors
+
+	since all information about tokens and its position is lost during parsing stage, eval cant use printError like it would normally,
+	instead it has to create src from currently evaluated numbers
+
+	functions as kind of a wrapper around printError
+
+	has 2 constructors, one that provides context for when it happened, whereas the other one doesnt
+*/
 class EvalException : public std::runtime_error {
 
 	std::string msg;
@@ -26,7 +37,7 @@ public:
 	
 	void printEvalErr(){
 		if (a && b && op) {
-			std::string src = a.value().toString() + op.value() + b.value().toString();
+			std::string src = a.value().toString() + op.value() + b.value().toString();		//src made from lhs,op,rhs
 
 			printError(ErrMsg{
 				src,
@@ -34,7 +45,8 @@ public:
 				msg,
 				note,
 				ErrType::Evaluator
-				});
+				}
+			);
 		} 
 		else {
 			std::cout << "Evaluator error: " << msg << "\n";
