@@ -137,13 +137,24 @@ Token Lexer::parseToken(){
     }
 
     if(isSingleCharInstruction(source[cur_index])){
+        if (singleOpsToEnumMap[source[cur_index]] == TokenType::minusSign && lastToken != TokenType::numLiteral) {  //if its a -, and previous token wasnt a number then it indicates a negativeness of a number, not subtraction
+            cur_index++;    //eat -
+            Token token = handleMultipleCharInstruction();
+            token.value.insert(0,1,'-'); //add -
+            cur_index++;
+            lastToken = token.type;
+            return token;
+        }
+
         Token token = Token{ singleOpsToEnumMap[source[cur_index]],std::string{source[cur_index]},cur_index,1 };
         cur_index++;
+        lastToken = token.type;
         return token;
     }
     else{
         Token token = handleMultipleCharInstruction();
         cur_index++;
+        lastToken = token.type;
         return token;
     }
 }

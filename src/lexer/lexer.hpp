@@ -6,6 +6,7 @@
 class Lexer{
     std::string source;
     uint64_t cur_index = 0;
+    TokenType lastToken = TokenType::undefined;
     std::vector<Token> tokens;
 
     Token parseToken();
