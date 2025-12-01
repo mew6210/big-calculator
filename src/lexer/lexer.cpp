@@ -55,6 +55,12 @@ namespace {
         else return false;
     }
 
+    /*
+        @brief returns 1 if minus sign represents a negative sign, and 0 if it represents subtraction
+    */
+    bool isNegativeSign(const char cur_index, const TokenType& tok) { 
+        return singleOpsToEnumMap[cur_index] == TokenType::minusSign && tok != TokenType::numLiteral;
+    }
 }
 
 /*
@@ -129,6 +135,25 @@ Token Lexer::handleMultipleCharInstruction() {
     }
 }
 
+Token Lexer::handleSingleCharInstruction() {
+    if (isNegativeSign(source[cur_index], lastTokenType)) {  //if its a -, and previous token wasnt a number then it indicates a negativeness of a number, not subtraction
+        cur_index++;    //eat -
+        Token token = handleMultipleCharInstruction();
+        token.value.insert(0, 1, '-'); //add - at the beginning of a number
+        cur_index++;
+        lastTokenType = token.type;
+        return token;
+    }
+    else {
+
+        Token token = Token{ singleOpsToEnumMap[source[cur_index]],std::string{source[cur_index]},cur_index,1 };
+        cur_index++;
+        lastTokenType = token.type;
+        return token;
+    }
+
+}
+
 Token Lexer::parseToken(){
 
     //skip spaces
@@ -137,13 +162,13 @@ Token Lexer::parseToken(){
     }
 
     if(isSingleCharInstruction(source[cur_index])){
-        Token token = Token{ singleOpsToEnumMap[source[cur_index]],std::string{source[cur_index]},cur_index,1 };
-        cur_index++;
+        Token token = handleSingleCharInstruction();
         return token;
     }
     else{
         Token token = handleMultipleCharInstruction();
         cur_index++;
+        lastTokenType = token.type;
         return token;
     }
 }
@@ -165,6 +190,7 @@ std::vector<Token> Lexer::getTokensFromString(const std::string& s){
     source = s;
     parseTokens();
     tokens.push_back(Token{ TokenType::tokEOF,"",cur_index-1,1});
+    lastTokenType = TokenType::undefined;
     return tokens;
 }
 

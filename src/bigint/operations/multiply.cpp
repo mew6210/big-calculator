@@ -112,6 +112,10 @@ Chunks sumUpMultiplicationResults(const std::vector<Chunks>& sums) {
 	return result;
 }
 
+bool determineMultSign(bool& sign1,bool& sign2) {
+	return sign1 == sign2;
+}
+
 void BigInt::multiplyBigInt(BigInt& bi) {
 	std::vector<Chunks> sums;
 	for (size_t i = 0; i < bi.chunks.size(); i++) {		//for every chunk in 2nd bigint
@@ -122,6 +126,7 @@ void BigInt::multiplyBigInt(BigInt& bi) {
 	auto resultChunks = sumUpMultiplicationResults(sums);
 	chunks = resultChunks;
 	trimTrailingChunks();
+	isPositive = determineMultSign(isPositive, bi.isPositive);
 }
 
 void BigInt::multiplyChunkInt32(uChunkInt val) {

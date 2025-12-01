@@ -29,10 +29,6 @@ BigInt::BigInt(const std::string& s) {
 	} 
 }
 
-/*
-
-	TODO: DOESNT WORK YET FOR NEGATIVE NUMBERS
-*/
 std::string BigInt::toString() {
 	std::string ret = "";
 	std::vector<uChunkInt> zero = { 0 };
@@ -46,6 +42,7 @@ std::string BigInt::toString() {
 		ret.push_back(toAdd);
 	}
 	std::reverse(ret.begin(), ret.end());
+	if (!isPositive) ret.insert(0,1,'-');
 	return ret;
 }
 

@@ -40,6 +40,7 @@ class BigInt {
 	void sumUpRemainders(std::vector<Remainder>& remainders);
 	void multiplyChunkInt64(uChunkInt val);
 	void multiplyChunkInt32(uChunkInt val);
+	
 
 public:
 	//constructors
@@ -76,6 +77,10 @@ public:
 	void inspectChunks(chunkDisplayMode cdm);
 	void inspectChunks(chunkDisplayMode cdm, int indent);
 	void print();
+
+	friend BigInt add(BigInt& a, BigInt& b);
+	friend BigInt subtract(BigInt& a, BigInt& b);
+	friend BigInt abs(BigInt& a);
 };
 
 struct uint128Emul {
