@@ -5,7 +5,7 @@ Arbitrary-precision Integer Calculator
 ## Interpreter-like token processing
 - [x] Lexer
 - [x] Pratt Parser
-- [ ] Tree-walk interpreter
+- [x] Tree-walk interpreter
 
 ## Basic arithmetic operations
 - [x] Addition
