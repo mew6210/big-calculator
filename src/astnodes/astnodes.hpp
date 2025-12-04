@@ -2,7 +2,15 @@
 #include "../bigint/bigint.hpp"
 #include "../lexer/token/token.hpp"
 #include "astoper.hpp"
+#include <map>
+#include <string>
 
+enum class NodeType {
+	BigInt,
+	Var,
+	BinExpr,
+	CallExpr
+};
 /*
 	@brief base class for other nodes
 */
@@ -14,6 +22,7 @@ public:
 	ExprNode(const ExprNode&) = default;
 	virtual void print(int ident = 0) = 0;
 	virtual BigInt eval() = 0;
+	virtual NodeType type() = 0;
 };
 
 /*
@@ -28,6 +37,7 @@ public:
 	BigIntNode(const BigIntNode&) = default;
 	void print(int indent) override;
 	BigInt eval() override;
+	NodeType type() override;
 };
 
 /*
@@ -40,7 +50,11 @@ class BinaryExprNode : public ExprNode {
 public:
 	BinaryExprNode(std::unique_ptr<ExprNode>&& lhsT, std::unique_ptr<ExprNode>&& rhsT, OperatorType& opT) : lhs(std::move(lhsT)), rhs(std::move(rhsT)), op(opT) {}
 	void print(int indent) override;
+	OperatorType getOp() { return op; };
+	std::unique_ptr<ExprNode> getLhs() { return std::move(lhs); };
+	std::unique_ptr<ExprNode> getRhs() { return std::move(rhs); };
 	BigInt eval() override;
+	NodeType type() override;
 };
 
 /*
@@ -55,7 +69,9 @@ public:
 	VariableExprNode() {}
 	VariableExprNode(std::string& name) : name(name) {}
 	void print(int indent) override;
+	std::string getName() { return name; };
 	BigInt eval() override;
+	NodeType type() override;
 };
 
 /*
@@ -70,4 +86,5 @@ public:
 	CallExprNode(const Token& nameT, std::vector<std::unique_ptr<ExprNode>>& argsT) : funcName(nameT.value), args(std::move(argsT)) {}
 	void print(int indent) override;
 	BigInt eval() override;
+	NodeType type() override;
 };

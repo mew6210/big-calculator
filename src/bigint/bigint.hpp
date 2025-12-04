@@ -47,7 +47,7 @@ public:
 	BigInt(const std::string& s);
 	BigInt(const chunkInt& val);
 	BigInt();
-	BigInt(BigInt&&) noexcept = default;
+	//BigInt(BigInt&&) noexcept = default;
 	BigInt(const BigInt&) = default;
 
 	//comparsions

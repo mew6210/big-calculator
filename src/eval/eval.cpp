@@ -3,6 +3,7 @@
 #include "../logging/logging.hpp"
 #include <optional>
 
+std::vector<std::pair<std::string, BigInt>> vars;
 
 /*
 	@brief helper exception for eval errors
@@ -55,15 +56,78 @@ public:
 	}
 };
 
+bool isRootAssign(std::unique_ptr<ExprNode>& node) {
+	if (node->type() == NodeType::BinExpr) {
+		auto binExprNode = dynamic_cast<BinaryExprNode*>(node.get());
+		if (binExprNode->getOp() == OperatorType::assign) {
+			return true;
+		}
+		else return false;
+	}
+	else return false;
+}
+
 void Evaluator::eval() {
 	try {
-		BigInt res = ASTRoot->eval();
-		res.print();
+		if (isRootAssign(ASTRoot)) {
+			handleAssignRoot();
+		}
+		else {
+			BigInt res = ASTRoot->eval();
+			res.print();
+		}
+		
 	}
 	catch (EvalException& e) {
 		e.printEvalErr();
 	}
 	
+}
+
+bool varExists(std::string& name) {
+	for (auto& var : vars) {
+		if (var.first == name) return true;
+	}
+	return false;
+}
+
+void assignVar(std::string& name,BigInt& bi) {
+	for (auto& var : vars) {
+		if (var.first == name) {
+			var.second = std::move(bi);
+		};
+	}
+}
+
+BigInt getVar(const std::string& name) {
+	for (auto& var : vars) {
+		if (var.first == name) {
+			return var.second;
+		}
+		
+	}
+	throw EvalException{ "blah blah","TODO" };
+	return BigInt(0);
+}
+
+void Evaluator::handleAssignRoot() {
+
+	auto ASTRootAssignNode = dynamic_cast<BinaryExprNode*>(ASTRoot.get());
+
+	auto rhs = ASTRootAssignNode->getRhs()->eval();
+	auto lhs = ASTRootAssignNode->getLhs();
+	if (lhs->type() != NodeType::Var) {
+		throw EvalException("blah blah","TODO");
+	}
+	auto lhsVar = dynamic_cast<VariableExprNode*>(lhs.get());
+	std::string varName = lhsVar->getName();
+
+	if (varExists(varName)) {
+		assignVar(varName, rhs);
+	}
+	else {
+		vars.push_back({ varName,std::move(rhs) });
+	}
 }
 
 BigInt BigIntNode::eval() {
@@ -88,7 +152,7 @@ BigInt BinaryExprNode::eval(){
 }
 
 BigInt VariableExprNode::eval() {
-	return BigInt(0);	//TODO: MAKE A VALUE LOOKUP IN VARIABLE VECTOR
+	return getVar(getName());	//TODO: MAKE A VALUE LOOKUP IN VARIABLE VECTOR
 }
 
 BigInt CallExprNode::eval() {

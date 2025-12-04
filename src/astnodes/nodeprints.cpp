@@ -34,3 +34,17 @@ void CallExprNode::print(int indent = 0) {
 		args[i]->print(indent + 4);
 	}
 }
+
+NodeType CallExprNode::type() {
+	return NodeType::CallExpr;
+}
+
+NodeType BigIntNode::type(){
+	return NodeType::BigInt;
+}
+NodeType BinaryExprNode::type() {
+	return NodeType::BinExpr;
+}
+NodeType VariableExprNode::type() {
+	return NodeType::Var;
+}
