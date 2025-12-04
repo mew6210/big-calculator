@@ -3,7 +3,6 @@
 #include "../logging/logging.hpp"
 #include <optional>
 
-std::vector<std::pair<std::string, BigInt>> vars;
 
 /*
 	@brief helper exception for eval errors
@@ -73,7 +72,7 @@ void Evaluator::eval() {
 			handleAssignRoot();
 		}
 		else {
-			BigInt res = ASTRoot->eval();
+			BigInt res = ASTRoot->eval(evalCtx);
 			res.print();
 		}
 		
@@ -84,37 +83,11 @@ void Evaluator::eval() {
 	
 }
 
-bool varExists(std::string& name) {
-	for (auto& var : vars) {
-		if (var.first == name) return true;
-	}
-	return false;
-}
-
-void assignVar(std::string& name,BigInt& bi) {
-	for (auto& var : vars) {
-		if (var.first == name) {
-			var.second = std::move(bi);
-		};
-	}
-}
-
-BigInt getVar(const std::string& name) {
-	for (auto& var : vars) {
-		if (var.first == name) {
-			return var.second;
-		}
-		
-	}
-	throw EvalException{ "blah blah","TODO" };
-	return BigInt(0);
-}
-
 void Evaluator::handleAssignRoot() {
 
 	auto ASTRootAssignNode = dynamic_cast<BinaryExprNode*>(ASTRoot.get());
 
-	auto rhs = ASTRootAssignNode->getRhs()->eval();
+	auto rhs = ASTRootAssignNode->getRhs()->eval(evalCtx);
 	auto lhs = ASTRootAssignNode->getLhs();
 	if (lhs->type() != NodeType::Var) {
 		throw EvalException("blah blah","TODO");
@@ -122,21 +95,20 @@ void Evaluator::handleAssignRoot() {
 	auto lhsVar = dynamic_cast<VariableExprNode*>(lhs.get());
 	std::string varName = lhsVar->getName();
 
-	if (varExists(varName)) {
-		assignVar(varName, rhs);
+	if (evalCtx.varExists(varName)) {
+		evalCtx.assignVar(varName, rhs);
 	}
-	else {
-		vars.push_back({ varName,std::move(rhs) });
-	}
+	else evalCtx.vars.push_back({ varName,std::move(rhs) });
+	
 }
 
-BigInt BigIntNode::eval() {
+BigInt BigIntNode::eval(EvalCtx&) {
 	return val;
 }
 
-BigInt BinaryExprNode::eval(){
-	BigInt a = lhs->eval();
-	BigInt b = rhs->eval();
+BigInt BinaryExprNode::eval(EvalCtx& evalCtx){
+	BigInt a = lhs->eval(evalCtx);
+	BigInt b = rhs->eval(evalCtx);
 
 	switch (op) {
 	case OperatorType::add: a.addBigInt(b); break;
@@ -151,10 +123,10 @@ BigInt BinaryExprNode::eval(){
 	return a;
 }
 
-BigInt VariableExprNode::eval() {
-	return getVar(getName());	//TODO: MAKE A VALUE LOOKUP IN VARIABLE VECTOR
+BigInt VariableExprNode::eval(EvalCtx& ectx) {
+	return ectx.getVar(getName());	//TODO: MAKE A VALUE LOOKUP IN VARIABLE VECTOR
 }
 
-BigInt CallExprNode::eval() {
+BigInt CallExprNode::eval(EvalCtx& ectx) {
 	return BigInt(0);	//TODO: MAKE FUNCTION EXECUTE
 }

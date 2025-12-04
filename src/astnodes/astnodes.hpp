@@ -5,6 +5,15 @@
 #include <map>
 #include <string>
 
+struct EvalCtx {
+	std::vector<std::pair<std::string, BigInt>> vars;
+	bool isAssignExpr;
+
+	BigInt getVar(const std::string& name);
+	bool varExists(std::string& name);
+	void assignVar(std::string& name, BigInt& bi);
+};
+
 enum class NodeType {
 	BigInt,
 	Var,
@@ -21,7 +30,7 @@ public:
 	ExprNode() = default;
 	ExprNode(const ExprNode&) = default;
 	virtual void print(int ident = 0) = 0;
-	virtual BigInt eval() = 0;
+	virtual BigInt eval(EvalCtx&) = 0;
 	virtual NodeType type() = 0;
 };
 
@@ -36,7 +45,7 @@ public:
 	BigIntNode(BigIntNode&&) noexcept = default;
 	BigIntNode(const BigIntNode&) = default;
 	void print(int indent) override;
-	BigInt eval() override;
+	BigInt eval(EvalCtx&) override;
 	NodeType type() override;
 };
 
@@ -53,7 +62,7 @@ public:
 	OperatorType getOp() { return op; };
 	std::unique_ptr<ExprNode> getLhs() { return std::move(lhs); };
 	std::unique_ptr<ExprNode> getRhs() { return std::move(rhs); };
-	BigInt eval() override;
+	BigInt eval(EvalCtx&) override;
 	NodeType type() override;
 };
 
@@ -70,7 +79,7 @@ public:
 	VariableExprNode(std::string& name) : name(name) {}
 	void print(int indent) override;
 	std::string getName() { return name; };
-	BigInt eval() override;
+	BigInt eval(EvalCtx&) override;
 	NodeType type() override;
 };
 
@@ -85,6 +94,6 @@ class CallExprNode : public ExprNode {
 public:
 	CallExprNode(const Token& nameT, std::vector<std::unique_ptr<ExprNode>>& argsT) : funcName(nameT.value), args(std::move(argsT)) {}
 	void print(int indent) override;
-	BigInt eval() override;
+	BigInt eval(EvalCtx&) override;
 	NodeType type() override;
 };

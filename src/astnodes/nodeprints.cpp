@@ -48,3 +48,29 @@ NodeType BinaryExprNode::type() {
 NodeType VariableExprNode::type() {
 	return NodeType::Var;
 }
+
+BigInt EvalCtx::getVar(const std::string& name) {
+	for (auto& var : vars) {
+		if (var.first == name) {
+			return var.second;
+		}
+
+	}
+	//throw EvalException{ "blah blah","TODO" };
+	return BigInt(0);
+}
+
+bool EvalCtx::varExists(std::string& name) {
+	for (auto& var : vars) {
+		if (var.first == name) return true;
+	}
+	return false;
+}
+
+void EvalCtx::assignVar(std::string& name, BigInt& bi) {
+	for (auto& var : vars) {
+		if (var.first == name) {
+			var.second = std::move(bi);
+		};
+	}
+}
