@@ -83,18 +83,29 @@ void Evaluator::eval() {
 	
 }
 
+bool isVarSignNegative(const std::string& s) {
+	return s[0] == '-';
+}
+
 void Evaluator::handleAssignRoot() {
 
 	auto ASTRootAssignNode = dynamic_cast<BinaryExprNode*>(ASTRoot.get());
 
 	auto rhs = ASTRootAssignNode->getRhs()->eval(evalCtx);
 	auto lhs = ASTRootAssignNode->getLhs();
+
 	if (lhs->type() != NodeType::Var) {
 		throw EvalException("blah blah","TODO");
 	}
+
 	auto lhsVar = dynamic_cast<VariableExprNode*>(lhs.get());
 	std::string varName = lhsVar->getName();
 
+	if (isVarSignNegative(varName)) {
+		throw EvalException("blah blah", "TODO");
+	}
+
+	//assign variable
 	if (evalCtx.varExists(varName)) {
 		evalCtx.assignVar(varName, rhs);
 	}
@@ -124,7 +135,14 @@ BigInt BinaryExprNode::eval(EvalCtx& evalCtx){
 }
 
 BigInt VariableExprNode::eval(EvalCtx& ectx) {
-	return ectx.getVar(getName());	//TODO: MAKE A VALUE LOOKUP IN VARIABLE VECTOR
+	std::string name = getName();
+	BigInt ret = ectx.getVar(name);
+	if (name[0] == '-') {		//if somebody types in -g, it should be recognized as negative g, not '-g' variable
+		name.erase(0,1);
+		ret = ectx.getVar(name);
+		ret.flipSign();
+	}
+	return ret;
 }
 
 BigInt CallExprNode::eval(EvalCtx& ectx) {
