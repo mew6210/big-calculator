@@ -1,6 +1,7 @@
 #include "astnodes.hpp"
 #include <map>
 #include <iostream>
+#include "../eval/evalException.hpp"
 
 void BinaryExprNode::print(int indent = 0) {
 	static std::map<OperatorType, std::string> binOpToStringMap = {
@@ -54,9 +55,11 @@ BigInt EvalCtx::getVar(const std::string& name) {
 		if (var.first == name) {
 			return var.second;
 		}
-
 	}
-	//throw EvalException{ "blah blah","TODO" };
+
+	std::string errStr = name + " is undefined";
+	std::string noteStr = "Define " + name;
+	throw EvalException{ errStr,noteStr}; 
 	return BigInt(0);
 }
 
