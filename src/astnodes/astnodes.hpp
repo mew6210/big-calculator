@@ -20,6 +20,7 @@ enum class NodeType {
 	BinExpr,
 	CallExpr
 };
+
 /*
 	@brief base class for other nodes
 */
@@ -31,6 +32,7 @@ public:
 	ExprNode(const ExprNode&) = default;
 	virtual void print(int ident = 0) = 0;
 	virtual BigInt eval(EvalCtx&) = 0;
+	virtual std::string toString() = 0;
 	virtual NodeType type() = 0;
 };
 
@@ -45,6 +47,7 @@ public:
 	BigIntNode(BigIntNode&&) noexcept = default;
 	BigIntNode(const BigIntNode&) = default;
 	void print(int indent) override;
+	std::string toString() override;
 	BigInt eval(EvalCtx&) override;
 	NodeType type() override;
 };
@@ -63,6 +66,7 @@ public:
 	std::unique_ptr<ExprNode> getLhs() { return std::move(lhs); };
 	std::unique_ptr<ExprNode> getRhs() { return std::move(rhs); };
 	BigInt eval(EvalCtx&) override;
+	std::string toString() override;
 	NodeType type() override;
 };
 
@@ -80,6 +84,7 @@ public:
 	void print(int indent) override;
 	std::string getName() { return name; };
 	BigInt eval(EvalCtx&) override;
+	std::string toString() override;
 	NodeType type() override;
 };
 
@@ -95,5 +100,6 @@ public:
 	CallExprNode(const Token& nameT, std::vector<std::unique_ptr<ExprNode>>& argsT) : funcName(nameT.value), args(std::move(argsT)) {}
 	void print(int indent) override;
 	BigInt eval(EvalCtx&) override;
+	std::string toString() override;
 	NodeType type() override;
 };

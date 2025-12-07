@@ -74,3 +74,45 @@ void EvalCtx::assignVar(std::string& name, BigInt& bi) {
 		};
 	}
 }
+
+char operatorTypeToChar(OperatorType& op) {
+	switch (op) {
+		case OperatorType::assign: return '=';
+		case OperatorType::add: return '+';
+		case OperatorType::subtract: return '-';
+		case OperatorType::multiply: return '*';
+		case OperatorType::divide: return '/';
+		case OperatorType::exponentiate: return '^';
+		case OperatorType::undefined: return '?';
+	}
+}
+
+std::string CallExprNode::toString() {
+	
+	std::string ret;
+	ret += funcName;
+	ret += '(';
+
+	for (auto& arg : args) {
+
+		ret +=arg->toString();
+		if (&arg != &args.back()) ret += ',';
+	}
+	ret += ')';
+	return ret;
+}
+std::string BigIntNode::toString() {
+	return val.toString();
+}
+std::string BinaryExprNode::toString() {
+	std::string lhsString = lhs->toString();
+	std::string rhsString = rhs->toString();
+	char opString = operatorTypeToChar(op);
+
+	std::string ret = lhsString +opString+ rhsString;
+
+	return ret;
+}
+std::string VariableExprNode::toString() {
+	return name;
+}

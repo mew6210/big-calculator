@@ -19,6 +19,7 @@ class EvalException : public std::runtime_error {
 	std::string msg;
 	std::string note;
 	std::optional<BigInt> a,b;
+	std::optional<std::unique_ptr<ExprNode>> var1;
 	std::optional<char> op;
 
 public:
@@ -26,13 +27,22 @@ public:
 		std::runtime_error(_msg),
 		msg(_msg),
 		note(_note){}
-	EvalException(const std::string& _msg,const std::string& _note,BigInt& _a,BigInt& _b, const char _op) 
+	EvalException(const std::string& _msg,const std::string& _note,const BigInt& _a,const BigInt& _b, const char _op) 
 		: std::runtime_error(_msg),
 		msg(_msg),
 		note(_note),
 		a(_a),
 		b(_b),
 		op(_op){}
+
+	EvalException(const std::string& _msg, const std::string& _note, std::unique_ptr<ExprNode>& _a, const BigInt& _b, const char _op)
+		: std::runtime_error(_msg),
+		msg(_msg),
+		note(_note),
+		var1(std::move(_a)),
+		b(_b),
+		op(_op) {
+	}
 
 	
 	void printEvalErr(){
@@ -47,7 +57,19 @@ public:
 				ErrType::Evaluator
 				}
 			);
-		} 
+		}
+		else if (var1 && b && op) {
+
+			std::string varName = var1.value()->toString();
+			std::string src = varName + op.value() + b.value().toString();
+			printError(ErrMsg{
+				src,
+				varName.size(),
+				msg,
+				note,
+				ErrType::Evaluator
+				});
+		}
 		else {
 			std::cout << "Evaluator error: " << msg << "\n";
 			std::cout << "Note: " << note << "\n";
@@ -95,14 +117,14 @@ void Evaluator::handleAssignRoot() {
 	auto lhs = ASTRootAssignNode->getLhs();
 
 	if (lhs->type() != NodeType::Var) {
-		throw EvalException("blah blah","TODO");
+		throw EvalException("Incorrect assignment syntax","Only one part assignments are allowed, like 'a=5'",lhs, rhs,'=');
 	}
 
 	auto lhsVar = dynamic_cast<VariableExprNode*>(lhs.get());
 	std::string varName = lhsVar->getName();
 
 	if (isVarSignNegative(varName)) {
-		throw EvalException("blah blah", "TODO");
+		throw EvalException("blah blah456", "TODO");
 	}
 
 	//assign variable
@@ -127,7 +149,7 @@ BigInt BinaryExprNode::eval(EvalCtx& evalCtx){
 	case OperatorType::multiply: a.multiplyBigInt(b); break;
 	case OperatorType::divide: throw EvalException("division not yet supported","dont use it please",a,b,'/'); break;	//TODO: USE DIVISION ONCE BIGINT DIVISION IS DONE
 	case OperatorType::exponentiate: throw EvalException("exponentiation not yet supported", "dont use it please", a, b, '^'); break;	//TODO: EXPONENTIATION
-	case OperatorType::assign: throw EvalException("assignment not yet supported", "dont use it please", a, b, '='); break;	//TODO: ASSIGNMENT
+	case OperatorType::assign: throw EvalException("Assignment caught in the middle of an eval", "Assignment here is only one-part like 'a=5'", a, b, '='); break;	//TODO: ASSIGNMENT
 	case OperatorType::undefined: throw EvalException("Unkown operation", "avalible operations are: +,-,*,/,^", a, b, '?'); break;
 	}
 
