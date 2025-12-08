@@ -41,8 +41,8 @@ public:
 		: std::runtime_error(_msg),
 		msg(_msg),
 		note(_note),
-		var1(std::move(_a)),
 		b(_b),
+		var1(std::move(_a)),
 		op(_op) {
 	}
 
