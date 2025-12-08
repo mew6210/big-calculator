@@ -1,10 +1,19 @@
-
 #include <string>
 #include <optional>
 #include "../logging/logging.hpp"
 #include "../bigint/bigint.hpp"
 #include "../astnodes/astnodes.hpp"
 
+/*
+	@brief helper exception for eval errors
+
+	since all information about tokens and its position is lost during parsing stage, eval cant use printError like it would normally,
+	instead it has to create src from currently evaluated numbers
+
+	functions as kind of a wrapper around printError
+
+	has 2 constructors, one that provides context for when it happened, whereas the other one doesnt
+*/
 class EvalException : public std::runtime_error {
 
 	std::string msg;

@@ -4,22 +4,13 @@
 #include <optional>
 #include "evalException.hpp"
 
-
 /*
-	@brief helper exception for eval errors
-
-	since all information about tokens and its position is lost during parsing stage, eval cant use printError like it would normally,
-	instead it has to create src from currently evaluated numbers
-
-	functions as kind of a wrapper around printError
-
-	has 2 constructors, one that provides context for when it happened, whereas the other one doesnt
+	@brief checks if root node is a binary assignment expression
 */
-
 bool isRootAssign(std::unique_ptr<ExprNode>& node) {
-	if (node->type() == NodeType::BinExpr) {
-		auto binExprNode = dynamic_cast<BinaryExprNode*>(node.get());
-		if (binExprNode->getOp() == OperatorType::assign) {
+	if (node->type() == NodeType::BinExpr) {	//if node has a type of binexpr
+		auto binExprNode = dynamic_cast<BinaryExprNode*>(node.get());	//cast it to binaryexprnode
+		if (binExprNode->getOp() == OperatorType::assign) {	//check for assignment operator
 			return true;
 		}
 		else return false;
@@ -29,41 +20,45 @@ bool isRootAssign(std::unique_ptr<ExprNode>& node) {
 
 void Evaluator::eval() {
 	try {
-		if (isRootAssign(ASTRoot)) {
+		if (isRootAssign(ASTRoot)) {	//if its an assignment, treat it like so
 			handleAssignRoot();
 		}
 		else {
-			BigInt res = ASTRoot->eval(evalCtx);
+			BigInt res = ASTRoot->eval(evalCtx);	//otherwise treat it like a basic evaluation, no variable assigning
 			res.print();
 		}
-		
 	}
 	catch (EvalException& e) {
 		e.printEvalErr();
 	}
-	
 }
 
-bool isVarSignNegative(const std::string& s) {
+bool isVarSignNegative(const std::string& s) {	
 	return s[0] == '-';
 }
 
 void Evaluator::handleAssignRoot() {
 
-	auto ASTRootAssignNode = dynamic_cast<BinaryExprNode*>(ASTRoot.get());
+	auto ASTRootAssignNode = dynamic_cast<BinaryExprNode*>(ASTRoot.get());	//it was already checked for it being an assignment binexprnode, so its safe to cast it
 
-	auto rhs = ASTRootAssignNode->getRhs()->eval(evalCtx);
+	auto rhs = ASTRootAssignNode->getRhs()->eval(evalCtx);	//evaluate right hand side
 	auto lhs = ASTRootAssignNode->getLhs();
 
-	if (lhs->type() != NodeType::Var) {
+	if (lhs->type() != NodeType::Var) {	//check if lhs is variable, if not then its probably binexprnode, which means somebody is doing 'a=b=5' or something like that
 		throw EvalException("Incorrect assignment syntax","Only one part assignments are allowed, like 'a=5'",lhs, rhs,'=');
 	}
 
-	auto lhsVar = dynamic_cast<VariableExprNode*>(lhs.get());
+	auto lhsVar = dynamic_cast<VariableExprNode*>(lhs.get());	//treat it like varexprnode
 	std::string varName = lhsVar->getName();
 
-	if (isVarSignNegative(varName)) {
-		throw EvalException("blah blah456", "TODO");
+	if (isVarSignNegative(varName)) {	//do not allow assigning to negative variables
+		//display a helpful message that converts illegal expression to a legal, and still correct one
+		// '-g=5' => 'g=-5'
+		std::string noteStr = "Instead, do: " + varName.erase(0, 1) + " = ";
+		rhs.flipSign();
+		noteStr += rhs.toString();
+
+		throw EvalException("Do not assign values to negative variables", noteStr);
 	}
 
 	//assign variable

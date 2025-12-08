@@ -4,16 +4,11 @@
 #include "astoper.hpp"
 #include <map>
 #include <string>
+#include "../eval/evalctx/evalctx.hpp"
 
-struct EvalCtx {
-	std::vector<std::pair<std::string, BigInt>> vars;
-	bool isAssignExpr;
-
-	BigInt getVar(const std::string& name);
-	bool varExists(std::string& name);
-	void assignVar(std::string& name, BigInt& bi);
-};
-
+/*
+	@brief enum for "reflection" of Node Types
+*/
 enum class NodeType {
 	BigInt,
 	Var,
@@ -30,10 +25,10 @@ public:
 	virtual ~ExprNode() = default;
 	ExprNode() = default;
 	ExprNode(const ExprNode&) = default;
-	virtual void print(int ident = 0) = 0;
-	virtual BigInt eval(EvalCtx&) = 0;
-	virtual std::string toString() = 0;
-	virtual NodeType type() = 0;
+	virtual void print(int ident = 0) = 0;	//each node should be printable
+	virtual BigInt eval(EvalCtx&) = 0;	//each node shold be able to be evaled
+	virtual std::string toString() = 0;	//each node should have a toString method
+	virtual NodeType type() = 0;	//each node should have a type	
 };
 
 /*

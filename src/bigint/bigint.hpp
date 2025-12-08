@@ -78,6 +78,7 @@ public:
 	void inspectChunks(chunkDisplayMode cdm, int indent);
 	void print();
 	void flipSign() { isPositive = !isPositive; };
+	bool isNegative() { return !isPositive; }
 
 	friend BigInt add(BigInt& a, BigInt& b);
 	friend BigInt subtract(BigInt& a, BigInt& b);
