@@ -47,7 +47,7 @@ public:
 	BigInt(const std::string& s);
 	BigInt(const chunkInt& val);
 	BigInt();
-	BigInt(BigInt&&) noexcept = default;
+	//BigInt(BigInt&&) noexcept = default;
 	BigInt(const BigInt&) = default;
 
 	//comparsions
@@ -77,6 +77,8 @@ public:
 	void inspectChunks(chunkDisplayMode cdm);
 	void inspectChunks(chunkDisplayMode cdm, int indent);
 	void print();
+	void flipSign() { isPositive = !isPositive; };
+	bool isNegative() { return !isPositive; }
 
 	friend BigInt add(BigInt& a, BigInt& b);
 	friend BigInt subtract(BigInt& a, BigInt& b);

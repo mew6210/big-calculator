@@ -8,7 +8,7 @@ int main(){
 
     initApp();
     Lexer lexer = Lexer();
-
+    Evaluator ev = Evaluator();
     std::string line = "";
     std::vector<Token> curTokens;
     while (true) {
@@ -18,8 +18,8 @@ int main(){
         curTokens = lexer.getTokensFromString(line);
         Parser p = Parser(curTokens, line);
         auto root = p.parse();
-        
-        Evaluator ev = Evaluator(line, root);
+        ev.setSrc(line);
+        ev.setASTRoot(root);
         ev.eval();
     }
     return 0;

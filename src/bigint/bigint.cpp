@@ -30,6 +30,7 @@ BigInt::BigInt(const std::string& s) {
 }
 
 std::string BigInt::toString() {
+	if (chunks.size() == 0) return "0";
 	std::string ret = "";
 	std::vector<uChunkInt> zero = { 0 };
 	BigInt selfCopy = BigInt();

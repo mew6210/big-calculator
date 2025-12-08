@@ -2,6 +2,19 @@
 #include "../bigint/bigint.hpp"
 #include "../lexer/token/token.hpp"
 #include "astoper.hpp"
+#include <map>
+#include <string>
+#include "../eval/evalctx/evalctx.hpp"
+
+/*
+	@brief enum for "reflection" of Node Types
+*/
+enum class NodeType {
+	BigInt,
+	Var,
+	BinExpr,
+	CallExpr
+};
 
 /*
 	@brief base class for other nodes
@@ -12,8 +25,10 @@ public:
 	virtual ~ExprNode() = default;
 	ExprNode() = default;
 	ExprNode(const ExprNode&) = default;
-	virtual void print(int ident = 0) = 0;
-	virtual BigInt eval() = 0;
+	virtual void print(int ident = 0) = 0;	//each node should be printable
+	virtual BigInt eval(EvalCtx&) = 0;	//each node shold be able to be evaled
+	virtual std::string toString() = 0;	//each node should have a toString method
+	virtual NodeType type() = 0;	//each node should have a type	
 };
 
 /*
@@ -27,7 +42,9 @@ public:
 	BigIntNode(BigIntNode&&) noexcept = default;
 	BigIntNode(const BigIntNode&) = default;
 	void print(int indent) override;
-	BigInt eval() override;
+	std::string toString() override;
+	BigInt eval(EvalCtx&) override;
+	NodeType type() override;
 };
 
 /*
@@ -40,7 +57,12 @@ class BinaryExprNode : public ExprNode {
 public:
 	BinaryExprNode(std::unique_ptr<ExprNode>&& lhsT, std::unique_ptr<ExprNode>&& rhsT, OperatorType& opT) : lhs(std::move(lhsT)), rhs(std::move(rhsT)), op(opT) {}
 	void print(int indent) override;
-	BigInt eval() override;
+	OperatorType getOp() { return op; };
+	std::unique_ptr<ExprNode> getLhs() { return std::move(lhs); };
+	std::unique_ptr<ExprNode> getRhs() { return std::move(rhs); };
+	BigInt eval(EvalCtx&) override;
+	std::string toString() override;
+	NodeType type() override;
 };
 
 /*
@@ -55,7 +77,10 @@ public:
 	VariableExprNode() {}
 	VariableExprNode(std::string& name) : name(name) {}
 	void print(int indent) override;
-	BigInt eval() override;
+	std::string getName() { return name; };
+	BigInt eval(EvalCtx&) override;
+	std::string toString() override;
+	NodeType type() override;
 };
 
 /*
@@ -69,5 +94,7 @@ class CallExprNode : public ExprNode {
 public:
 	CallExprNode(const Token& nameT, std::vector<std::unique_ptr<ExprNode>>& argsT) : funcName(nameT.value), args(std::move(argsT)) {}
 	void print(int indent) override;
-	BigInt eval() override;
+	BigInt eval(EvalCtx&) override;
+	std::string toString() override;
+	NodeType type() override;
 };
