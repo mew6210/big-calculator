@@ -19,4 +19,5 @@ public:
     std::vector<Token> getTokensFromString(const std::string& s);
     void printTokens();
     std::vector<Token> getTokens() { return tokens; };
+    void cleanup();
 };

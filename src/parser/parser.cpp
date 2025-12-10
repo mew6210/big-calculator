@@ -160,15 +160,23 @@ unique_ptr<ExprNode> Parser::parseBinOpRHS(int exprPrec, unique_ptr<ExprNode> lh
 
 unique_ptr<ExprNode> Parser::parseTopLevelExpr() {
 	auto e = parseExpression();
-	return e;
+	root = std::move(e);
+	return e;	//no need for that return actually
 }
 
 unique_ptr<ExprNode> Parser::parse() {
-	
+	if(tokens.size()!=0) curTok = tokens[0];
 	while (true) {
 		switch (curTok.type) {
 		case TokenType::tokEOF: return nullptr;
 		default: return parseTopLevelExpr();
 		}
 	}
+}
+
+void Parser::cleanup() {
+	curTokIndex = 0;
+	tokens = {};
+	src = "";
+	root = nullptr;
 }
