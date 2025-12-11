@@ -5,9 +5,7 @@ int main(){
 
     AppState state = initApp();
     
-    
     std::string line = "";
-    std::vector<Token> curTokens;
     while (true) {
         std::cout << ">";
         std::getline(std::cin, line);
@@ -15,5 +13,4 @@ int main(){
         state.setSrc(line);
         state.execute();
     }
-    return 0;
-}
+}   //main returns success automatically
