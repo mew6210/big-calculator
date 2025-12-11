@@ -226,3 +226,10 @@ void Lexer::printTokens(){
         }
     }
 }
+
+void Lexer::cleanup() {
+    source = "";
+    cur_index = 0;
+    tokens = {};
+    lastTokenType = TokenType::undefined;
+}

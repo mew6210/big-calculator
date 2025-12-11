@@ -10,6 +10,7 @@ class Parser {
 	std::string src;	//for nice error messages
 	Token curTok;
 	size_t curTokIndex = 0;
+	std::unique_ptr<ExprNode> root;
 	std::map<TokenType, int> precedenceMap = {
 		{TokenType::assignOp,1},
 		{TokenType::plusSign,10},
@@ -34,5 +35,14 @@ class Parser {
 	std::unique_ptr<ExprNode> parseErrorLog(const std::string& msg,const std::string& note);
 public:
 	std::unique_ptr<ExprNode> parse();
-	Parser(std::vector<Token>& tokensT,const std::string& src) :tokens(std::move(tokensT)),src(src), curTok(tokens[0]){}
+	void setTokens(std::vector<Token> tkns_c) { tokens = tkns_c; }
+	void setSrc(std::string s_c) { src  = s_c;}
+	void setCurTok(Token curTok_c) { curTok  = curTok_c;}
+	void setCurTokIndex(size_t curTokIndex_c) { curTokIndex  = curTokIndex_c;}
+	std::unique_ptr<ExprNode> getRoot() {return std::move(root);}
+	void print() { root->print(); }
+	void cleanup();
+	//Parser(std::vector<Token>& tokensT,const std::string& src) :tokens(std::move(tokensT)),src(src), curTok(tokens[0]){}
+	Parser(){}
+	
 };
