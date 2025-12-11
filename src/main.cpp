@@ -1,5 +1,4 @@
 #include "core/core.hpp"
-#include "bigint/bigint.hpp"
 
 int main(){
 

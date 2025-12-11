@@ -2,7 +2,6 @@
 #include "../parser/parser.hpp"
 #include "../eval/eval.hpp"
 
-
 class AppState {
 
 	Lexer lexer;
