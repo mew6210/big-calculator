@@ -3,6 +3,7 @@
 #include "../logging/logging.hpp"
 #include <optional>
 #include "evalException.hpp"
+#include "stl/stl.hpp"
 
 /*
 	@brief checks if root node is a binary assignment expression
@@ -25,7 +26,8 @@ void Evaluator::eval() {
 		}
 		else {
 			BigInt res = ASTRoot->eval(evalCtx);	//otherwise treat it like a basic evaluation, no variable assigning
-			res.print();
+			if(evalCtx.shouldPrint) res.print();
+			evalCtx.shouldPrint = true;
 		}
 	}
 	catch (EvalException& e) {
@@ -65,8 +67,7 @@ void Evaluator::handleAssignRoot() {
 	if (evalCtx.varExists(varName)) {
 		evalCtx.assignVar(varName, rhs);
 	}
-	else evalCtx.vars.push_back({ varName,std::move(rhs) });
-	
+	else evalCtx.vars.push_back({ varName,std::move(rhs) });	
 }
 
 BigInt BigIntNode::eval(EvalCtx&) {
@@ -102,5 +103,8 @@ BigInt VariableExprNode::eval(EvalCtx& ectx) {
 }
 
 BigInt CallExprNode::eval(EvalCtx& ectx) {
-	return BigInt(0);	//TODO: MAKE FUNCTION EXECUTE
+	auto var = stlDispatch(funcName,args,ectx);
+
+	if (var) return var.value();
+	else return BigInt(0);
 }

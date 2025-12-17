@@ -9,6 +9,7 @@
 struct EvalCtx {
 	std::vector<std::pair<std::string, BigInt>> vars;
 	bool isAssignExpr;
+	bool shouldPrint = true;
 
 	BigInt getVar(const std::string& name);
 	bool varExists(std::string& name);
