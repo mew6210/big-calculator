@@ -1,5 +1,6 @@
 #include "stl.hpp"
-
+#include "funcinfo.hpp"
+#include "funcreturn.hpp"
 using ExprNodes = std::vector<std::unique_ptr<ExprNode>>;
 
 
@@ -19,10 +20,11 @@ chunkDisplayMode getChunkDisplayModeFromBigInt(BigInt& bi) {
 
 namespace stlFuncs {
 
-	void inspect(ExprNodes& args, EvalCtx& eCtx) {
+	//void
+	funcReturn inspect(ExprNodes& args, EvalCtx& eCtx) {
 		chunkDisplayMode cdm = chunkDisplayMode::decimal;
-		if (args.size() > 2) throw EvalException("", "");
-		if (args.size() == 0) throw EvalException("", "");
+		if (args.size() > 2) throw EvalException("Too many arguments in inspect()", "Check out \"showfunctions()\" to see the correct function parameters");
+		if (args.size() == 0) throw EvalException("Expected at least 1 argument in inspect()", "Check out \"showfunctions()\" to see the correct function parameters");
 
 		if (args.size() == 2) {
 			BigInt cdmVar = args[1]->eval(eCtx);
@@ -33,34 +35,80 @@ namespace stlFuncs {
 
 		var.inspectChunks(cdm);
 		eCtx.shouldPrint = false;
+		return { BigInt(0),false };
 	}
 
-	void showFunctions(ExprNodes& args, EvalCtx& eCtx) {
+	//void
+	funcReturn showFunctions(ExprNodes& args, EvalCtx& eCtx);
 
+	//void
+	funcReturn help(ExprNodes& args, EvalCtx& eCtx) {
 
-
+		std::cout << 
+			"SHORT DESCRIPTION\n"
+			"\tA python-like REPL(read-eval-print loop) calculator for integers of theoretically any size\n\n"
+			"LONG DESCRIPTION\n"
+			"\tThis app consists of 2 parts:\n"
+			"\t-- Frontend layer:\n"
+			"\tUser-interface that you are currently interacting with \n"
+			"\tLexes, parses and interprets user input\n"
+			"\tIt behaves like a frontend of a interpreter or a compiler\n"
+			"\n\t-- Backend layer:\n"
+			"\tBigInt implementation that handles all the calculations on arbitrary-sized integers\n" 
+			"\tInternally it uses a vector of unsigned 64-bit integers, and a bool for the sign\n"
+			"EXAMPLES\n"
+			"\tBasic expressions are handled\n"
+			"\t\"2 + 3\" returns 5\n\n"
+			"\tIt also internally understands operator precedence\n"
+			"\t\"2+3*6\" returns 20, not 30\n\n"
+			"\tVariables are also here\n"
+			"\t\"a = 5\" assigns a to 5, and can be reused later like so \"a + 2\" returns 7\n\n"
+			"\tParenthesis are also supported\n"
+			"\tFunctions are also supported\n" 
+			"\tIf you want to check all avalible functions and their documentation, type \"showfunctions()\"\n"
+			"NEXT STEPS\n"
+			"\tPlay around, have fun and maybe try to break it, im curious how it behaves under user unpredictability\n"
+			"\tType \"showfunctions()\" to check out other features\n"
+			;
+		eCtx.shouldPrint = false;
+		return { BigInt(0),false };
 	}
 
-	void help(ExprNodes& args, EvalCtx& eCtx) {
-
-	}
-
-	void showVars(ExprNodes& args, EvalCtx& eCtx) {
+	//void
+	funcReturn showVars(ExprNodes& args, EvalCtx& eCtx) {
 		for (auto& var : eCtx.vars) {
 			std::cout << var.first << " = " << var.second.toString() << "\n";
 		}
 		eCtx.shouldPrint = false;
+		return { BigInt(0),false };
 	}
 
-	BigInt abs(ExprNodes& args, EvalCtx& eCtx) {
+	funcReturn abs(ExprNodes& args, EvalCtx& eCtx) {
 		
-		if (args.size() != 1) throw EvalException("", "");
+		if (args.size() != 1) throw EvalException("Too many arguments in abs(), expected 1", "Check out \"showfunctions()\" to see the correct function parameters");
 
 		BigInt var = args[0]->eval(eCtx);
 		if (var.isNegative()) {
 			var.flipSign();
 		}
-		return var;
+		return funcReturn{ var ,true};
+	}
+}
+
+std::vector<stlFunc> stlFunctions = {
+	{"inspect","","",stlFuncs::inspect},
+	{"showfunctions","","",stlFuncs::showFunctions},
+	{"showvars","","",stlFuncs::showVars},
+	{"help","","",stlFuncs::help},
+	{"abs","","",stlFuncs::abs}
+};
+
+/*
+	showfunctions needs to be added later to the namespace, since it references stlFunctions
+*/
+namespace stlFuncs {
+	funcReturn showFunctions(ExprNodes& args, EvalCtx& eCtx) {
+		return funcReturn{ BigInt(0),false };
 	}
 }
 
@@ -68,12 +116,12 @@ std::optional<BigInt> stlDispatch(std::string& funcName,ExprNodes& args, EvalCtx
 
 	strToLower(funcName);
 
-	if (funcName == "inspect") stlFuncs::inspect(args, eCtx);
-	if (funcName == "showFunctions") stlFuncs::showFunctions(args, eCtx);
-	if (funcName == "showvars") stlFuncs::showVars(args, eCtx);
-	if (funcName == "help") stlFuncs::help(args, eCtx);
-	if (funcName == "abs") return stlFuncs::abs(args, eCtx);
-
-
+	for (auto& func : stlFunctions) {
+		if (funcName == func.funcName) { 
+			auto res = func.call(args, eCtx);
+			if (res.hasValue) return res.value;
+			else return std::nullopt;
+		}
+	}
 	return std::nullopt;
 }
