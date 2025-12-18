@@ -8,6 +8,7 @@
 struct stlFunc{
 	std::string funcName;
 	std::string funcDesc;
-	std::string exUsage;
+	std::string paramDesc;
+	std::string exampleDesc;
 	std::function<funcReturn(std::vector<std::unique_ptr<ExprNode>>&,EvalCtx&)> call;
 };

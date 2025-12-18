@@ -96,11 +96,11 @@ namespace stlFuncs {
 }
 
 std::vector<stlFunc> stlFunctions = {
-	{"inspect","","",stlFuncs::inspect},
-	{"showfunctions","","",stlFuncs::showFunctions},
-	{"showvars","","",stlFuncs::showVars},
-	{"help","","",stlFuncs::help},
-	{"abs","","",stlFuncs::abs}
+	{"inspect","","","",stlFuncs::inspect},
+	{"showfunctions","","","",stlFuncs::showFunctions},
+	{"showvars","","","",stlFuncs::showVars},
+	{"help","","","",stlFuncs::help},
+	{"abs","","","",stlFuncs::abs}
 };
 
 /*
