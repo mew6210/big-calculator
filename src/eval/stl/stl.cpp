@@ -140,6 +140,30 @@ namespace stlFuncs {
 		return funcReturn{ var1,false };
 
 	}
+
+	funcReturn sum(ExprNodes& args, EvalCtx& eCtx) {
+
+		BigInt sum = BigInt(0);
+
+		for (auto& arg : args) {
+			BigInt var = arg->eval(eCtx);
+			sum.addBigInt(var);
+		}
+
+		return funcReturn{ sum,true };
+	}
+
+	funcReturn prod(ExprNodes& args, EvalCtx& eCtx) {
+
+		BigInt sum = BigInt(1);
+
+		for (auto& arg : args) {
+			BigInt var = arg->eval(eCtx);
+			sum.multiplyBigInt(var);
+		}
+
+		return funcReturn{ sum,true };
+	}
 }
 
 std::vector<stlFunc> stlFunctions = {
@@ -150,7 +174,9 @@ std::vector<stlFunc> stlFunctions = {
 	{"abs","","","",stlFuncs::abs},
 	{"max","","","",stlFuncs::max},
 	{"min","","","",stlFuncs::min},
-	{"cmp","","","",stlFuncs::cmp}
+	{"cmp","","","",stlFuncs::cmp},
+	{"sum","","","",stlFuncs::sum},
+	{"prod","","","",stlFuncs::prod}
 
 };
 
