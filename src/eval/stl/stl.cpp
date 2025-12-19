@@ -3,7 +3,6 @@
 #include "funcreturn.hpp"
 using ExprNodes = std::vector<std::unique_ptr<ExprNode>>;
 
-
 void strToLower(std::string& s) {	//converts string to lowercase
 	for (char& c : s) {
 		c = tolower(c);
@@ -93,14 +92,66 @@ namespace stlFuncs {
 		}
 		return funcReturn{ var ,true};
 	}
+
+	funcReturn max(ExprNodes& args, EvalCtx& eCtx) {
+
+		if (args.size() != 2) throw EvalException("", "");
+
+		BigInt var1 = args[0]->eval(eCtx);
+		BigInt var2 = args[1]->eval(eCtx);
+		
+		if (var1.biggerThan(var2)) return funcReturn { var1,true };
+		if (var2.biggerThan(var1)) return funcReturn{ var2, true };
+		return funcReturn{ var1,true };
+	}
+
+	funcReturn min(ExprNodes& args, EvalCtx& eCtx) {
+
+		if (args.size() != 2) throw EvalException("", "");
+
+		BigInt var1 = args[0]->eval(eCtx);
+		BigInt var2 = args[1]->eval(eCtx);
+
+		if (var1.biggerThan(var2)) return funcReturn{ var2,true };
+		if (var2.biggerThan(var1)) return funcReturn{ var1, true };
+		return funcReturn{ var1,true };
+	}
+
+	//void
+	funcReturn cmp(ExprNodes& args, EvalCtx& eCtx) {
+
+		if (args.size() != 2) throw EvalException("", "");
+
+		BigInt var1 = args[0]->eval(eCtx);
+		BigInt var2 = args[1]->eval(eCtx);
+
+		
+		if (var1.biggerThan(var2)){
+			std::cout << args[0]->toString() << " is bigger\n";
+		}
+		else if (var2.biggerThan(var1)){
+			std::cout << args[1]->toString() << " is bigger\n";
+		}
+		else if (var1.equals(var2)) {
+			std::cout << args[0]->toString() << " is equal " << args[1]->toString();
+		}
+
+		eCtx.shouldPrint = false;
+		return funcReturn{ var1,false };
+
+	}
 }
 
 std::vector<stlFunc> stlFunctions = {
 	{"inspect","","","",stlFuncs::inspect},
-	{"showfunctions","","","",stlFuncs::showFunctions},
-	{"showvars","","","",stlFuncs::showVars},
+	{"showFunctions","","","",stlFuncs::showFunctions},
+	{"showVars","","","",stlFuncs::showVars},
 	{"help","","","",stlFuncs::help},
-	{"abs","","","",stlFuncs::abs}
+	{"abs","","","",stlFuncs::abs},
+	{"max","","","",stlFuncs::max},
+	{"min","","","",stlFuncs::min},
+	{"cmp","","","",stlFuncs::cmp}
+
 };
 
 /*
@@ -114,7 +165,7 @@ namespace stlFuncs {
 
 std::optional<BigInt> stlDispatch(std::string& funcName,ExprNodes& args, EvalCtx& eCtx) {
 
-	strToLower(funcName);
+	//strToLower(funcName);
 
 	for (auto& func : stlFunctions) {
 		if (funcName == func.funcName) { 
