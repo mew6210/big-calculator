@@ -164,6 +164,16 @@ namespace stlFuncs {
 
 		return funcReturn{ sum,true };
 	}
+
+	funcReturn cntDigits(ExprNodes& args, EvalCtx& eCtx) {
+
+		if (args.size() != 1) throw EvalException("", "");
+
+		BigInt var = args[0]->eval(eCtx);
+
+		return funcReturn{ var.toString().size(),true };
+
+	}
 }
 
 std::vector<stlFunc> stlFunctions = {
@@ -176,7 +186,8 @@ std::vector<stlFunc> stlFunctions = {
 	{"min","","","",stlFuncs::min},
 	{"cmp","","","",stlFuncs::cmp},
 	{"sum","","","",stlFuncs::sum},
-	{"prod","","","",stlFuncs::prod}
+	{"prod","","","",stlFuncs::prod},
+	{"cntDigits","","","",stlFuncs::cntDigits},
 
 };
 
