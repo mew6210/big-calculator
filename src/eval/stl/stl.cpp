@@ -68,6 +68,8 @@ namespace stlFuncs {
 			"NEXT STEPS\n"
 			"\tPlay around, have fun and maybe try to break it, im curious how it behaves under user unpredictability\n"
 			"\tType \"showfunctions()\" to check out other features\n"
+			"\tAlso if you are unsure about some function, u can write \"?\" at the start of it to get its description,like:\n"
+			"\t?help()\n"
 			;
 		eCtx.shouldPrint = false;
 		return { BigInt(0),false };
@@ -177,25 +179,121 @@ namespace stlFuncs {
 }
 
 std::vector<stlFunc> stlFunctions = {
-	{"inspect","","","",stlFuncs::inspect},
-	{"showFunctions","","","",stlFuncs::showFunctions},
-	{"showVars","","","",stlFuncs::showVars},
-	{"help","","","",stlFuncs::help},
-	{"abs","","","",stlFuncs::abs},
-	{"max","","","",stlFuncs::max},
-	{"min","","","",stlFuncs::min},
-	{"cmp","","","",stlFuncs::cmp},
-	{"sum","","","",stlFuncs::sum},
-	{"prod","","","",stlFuncs::prod},
-	{"cntDigits","","","",stlFuncs::cntDigits},
+	{"inspect"
+	,
+	"\tDisplays detailed information about the value of an expression",
+	"\tOnly one number (can be variable or anything)",
+	"\t\"inspect(5*1000000000000000000000000)\",displays chunks of a number 5000000000000000000000000",
+	stlFuncs::inspect
+	},
+
+	{"showFunctions" ,
+	"\tDisplays all functions and how they work",
+	"\tAny parameters are ignored",
+	"\tYou probably already know how to use it if you see it",
+	stlFuncs::showFunctions
+	},
+
+	{"showVars" ,
+	"\tDisplays all declared variables",
+	"\tAny parameters are ignored",
+	"\t \"a=5\", \t\"showVars()\" ",
+	stlFuncs::showVars
+	},
+
+	{"help" ,
+	"\tDisplays a quick introduction",
+	"\tAny parameters are ignored",
+	"\t \"help()\"",
+	stlFuncs::help
+	},
+
+	{"abs" ,
+	"\tReturns an absolute value of a given expression",
+	"\tOnly one parameter, any expression",
+	"\t\"abs(3-5)\" returns 2",
+	stlFuncs::abs
+	},
+
+	{"max" ,
+	"\tReturns a bigger value",
+	"\tTwo parameters, any expressions",
+	"\t\"max(100,5*3)\" returns 100",
+	stlFuncs::max
+	},
+
+	{"min" ,
+	"\tReturns a smaller value",
+	"\tTwo parameters, any expressions",
+	"\t\"min(-5,100)\" returns -5",
+	stlFuncs::min
+	},
+
+	{"cmp" ,
+	"\tPrints out which value is bigger",
+	"\tTwo parameters, any expressions",
+	"\t\"cmp(5,3)\" prints out \"5 is bigger\"",
+	stlFuncs::cmp
+	},
+
+	{"sum" ,
+	"\tReturns a sum of all the given expressions",
+	"\tAny amount of expressions",
+	"\t\"sum(5,-5,3,4)\" returns 7",
+	stlFuncs::sum
+	},
+
+	{"prod" ,
+	"\tReturns a product of all the given expressions",
+	"\tAny amount of expressions",
+	"\t\"prod(5,3,4)\" returns 60",
+	stlFuncs::prod
+	},
+
+	{"cntDigits" ,
+	"\tReturns the amount of digits that a given value has in its decimal form",
+	"\tOne parameter, any expression",
+	"\t\"cntDigits(150)\" returns 3",
+	stlFuncs::cntDigits
+	},
+
 
 };
+
+void printFuncLabel(const std::string& name) {
+
+	const int totalWidth = 20;
+
+	int dashCount = totalWidth - name.size();
+	int left = dashCount / 2;
+	int right = dashCount - left;
+
+	std::cout << "<" << std::string(left, '-');
+	std::cout << name;
+	std::cout << std::string(right, '-') << ">\n";
+}
+
+void printStlFuncInfo(const stlFunc& func) {
+	printFuncLabel(func.funcName);
+
+	std::cout << "-DESCRIPTION\n";
+	std::cout << func.funcDesc << "\n";
+	std::cout << "-PARAMETERS\n";
+	std::cout << func.paramDesc << "\n";
+	std::cout << "-EXAMPLE\n";
+	std::cout << func.exampleDesc << "\n";
+	std::cout << "<----------------->\n\n";
+}
 
 /*
 	showfunctions needs to be added later to the namespace, since it references stlFunctions
 */
 namespace stlFuncs {
+	//void
 	funcReturn showFunctions(ExprNodes& args, EvalCtx& eCtx) {
+		
+		for (auto& func : stlFunctions) printStlFuncInfo(func);
+		eCtx.shouldPrint = false;
 		return funcReturn{ BigInt(0),false };
 	}
 }
@@ -210,6 +308,12 @@ std::optional<BigInt> stlDispatch(std::string& funcName,ExprNodes& args, EvalCtx
 			if (res.hasValue) return res.value;
 			else return std::nullopt;
 		}
+		else if (funcName == "?" + func.funcName) {
+			printStlFuncInfo(func);
+			eCtx.shouldPrint = false;
+			return std::nullopt;
+		}
+
 	}
 	return std::nullopt;
 }
