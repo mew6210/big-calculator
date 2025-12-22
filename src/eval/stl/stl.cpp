@@ -1,7 +1,70 @@
 #include "stl.hpp"
 #include "funcinfo.hpp"
 #include "funcreturn.hpp"
+#include <algorithm>
+
 using ExprNodes = std::vector<std::unique_ptr<ExprNode>>;
+
+namespace helpers {
+
+	void printFuncLabel(const std::string& name) {
+
+		const int totalWidth = 20;
+
+		int dashCount = totalWidth - name.size();
+		int left = dashCount / 2;
+		int right = dashCount - left;
+
+		std::cout << "<" << std::string(left, '-');
+		std::cout << name;
+		std::cout << std::string(right, '-') << ">\n";
+	}
+
+	void printStlFuncInfo(const stlFunc& func) {
+		printFuncLabel(func.funcName);
+
+		std::cout << "-DESCRIPTION\n";
+		std::cout << func.funcDesc << "\n";
+		std::cout << "-PARAMETERS\n";
+		std::cout << func.paramDesc << "\n";
+		std::cout << "-EXAMPLE\n";
+		std::cout << func.exampleDesc << "\n";
+		std::cout << "<----------------->\n\n";
+	}
+
+	uint64_t levenshteinDistance(const std::string& a, const std::string& b)
+	{
+		const size_t n = a.size();
+		const size_t m = b.size();
+
+		if (n == 0) return m;
+		if (m == 0) return n;
+
+		if (m > n)
+			return levenshteinDistance(b, a);
+
+		std::vector<uint64_t> prev(m + 1), curr(m + 1);
+
+		for (size_t j = 0; j <= m; ++j)
+			prev[j] = j;
+
+		for (size_t i = 1; i <= n; ++i){
+			curr[0] = i;
+			for (size_t j = 1; j <= m; ++j){
+				uint64_t cost = (a[i - 1] == b[j - 1]) ? 0 : 1;
+				curr[j] = std::min({
+					prev[j] + 1,        // deletion
+					curr[j - 1] + 1,    // insertion
+					prev[j - 1] + cost  // substitution
+					});
+			}
+			std::swap(prev, curr);
+		}
+
+		return prev[m];
+	}
+
+}
 
 void strToLower(std::string& s) {	//converts string to lowercase
 	for (char& c : s) {
@@ -260,31 +323,6 @@ std::vector<stlFunc> stlFunctions = {
 
 };
 
-void printFuncLabel(const std::string& name) {
-
-	const int totalWidth = 20;
-
-	int dashCount = totalWidth - name.size();
-	int left = dashCount / 2;
-	int right = dashCount - left;
-
-	std::cout << "<" << std::string(left, '-');
-	std::cout << name;
-	std::cout << std::string(right, '-') << ">\n";
-}
-
-void printStlFuncInfo(const stlFunc& func) {
-	printFuncLabel(func.funcName);
-
-	std::cout << "-DESCRIPTION\n";
-	std::cout << func.funcDesc << "\n";
-	std::cout << "-PARAMETERS\n";
-	std::cout << func.paramDesc << "\n";
-	std::cout << "-EXAMPLE\n";
-	std::cout << func.exampleDesc << "\n";
-	std::cout << "<----------------->\n\n";
-}
-
 /*
 	showfunctions needs to be added later to the namespace, since it references stlFunctions
 */
@@ -292,7 +330,7 @@ namespace stlFuncs {
 	//void
 	funcReturn showFunctions(ExprNodes& args, EvalCtx& eCtx) {
 		
-		for (auto& func : stlFunctions) printStlFuncInfo(func);
+		for (auto& func : stlFunctions) helpers::printStlFuncInfo(func);
 		eCtx.shouldPrint = false;
 		return funcReturn{ BigInt(0),false };
 	}
@@ -309,11 +347,26 @@ std::optional<BigInt> stlDispatch(std::string& funcName,ExprNodes& args, EvalCtx
 			else return std::nullopt;
 		}
 		else if (funcName == "?" + func.funcName) {
-			printStlFuncInfo(func);
+			helpers::printStlFuncInfo(func);
 			eCtx.shouldPrint = false;
 			return std::nullopt;
 		}
-
 	}
+
+	//func not found
+	using Distance = std::pair<std::string, uint64_t>;
+	std::vector<Distance> distances;
+
+	for (auto& func : stlFunctions) {
+		distances.push_back({ func.funcName,helpers::levenshteinDistance(funcName,func.funcName) });
+	}
+	std::sort(distances.begin(), distances.end(), [](Distance& distance1, Distance& distance2) {
+		return distance1.second < distance2.second;
+		});
+
+	throw EvalException("\""+funcName+"()\" function not found", "Did you mean " + distances[0].first+"()?");
+
+
+
 	return std::nullopt;
 }
