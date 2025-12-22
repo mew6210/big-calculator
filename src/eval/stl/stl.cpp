@@ -336,9 +336,22 @@ namespace stlFuncs {
 	}
 }
 
-std::optional<BigInt> stlDispatch(std::string& funcName,ExprNodes& args, EvalCtx& eCtx) {
+void handleFuncNotFound(std::string& funcName) {
 
-	//strToLower(funcName);
+	using Distance = std::pair<std::string, uint64_t>;
+	std::vector<Distance> distances;
+
+	for (auto& func : stlFunctions) {
+		distances.push_back({ func.funcName,helpers::levenshteinDistance(funcName,func.funcName) });
+	}
+	std::sort(distances.begin(), distances.end(), [](Distance& distance1, Distance& distance2) {
+		return distance1.second < distance2.second;
+		});
+
+	throw EvalException("\"" + funcName + "()\" function not found", "Did you mean " + distances[0].first + "()?");
+}
+
+std::optional<BigInt> stlDispatch(std::string& funcName,ExprNodes& args, EvalCtx& eCtx) {
 
 	for (auto& func : stlFunctions) {
 		if (funcName == func.funcName) { 
@@ -354,19 +367,7 @@ std::optional<BigInt> stlDispatch(std::string& funcName,ExprNodes& args, EvalCtx
 	}
 
 	//func not found
-	using Distance = std::pair<std::string, uint64_t>;
-	std::vector<Distance> distances;
-
-	for (auto& func : stlFunctions) {
-		distances.push_back({ func.funcName,helpers::levenshteinDistance(funcName,func.funcName) });
-	}
-	std::sort(distances.begin(), distances.end(), [](Distance& distance1, Distance& distance2) {
-		return distance1.second < distance2.second;
-		});
-
-	throw EvalException("\""+funcName+"()\" function not found", "Did you mean " + distances[0].first+"()?");
-
-
+	handleFuncNotFound(funcName);
 
 	return std::nullopt;
 }
