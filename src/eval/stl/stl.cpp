@@ -32,8 +32,7 @@ namespace helpers {
 		std::cout << "<----------------->\n\n";
 	}
 
-	uint64_t levenshteinDistance(const std::string& a, const std::string& b)
-	{
+	uint64_t levenshteinDistance(const std::string& a, const std::string& b){
 		const size_t n = a.size();
 		const size_t m = b.size();
 
@@ -80,13 +79,17 @@ chunkDisplayMode getChunkDisplayModeFromBigInt(BigInt& bi) {
 	return chunkDisplayMode::decimal;
 }
 
+
+/*
+	implementation of stl functions, all of them based on bigint implementation
+*/
 namespace stlFuncs {
 
 	//void
 	funcReturn inspect(ExprNodes& args, EvalCtx& eCtx) {
 		chunkDisplayMode cdm = chunkDisplayMode::decimal;
-		if (args.size() > 2) throw EvalException("Too many arguments in inspect()", "Check out \"showfunctions()\" to see the correct function parameters");
-		if (args.size() == 0) throw EvalException("Expected at least 1 argument in inspect()", "Check out \"showfunctions()\" to see the correct function parameters");
+		if (args.size() > 2) throw EvalException("Too many arguments in inspect()", "Check out \"?inspect()\" to see the correct function parameters");
+		if (args.size() == 0) throw EvalException("Expected at least 1 argument in inspect()", "Check out \"?inspect()\" to see the correct function parameters");
 
 		if (args.size() == 2) {
 			BigInt cdmVar = args[1]->eval(eCtx);
@@ -96,8 +99,8 @@ namespace stlFuncs {
 		BigInt var = args[0]->eval(eCtx);
 
 		var.inspectChunks(cdm);
-		eCtx.shouldPrint = false;
-		return { BigInt(0),false };
+		eCtx.shouldPrint = false; //dont print result, which is 0
+		return { BigInt(0),false }; //dont return anything
 	}
 
 	//void
@@ -134,8 +137,8 @@ namespace stlFuncs {
 			"\tAlso if you are unsure about some function, u can write \"?\" at the start of it to get its description,like:\n"
 			"\t?help()\n"
 			;
-		eCtx.shouldPrint = false;
-		return { BigInt(0),false };
+		eCtx.shouldPrint = false; //dont print result, which is 0
+		return { BigInt(0),false }; //dont return anything
 	}
 
 	//void
@@ -143,13 +146,13 @@ namespace stlFuncs {
 		for (auto& var : eCtx.vars) {
 			std::cout << var.first << " = " << var.second.toString() << "\n";
 		}
-		eCtx.shouldPrint = false;
-		return { BigInt(0),false };
+		eCtx.shouldPrint = false; //dont print result, which is 0
+		return { BigInt(0),false }; //dont return anything
 	}
 
 	funcReturn abs(ExprNodes& args, EvalCtx& eCtx) {
 		
-		if (args.size() != 1) throw EvalException("Too many arguments in abs(), expected 1", "Check out \"showfunctions()\" to see the correct function parameters");
+		if (args.size() != 1) throw EvalException("Too many arguments in abs(), expected 1", "Check out \"?abs()\" to see the correct function parameters");
 
 		BigInt var = args[0]->eval(eCtx);
 		if (var.isNegative()) {
@@ -160,7 +163,7 @@ namespace stlFuncs {
 
 	funcReturn max(ExprNodes& args, EvalCtx& eCtx) {
 
-		if (args.size() != 2) throw EvalException("", "");
+		if (args.size() != 2) throw EvalException("Wrong amount of arguments in max(), expected 2", "Check out \"?max()\" to see the correct function parameters");
 
 		BigInt var1 = args[0]->eval(eCtx);
 		BigInt var2 = args[1]->eval(eCtx);
@@ -172,7 +175,7 @@ namespace stlFuncs {
 
 	funcReturn min(ExprNodes& args, EvalCtx& eCtx) {
 
-		if (args.size() != 2) throw EvalException("", "");
+		if (args.size() != 2) throw EvalException("Wrong amount of arguments in min(), expected 2", "Check out \"?min()\" to see the correct function parameters");
 
 		BigInt var1 = args[0]->eval(eCtx);
 		BigInt var2 = args[1]->eval(eCtx);
@@ -185,7 +188,7 @@ namespace stlFuncs {
 	//void
 	funcReturn cmp(ExprNodes& args, EvalCtx& eCtx) {
 
-		if (args.size() != 2) throw EvalException("", "");
+		if (args.size() != 2) throw EvalException("Wrong amount of arguments in cmp(), expected 2", "Check out \"?cmp()\" to see the correct function parameters");
 
 		BigInt var1 = args[0]->eval(eCtx);
 		BigInt var2 = args[1]->eval(eCtx);
@@ -201,9 +204,8 @@ namespace stlFuncs {
 			std::cout << args[0]->toString() << " is equal " << args[1]->toString();
 		}
 
-		eCtx.shouldPrint = false;
-		return funcReturn{ var1,false };
-
+		eCtx.shouldPrint = false; //dont print result, which is 0
+		return funcReturn{ var1,false }; //dont return anything
 	}
 
 	funcReturn sum(ExprNodes& args, EvalCtx& eCtx) {
@@ -232,21 +234,30 @@ namespace stlFuncs {
 
 	funcReturn cntDigits(ExprNodes& args, EvalCtx& eCtx) {
 
-		if (args.size() != 1) throw EvalException("", "");
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in cntDigits(), expected 1", "Check out \"?cntDigits()\" to see the correct function parameters");
 
 		BigInt var = args[0]->eval(eCtx);
 
 		return funcReturn{ var.toString().size(),true };
-
 	}
 }
 
+/*
+	@brief functions for this app's standard library
+	it contains:
+	- name
+	- description
+	- parameters description
+	- examplary usage
+	- call to the corresponding function in stlFuncs namespace
+
+*/
 std::vector<stlFunc> stlFunctions = {
 	{"inspect"
 	,
 	"\tDisplays detailed information about the value of an expression",
-	"\tOnly one number (can be variable or anything)",
-	"\t\"inspect(5*1000000000000000000000000)\",displays chunks of a number 5000000000000000000000000",
+	"\tOne or two expressions, if one then only the inspected number, if 2 then first one is inspected number and 2nd one is base, which can be either 10 or 16",
+	"\t\"inspect(5*1000000000000000000000000)\",displays chunks of a number 5000000000000000000000000\n\t\"inspect(3*100,16), displays chunks of a number 300 in hexadecimal form\"",
 	stlFuncs::inspect
 	},
 
@@ -331,8 +342,8 @@ namespace stlFuncs {
 	funcReturn showFunctions(ExprNodes& args, EvalCtx& eCtx) {
 		
 		for (auto& func : stlFunctions) helpers::printStlFuncInfo(func);
-		eCtx.shouldPrint = false;
-		return funcReturn{ BigInt(0),false };
+		eCtx.shouldPrint = false;	//dont print result, which is 0
+		return funcReturn{ BigInt(0),false };	//dont return anything
 	}
 }
 
@@ -341,24 +352,44 @@ void handleFuncNotFound(std::string& funcName) {
 	using Distance = std::pair<std::string, uint64_t>;
 	std::vector<Distance> distances;
 
+	//check how similiar current stl function names are to user's input
 	for (auto& func : stlFunctions) {
 		distances.push_back({ func.funcName,helpers::levenshteinDistance(funcName,func.funcName) });
 	}
+
+	//sort so that first element is the most likely
 	std::sort(distances.begin(), distances.end(), [](Distance& distance1, Distance& distance2) {
 		return distance1.second < distance2.second;
 		});
 
-	throw EvalException("\"" + funcName + "()\" function not found", "Did you mean " + distances[0].first + "()?");
+
+	std::string errNote;
+	if (distances[0].second < 3) {	//if its pretty similiar, tell user the most probable match
+		errNote = "Did you mean " + distances[0].first + "()?";
+	}
+	//if it isnt that similiar, dont tell user the closest match
+	else errNote = "Use \"showFunctions()\" for all avalible functions";
+
+	throw EvalException("\"" + funcName + "()\" function not found", errNote);
 }
 
 std::optional<BigInt> stlDispatch(std::string& funcName,ExprNodes& args, EvalCtx& eCtx) {
-
+	
 	for (auto& func : stlFunctions) {
+		/*
+		look through each stl function, and if found return its value
+		if func doesnt return a value, return std::nullopt so that <optional> is empty
+		*/
 		if (funcName == func.funcName) { 
 			auto res = func.call(args, eCtx);
 			if (res.hasValue) return res.value;
 			else return std::nullopt;
 		}
+
+		/*
+		if name of the function starts with "?",
+		user is asking about func info, not evaluation
+		*/
 		else if (funcName == "?" + func.funcName) {
 			helpers::printStlFuncInfo(func);
 			eCtx.shouldPrint = false;
@@ -366,7 +397,7 @@ std::optional<BigInt> stlDispatch(std::string& funcName,ExprNodes& args, EvalCtx
 		}
 	}
 
-	//func not found
+	//by this point, stl function was not found
 	handleFuncNotFound(funcName);
 
 	return std::nullopt;
