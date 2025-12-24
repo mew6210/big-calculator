@@ -6,7 +6,8 @@ struct Evaluator {
 	std::unique_ptr<ExprNode> ASTRoot;
 	EvalCtx evalCtx;
 
-public:
+	void handleAssignVar(BinaryExprNode* ASTRootAssignNode);
+	void handleAssignUserFunc(BinaryExprNode* ASTRootAssignNode);
 	void eval();
 	void handleAssignRoot();
 	void setSrc(std::string& src_) { src = src_; };

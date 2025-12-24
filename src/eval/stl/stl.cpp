@@ -373,8 +373,9 @@ void handleFuncNotFound(std::string& funcName) {
 	throw EvalException("\"" + funcName + "()\" function not found", errNote);
 }
 
-std::optional<BigInt> stlDispatch(std::string& funcName,ExprNodes& args, EvalCtx& eCtx) {
+std::optional<BigInt> funcDispatch(std::string& funcName,ExprNodes& args, EvalCtx& eCtx) {
 	
+	//check for stl functions
 	for (auto& func : stlFunctions) {
 		/*
 		look through each stl function, and if found return its value
@@ -396,6 +397,34 @@ std::optional<BigInt> stlDispatch(std::string& funcName,ExprNodes& args, EvalCtx
 			return std::nullopt;
 		}
 	}
+
+	//check for user functions
+	for (auto& func : eCtx.userFunctions) {
+
+		if (funcName == func.name) {
+			
+			if (func.params.size() != args.size()) throw EvalException("", "");
+
+			EvalCtx newEvalCtx{};
+			std::vector<std::pair<std::string,BigInt>> vars;
+			
+			for (size_t i = 0; i < func.params.size();i++) {
+				vars.push_back({ func.params[i],args[i]->eval(eCtx) });
+			}
+			newEvalCtx.vars = vars;
+			auto val = func.definition->eval(newEvalCtx);
+			return val;
+		}
+
+	}
+	for (auto& func : eCtx.userFunctions) {
+		if (funcName == "?" + func.name) {
+			std::cout << func.definition->toString()<<"\n";
+			eCtx.shouldPrint = false;
+			return std::nullopt;
+		}
+	}
+
 
 	//by this point, stl function was not found
 	handleFuncNotFound(funcName);

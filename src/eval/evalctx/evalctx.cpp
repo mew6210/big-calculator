@@ -31,3 +31,21 @@ void EvalCtx::assignVar(std::string& name, BigInt& bi) {
 		};
 	}
 }
+
+bool EvalCtx::funcExists(std::string& name) {
+	for (auto& func : userFunctions) {
+		if (func.name == name) return true;
+	}
+	return false;
+}
+
+void EvalCtx::assignFunc(UserFunc& userFunc) {
+
+	for (auto& func : userFunctions) {
+		if (func.name == userFunc.name) {
+			func.params = std::move(userFunc.params);
+			func.definition = std::move(userFunc.definition);
+		}
+	}
+
+}

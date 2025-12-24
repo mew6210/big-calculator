@@ -60,6 +60,7 @@ public:
 	OperatorType getOp() { return op; };
 	std::unique_ptr<ExprNode> getLhs() { return std::move(lhs); };
 	std::unique_ptr<ExprNode> getRhs() { return std::move(rhs); };
+	NodeType lhsType(){ return lhs->type(); }
 	BigInt eval(EvalCtx&) override;
 	std::string toString() override;
 	NodeType type() override;
@@ -93,8 +94,11 @@ class CallExprNode : public ExprNode {
 
 public:
 	CallExprNode(const Token& nameT, std::vector<std::unique_ptr<ExprNode>>& argsT) : funcName(nameT.value), args(std::move(argsT)) {}
+	std::string getName() { return funcName; }
+	std::vector<std::unique_ptr<ExprNode>> getArgs() { return std::move(args); }
 	void print(int indent) override;
 	BigInt eval(EvalCtx&) override;
 	std::string toString() override;
 	NodeType type() override;
 };
+
