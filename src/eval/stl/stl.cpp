@@ -411,8 +411,11 @@ std::optional<BigInt> funcDispatch(std::string& funcName,ExprNodes& args, EvalCt
 			for (size_t i = 0; i < func.params.size();i++) {
 				vars.push_back({ func.params[i],args[i]->eval(eCtx) });
 			}
+			
 			newEvalCtx.vars = vars;
+			newEvalCtx.userFunctions = std::move(eCtx.userFunctions);
 			auto val = func.definition->eval(newEvalCtx);
+			eCtx.userFunctions = std::move(newEvalCtx.userFunctions);
 			return val;
 		}
 
