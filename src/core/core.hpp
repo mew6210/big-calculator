@@ -14,6 +14,7 @@ class AppState {
 	void parse();
 	void eval();
 	void cleanup();
+	void handleFileLoad();
 
 public:
 	AppState(){}

@@ -1,5 +1,6 @@
 #include "core.hpp"
 #include <iostream>
+#include <fstream>
 
 void introduce(){
     std::cout<<"Arbitrary precision integer calculator\n";
@@ -10,6 +11,28 @@ void introduce(){
 AppState initApp(){
     introduce();
     return AppState();
+}
+
+void AppState::handleFileLoad() {
+    cleanup();
+    std::string fileName = evaluator.evalCtx.fileToExec;
+    evaluator.evalCtx.fileToExec = "";
+
+    if (fileName == "") return; //if no file to execute, just leave
+
+    std::ifstream file(fileName);
+
+    std::vector<std::string> lines;
+    std::string line = "";
+    while (std::getline(file, line)) {
+        lines.push_back(line);
+    }
+
+    for (const auto& line : lines) {
+        setSrc(line);
+        execute();
+    }
+    fileName = "";
 }
 
 //lexer wrapper
@@ -32,6 +55,8 @@ void AppState::eval(){
     auto root = parser.getRoot();       //setASTRoot only takes lvalues, so this variable is actually necessary XD
     evaluator.setASTRoot(root);
     evaluator.eval();
+    
+    handleFileLoad();
 }
 
 /*
