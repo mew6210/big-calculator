@@ -2,6 +2,7 @@
 #include "funcinfo.hpp"
 #include "funcreturn.hpp"
 #include <algorithm>
+#include <fstream>
 
 using ExprNodes = std::vector<std::unique_ptr<ExprNode>>;
 
@@ -259,6 +260,25 @@ namespace stlFuncs {
 		return funcReturn{ BigInt(0),false };	//void
 	}
 
+	//void
+	funcReturn execFile(ExprNodes& args, EvalCtx& eCtx) {
+
+		if (args.size() != 1) throw EvalException("", "");
+		if (args[0]->type() != NodeType::Var) throw EvalException("", "");
+
+		auto varNode = dynamic_cast<VariableExprNode*>(args[0].get());
+
+		std::string fileName = varNode->getName();
+		eCtx.fileToExec = fileName;
+
+		std::ifstream file(fileName);
+
+		if (!file.good()) throw EvalException("No such file", "");
+
+		eCtx.shouldPrint = false;
+		return funcReturn{ BigInt(0),false };
+	}
+
 }
 
 /*
@@ -351,10 +371,17 @@ std::vector<stlFunc> stlFunctions = {
 	},
 
 	{"showMyFunctions",
-	"Shows user-defined functions",
+	"\tShows user-defined functions",
 	"\tNo parameters, they are ignored",
 	"\t\"f(x) = x\n\t\"showMyFunctions()\"\" prints f(x) and its info",
 	stlFuncs::showMyFunctions
+	},
+
+	{"execFile",
+	"\tExecutes a given file line by line",
+	"\tOnly one parameter, has to be a variable, which is the name to the file, including extension",
+	"\t\"execFile(test1.txt)\" executes contents of a \"test.txt\" file",
+	stlFuncs::execFile
 	}
 
 };
