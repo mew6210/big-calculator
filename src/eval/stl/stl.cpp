@@ -240,6 +240,25 @@ namespace stlFuncs {
 
 		return funcReturn{ var.toString().size(),true };
 	}
+
+	//void
+	funcReturn showMyFunctions(ExprNodes& args, EvalCtx& eCtx) {
+
+		for (const auto& func : eCtx.userFunctions) {
+
+			std::cout << func.name << "(";
+			for (size_t i = 0; i < func.params.size(); i++) {
+				std::cout<<func.params[i];
+				if (i != func.params.size() - 1) std::cout << ",";
+			}
+			std::cout << ")";
+			std::cout << " = " << func.definition->toString();
+			std::cout << "\n";
+		}
+		eCtx.shouldPrint = false;
+		return funcReturn{ BigInt(0),false };	//void
+	}
+
 }
 
 /*
@@ -331,6 +350,12 @@ std::vector<stlFunc> stlFunctions = {
 	stlFuncs::cntDigits
 	},
 
+	{"showMyFunctions",
+	"Shows user-defined functions",
+	"\tNo parameters, they are ignored",
+	"\t\"f(x) = x\n\t\"showMyFunctions()\"\" prints f(x) and its info",
+	stlFuncs::showMyFunctions
+	}
 
 };
 
