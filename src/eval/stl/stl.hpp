@@ -6,4 +6,4 @@
 #include "../evalException.hpp"
 #include <optional>
 
-std::optional<BigInt> stlDispatch(std::string& funcName, std::vector<std::unique_ptr<ExprNode>>& args, EvalCtx& eCtx);
+std::optional<BigInt> funcDispatch(std::string& funcName, std::vector<std::unique_ptr<ExprNode>>& args, EvalCtx& eCtx);

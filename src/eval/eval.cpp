@@ -39,17 +39,9 @@ bool isVarSignNegative(const std::string& s) {
 	return s[0] == '-';
 }
 
-void Evaluator::handleAssignRoot() {
-
-	auto ASTRootAssignNode = dynamic_cast<BinaryExprNode*>(ASTRoot.get());	//it was already checked for it being an assignment binexprnode, so its safe to cast it
-
+void Evaluator::handleAssignVar(BinaryExprNode* ASTRootAssignNode) {	//dont need to free this pointer, since its not owning
 	auto rhs = ASTRootAssignNode->getRhs()->eval(evalCtx);	//evaluate right hand side
 	auto lhs = ASTRootAssignNode->getLhs();
-
-	if (lhs->type() != NodeType::Var) {	//check if lhs is variable, if not then its probably binexprnode, which means somebody is doing 'a=b=5' or something like that
-		throw EvalException("Incorrect assignment syntax","Only one part assignments are allowed, like 'a=5'",lhs, rhs,'=');
-	}
-
 	auto lhsVar = dynamic_cast<VariableExprNode*>(lhs.get());	//treat it like varexprnode
 	std::string varName = lhsVar->getName();
 
@@ -67,7 +59,53 @@ void Evaluator::handleAssignRoot() {
 	if (evalCtx.varExists(varName)) {
 		evalCtx.assignVar(varName, rhs);
 	}
-	else evalCtx.vars.push_back({ varName,std::move(rhs) });	
+	else evalCtx.vars.push_back({ varName,std::move(rhs) });
+}
+
+void Evaluator::handleAssignUserFunc(BinaryExprNode* ASTRootAssignNode) {
+
+	auto lhs = ASTRootAssignNode->getLhs();
+	//by this point lhs has to be CallExpr
+	auto lhsCall = dynamic_cast<CallExprNode*>(lhs.get());
+	std::string name = lhsCall->getName();
+	auto args = lhsCall->getArgs();
+
+	std::vector<std::string> params;
+
+	//each arg has to be a variable
+	for (auto& arg : args) {
+		if (arg->type() != NodeType::Var) throw EvalException("", "");
+		auto argVar = dynamic_cast<VariableExprNode*>(arg.get());
+		params.push_back(argVar->getName());
+	}
+	auto definition = ASTRootAssignNode->getRhs();
+	UserFunc eFunc = { name,params,std::move(definition) };
+
+	if (evalCtx.funcExists(name)) {
+		evalCtx.assignFunc(eFunc);
+	}
+	else evalCtx.userFunctions.push_back(std::move(eFunc));		//need to std::move eFunc cause it has std::unique_ptr
+	
+}
+
+void Evaluator::handleAssignRoot() {
+
+	auto ASTRootAssignNode = dynamic_cast<BinaryExprNode*>(ASTRoot.get());	//it was already checked for it being an assignment binexprnode, so its safe to cast it
+
+	auto lhsType = ASTRootAssignNode->lhsType();
+
+	if (lhsType != NodeType::Var && lhsType != NodeType::CallExpr) {	//its only legal to assign variables or functions to something
+		auto lhs = ASTRootAssignNode->getLhs();
+		auto rhs = ASTRootAssignNode->getRhs()->eval(evalCtx);	//evaluate right hand side
+		throw EvalException("Incorrect assignment syntax","Only one part assignments are allowed, like 'a=5'",lhs, rhs,'=');
+	}
+
+	if (lhsType == NodeType::Var) {
+		handleAssignVar(ASTRootAssignNode);
+	}
+	if (lhsType == NodeType::CallExpr) {
+		handleAssignUserFunc(ASTRootAssignNode);
+	}
 }
 
 BigInt BigIntNode::eval(EvalCtx&) {
@@ -103,8 +141,10 @@ BigInt VariableExprNode::eval(EvalCtx& ectx) {
 }
 
 BigInt CallExprNode::eval(EvalCtx& ectx) {
-	auto var = stlDispatch(funcName,args,ectx);
+	
+	auto var = funcDispatch(funcName, args, ectx);
 
 	if (var) return var.value();
 	else return BigInt(0);
+
 }

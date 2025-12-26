@@ -240,6 +240,25 @@ namespace stlFuncs {
 
 		return funcReturn{ var.toString().size(),true };
 	}
+
+	//void
+	funcReturn showMyFunctions(ExprNodes& args, EvalCtx& eCtx) {
+
+		for (const auto& func : eCtx.userFunctions) {
+
+			std::cout << func.name << "(";
+			for (size_t i = 0; i < func.params.size(); i++) {
+				std::cout<<func.params[i];
+				if (i != func.params.size() - 1) std::cout << ",";
+			}
+			std::cout << ")";
+			std::cout << " = " << func.definition->toString();
+			std::cout << "\n";
+		}
+		eCtx.shouldPrint = false;
+		return funcReturn{ BigInt(0),false };	//void
+	}
+
 }
 
 /*
@@ -331,6 +350,12 @@ std::vector<stlFunc> stlFunctions = {
 	stlFuncs::cntDigits
 	},
 
+	{"showMyFunctions",
+	"Shows user-defined functions",
+	"\tNo parameters, they are ignored",
+	"\t\"f(x) = x\n\t\"showMyFunctions()\"\" prints f(x) and its info",
+	stlFuncs::showMyFunctions
+	}
 
 };
 
@@ -373,8 +398,9 @@ void handleFuncNotFound(std::string& funcName) {
 	throw EvalException("\"" + funcName + "()\" function not found", errNote);
 }
 
-std::optional<BigInt> stlDispatch(std::string& funcName,ExprNodes& args, EvalCtx& eCtx) {
+std::optional<BigInt> funcDispatch(std::string& funcName,ExprNodes& args, EvalCtx& eCtx) {
 	
+	//check for stl functions
 	for (auto& func : stlFunctions) {
 		/*
 		look through each stl function, and if found return its value
@@ -396,6 +422,37 @@ std::optional<BigInt> stlDispatch(std::string& funcName,ExprNodes& args, EvalCtx
 			return std::nullopt;
 		}
 	}
+
+	//check for user functions
+	for (auto& func : eCtx.userFunctions) {
+
+		if (funcName == func.name) {
+			
+			if (func.params.size() != args.size()) throw EvalException("", "");
+
+			EvalCtx newEvalCtx{};
+			std::vector<std::pair<std::string,BigInt>> vars;
+			
+			for (size_t i = 0; i < func.params.size();i++) {
+				vars.push_back({ func.params[i],args[i]->eval(eCtx) });
+			}
+			
+			newEvalCtx.vars = vars;
+			newEvalCtx.userFunctions = std::move(eCtx.userFunctions);
+			auto val = func.definition->eval(newEvalCtx);
+			eCtx.userFunctions = std::move(newEvalCtx.userFunctions);
+			return val;
+		}
+
+	}
+	for (auto& func : eCtx.userFunctions) {
+		if (funcName == "?" + func.name) {
+			std::cout << func.definition->toString()<<"\n";
+			eCtx.shouldPrint = false;
+			return std::nullopt;
+		}
+	}
+
 
 	//by this point, stl function was not found
 	handleFuncNotFound(funcName);

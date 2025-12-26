@@ -122,7 +122,7 @@ void BigInt::multiplyBigInt(BigInt& bi) {
 		auto result = multiplyChunkInt64External(chunks,bi.chunks[i]);	//multiply every single chunk in 1st bigint
 		sums.push_back(result);
 	}
-
+	if (sums.size() == 0) { chunks = {}; return; }
 	auto resultChunks = sumUpMultiplicationResults(sums);
 	chunks = resultChunks;
 	trimTrailingChunks();
