@@ -74,7 +74,7 @@ void Evaluator::handleAssignUserFunc(BinaryExprNode* ASTRootAssignNode) {
 
 	//each arg has to be a variable
 	for (auto& arg : args) {
-		if (arg->type() != NodeType::Var) throw EvalException("", "");
+		if (arg->type() != NodeType::Var) throw EvalException("Function argument has to be a variable", "You provided: "+arg->toString());
 		auto argVar = dynamic_cast<VariableExprNode*>(arg.get());
 		params.push_back(argVar->getName());
 	}

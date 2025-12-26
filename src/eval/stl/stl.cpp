@@ -263,8 +263,8 @@ namespace stlFuncs {
 	//void
 	funcReturn execFile(ExprNodes& args, EvalCtx& eCtx) {
 
-		if (args.size() != 1) throw EvalException("", "");
-		if (args[0]->type() != NodeType::Var) throw EvalException("", "");
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in execFile(), expected 1", "Check out \"?execFile()\" to see the correct function parameters");
+		if (args[0]->type() != NodeType::Var) throw EvalException("Given argument has to be a variable", "Check out \"?execFile()\" to see the correct function parameters");
 
 		auto varNode = dynamic_cast<VariableExprNode*>(args[0].get());
 
@@ -273,7 +273,7 @@ namespace stlFuncs {
 
 		std::ifstream file(fileName);
 
-		if (!file.good()) throw EvalException("No such file", "");
+		if (!file.good()) throw EvalException("No such file", fileName+" does not exist");
 
 		eCtx.shouldPrint = false;
 		return funcReturn{ BigInt(0),false };
@@ -455,7 +455,7 @@ std::optional<BigInt> funcDispatch(std::string& funcName,ExprNodes& args, EvalCt
 
 		if (funcName == func.name) {
 			
-			if (func.params.size() != args.size()) throw EvalException("", "");
+			if (func.params.size() != args.size()) throw EvalException("Argument mismatch, " "function " + func.name + " expects " + std::to_string(func.params.size()) + " arguments, but " + std::to_string(args.size()) + " were provided","Check out ?"+func.name+"()");
 
 			EvalCtx newEvalCtx{};
 			std::vector<std::pair<std::string,BigInt>> vars;
