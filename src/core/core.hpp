@@ -18,9 +18,15 @@ class AppState {
 
 public:
 	AppState(){}
-
+	
+	//could be std::filesystem::path to make it more secure
+	void setFileToExec(const std::string& s) { evaluator.evalCtx.fileToExec = s; }
+	
 	void execute();
+	void executeFile() { handleFileLoad(); }
 	void setSrc(const std::string& s) { src = s; }
 };
 
 AppState initApp();
+
+void checkForStart(AppState& a);

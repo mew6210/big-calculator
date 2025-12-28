@@ -3,6 +3,7 @@
 #include "funcreturn.hpp"
 #include <algorithm>
 #include <fstream>
+#include <cstdio>
 
 using ExprNodes = std::vector<std::unique_ptr<ExprNode>>;
 
@@ -62,6 +63,20 @@ namespace helpers {
 		}
 
 		return prev[m];
+	}
+
+	std::string userFuncToStr(const UserFunc& func) {
+		std::string ret;
+		ret += func.name;
+		ret += "(";
+		for (size_t i = 0; i < func.params.size(); i++) {
+			ret += func.params[i];
+			if (i != func.params.size() - 1) ret += ",";
+		}
+		ret += ")";
+		ret += " = " + func.definition->toString();
+
+		return ret;
 	}
 
 }
@@ -247,13 +262,8 @@ namespace stlFuncs {
 
 		for (const auto& func : eCtx.userFunctions) {
 
-			std::cout << func.name << "(";
-			for (size_t i = 0; i < func.params.size(); i++) {
-				std::cout<<func.params[i];
-				if (i != func.params.size() - 1) std::cout << ",";
-			}
-			std::cout << ")";
-			std::cout << " = " << func.definition->toString();
+			std::string userFuncStr = helpers::userFuncToStr(func);
+			std::cout << userFuncStr;
 			std::cout << "\n";
 		}
 		eCtx.shouldPrint = false;
@@ -279,6 +289,39 @@ namespace stlFuncs {
 		return funcReturn{ BigInt(0),false };
 	}
 
+	//void
+	funcReturn save(ExprNodes& args, EvalCtx& eCtx) {
+
+		std::ofstream file("start.txt",std::ios::trunc); //clear file on open
+
+		for (const auto& var : eCtx.vars) {
+			file << var.first + " = " + var.second.toString()<<"\n";
+		}
+
+		for (const auto& func : eCtx.userFunctions) {
+			file<<helpers::userFuncToStr(func);
+			file<< "\n";
+		}
+
+		eCtx.shouldPrint = false;
+		return funcReturn{ BigInt(0),false }; //file auto closed
+	}
+
+	//void
+	funcReturn clearSave(ExprNodes& args, EvalCtx& eCtx) {
+
+		int status = remove("start.txt");	//remove save file
+
+		if (status==0) {
+			std::cout << "Save successfully deleted\n";
+		}
+		else {
+			std::cout << "Error removing save file\n";
+		}
+
+		eCtx.shouldPrint = false;
+		return funcReturn{ BigInt(0),false }; 
+	}
 }
 
 /*
@@ -382,6 +425,19 @@ std::vector<stlFunc> stlFunctions = {
 	"\tOnly one parameter, has to be a variable, which is the name to the file, including extension",
 	"\t\"execFile(test1.txt)\" executes contents of a \"test.txt\" file",
 	stlFuncs::execFile
+	},
+
+	{"save",
+	"\tSaves variables and functions to a file, that will be loaded at the next startup",
+	"\tNone, any are ignored",
+	"",
+	stlFuncs::save
+	},
+	{"clearSave",
+	"\tDeletes the save file made by \"save()\"",
+	"\tNone, any are ignored",
+	"",
+	stlFuncs::clearSave
 	}
 
 };

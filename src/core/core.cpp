@@ -73,3 +73,15 @@ void AppState::execute() {
     eval();
     cleanup();
 }
+
+void checkForStart(AppState& state) {
+
+    std::ifstream file("start.txt");
+
+    if (file.good()) {
+        state.setFileToExec("start.txt");
+        state.executeFile();
+        std::cout << "file with previous vars and funcs found and loaded successfully\n";
+    }
+    else return;
+}
