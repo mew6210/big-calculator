@@ -322,6 +322,18 @@ namespace stlFuncs {
 		eCtx.shouldPrint = false;
 		return funcReturn{ BigInt(0),false }; 
 	}
+
+	funcReturn mod(ExprNodes& args, EvalCtx& eCtx) {
+
+		if (args.size() != 2) throw EvalException("", "");
+
+		BigInt a = args[0]->eval(eCtx);
+		BigInt b = args[1]->eval(eCtx);
+
+		auto res = divideUnsigned(a, b);
+		
+		return funcReturn{ res.remainder,true};
+	}
 }
 
 /*
@@ -438,6 +450,12 @@ std::vector<stlFunc> stlFunctions = {
 	"\tNone, any are ignored",
 	"",
 	stlFuncs::clearSave
+	},
+	{"mod",
+	"\tReturns remainder of the division between 2 parameters",
+	"\tTwo parameters, any expressions",
+	"\t\"mod(5,3)\" returns 2, because its the remainder of division 5 / 3",
+	stlFuncs::mod
 	}
 
 };

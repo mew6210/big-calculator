@@ -257,7 +257,9 @@ namespace divHelpers {
 /*
     @brief implements knuth's algorithm d for long division of any base
 
-    each step is marked as Dx where x is the number of a step
+    each step is marked as Dx where x is the number of a step in knuth's algorithm d specification, that can be found here: 
+    https://www.haio.ir/app/uploads/2022/01/The-art-of-computer-programming.-Vol.2.-Seminumerical-algorithms-by-Knuth-Donald-E-z-lib.org_.pdf
+    at about page 273 (pdf's 289) chapter 4.3.1
 
 */
 void BigInt::divideBigInt(BigInt& divisor) {
@@ -393,19 +395,17 @@ void BigInt::divideBigInt(BigInt& divisor) {
     }
 }
 
-// Alternative: Non-modifying version that returns DivResult
+//alternative function for getting the remainder, 
+//no documentation, but it works the same way as the function above
 DivResult divideUnsigned(BigInt a, BigInt b) {
     DivResult result;
 
-    // Make copies
     BigInt u = a;
     BigInt v = b;
 
-    // Ensure both are positive
     u.isPositive = true;
     v.isPositive = true;
 
-    // Handle trivial cases
     if (v.biggerThan(u)) {
         result.quotient.chunks = { 0 };
         result.quotient.isPositive = true;
@@ -422,7 +422,6 @@ DivResult divideUnsigned(BigInt a, BigInt b) {
         return result;
     }
 
-    // Normalize
     uint64_t vn_1 = v.chunks.back();
     uint64_t d = divHelpers::computeNormalizationFactor(vn_1);
 
@@ -434,30 +433,23 @@ DivResult divideUnsigned(BigInt a, BigInt b) {
     size_t m = u.chunks.size() - v.chunks.size();
     size_t n = v.chunks.size();
 
-    // Initialize quotient
     result.quotient.chunks.resize(m + 1, 0);
     result.quotient.isPositive = true;
 
-    // Add extra digit to u
     u.chunks.push_back(0);
 
-    // Get divisor's high digits
     uint64_t v1 = v.chunks[n - 1];
     uint64_t v0 = (n > 1) ? v.chunks[n - 2] : 0;
 
-    // Main division loop
     for (int j = m; j >= 0; j--) {
-        // Get current window
         uint64_t u2 = 0, u1 = 0, u0 = 0;
         size_t idx = j + n;
         if (idx < u.chunks.size()) u2 = u.chunks[idx];
         if (idx - 1 < u.chunks.size()) u1 = u.chunks[idx - 1];
         if (idx - 2 < u.chunks.size()) u0 = u.chunks[idx - 2];
 
-        // Estimate quotient digit
         uint64_t qhat = divHelpers::estimateQuotient(u2, u1, u0, v1, v0);
 
-        // Adjust qhat if necessary
         for (int adjust = 0; adjust < 2; adjust++) {
             if (isQuotientTooLarge(u, v, qhat, j)) {
                 if (qhat > 0) qhat--;
@@ -466,14 +458,8 @@ DivResult divideUnsigned(BigInt a, BigInt b) {
                 break;
             }
         }
-
-        // Subtract v × qhat from u
         subtractMultiple(u, v, qhat, j);
-
-        // Store quotient digit
         result.quotient.chunks[j] = qhat;
-
-        // Early exit if remainder is zero
         if (u.chunks.size() == 1 && u.chunks[0] == 0) {
             for (int k = j - 1; k >= 0; k--) {
                 result.quotient.chunks[k] = 0;
@@ -482,17 +468,14 @@ DivResult divideUnsigned(BigInt a, BigInt b) {
         }
     }
 
-    // Clean up
     u.trimTrailingChunks();
     if (u.chunks.empty()) {
         u.chunks.push_back(0);
     }
 
-    // Denormalize remainder
     if (d > 1) {
         u.divideChunkInt(d, true);
     }
-
 
     result.remainder = u;
     result.remainder.isPositive = true;
