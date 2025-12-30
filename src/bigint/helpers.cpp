@@ -118,8 +118,3 @@ void checkMod() {
 	uint64_t remainder = a.moduloChunkInt(b);
 	std::cout << "remainder: " << remainder;
 }
-void checkExp() {
-	BigInt a = BigInt(10);
-	a.exponentiateChunkInt(0);
-	a.inspectChunks(chunkDisplayMode::decimal);
-}

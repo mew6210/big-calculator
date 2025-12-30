@@ -11,7 +11,6 @@ void BinaryExprNode::print(int indent = 0) {
 		{OperatorType::subtract,"subtract"},
 		{OperatorType::multiply,"multiply"},
 		{OperatorType::divide,"divide"},
-		{OperatorType::exponentiate,"exponentiate"},
 		{OperatorType::undefined,"undefined"}
 	};
 	std::cout << std::string(indent, ' ') << "BinaryExprNode" << " op: " << binOpToStringMap[op]<< '\n';
@@ -59,7 +58,6 @@ char operatorTypeToChar(OperatorType& op) {
 		case OperatorType::subtract: return '-';
 		case OperatorType::multiply: return '*';
 		case OperatorType::divide: return '/';
-		case OperatorType::exponentiate: return '^';
 		case OperatorType::undefined: return '?';
 	}
 }

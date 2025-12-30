@@ -81,20 +81,13 @@ public:
 
 	uChunkInt moduloChunkInt(uChunkInt val);
 
-	void exponentiateChunkInt(uChunkInt val);
-	
-
 	std::string toString() const;
 	void inspectChunks(chunkDisplayMode cdm);
 	void inspectChunks(chunkDisplayMode cdm, int indent);
 	void print();
 	void flipSign() { isPositive = !isPositive; };
 	bool isNegative() { return !isPositive; }
-	bool isZero() { 
-		if (chunks.size() == 0) return true;
-		if (chunks.size() == 1 && chunks[0] == 0) return true;
-		else return false;
-		 }
+	bool isZero() { if (chunks.size() == 0) return true;if (chunks.size() == 1 && chunks[0] == 0) return true; else return false;}
 	friend BigInt add(BigInt& a, BigInt& b);
 	friend BigInt subtract(BigInt& a, BigInt& b);
 	friend BigInt abs(BigInt& a);

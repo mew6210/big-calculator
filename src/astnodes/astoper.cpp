@@ -10,7 +10,6 @@ OperatorType tokenToOper(const Token& tok) {
 	case TokenType::minusSign: return OperatorType::subtract;
 	case TokenType::multipSign: return OperatorType::multiply;
 	case TokenType::divSign: return OperatorType::divide;
-	case TokenType::exponentSign: return OperatorType::exponentiate;
 	default: return OperatorType::undefined;
 	}
 }

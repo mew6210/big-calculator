@@ -7,7 +7,6 @@ enum class OperatorType {
 	subtract,
 	multiply,
 	divide,
-	exponentiate,
 	undefined
 };
 
