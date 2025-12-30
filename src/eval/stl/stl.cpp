@@ -325,7 +325,7 @@ namespace stlFuncs {
 
 	funcReturn mod(ExprNodes& args, EvalCtx& eCtx) {
 
-		if (args.size() != 2) throw EvalException("", "");
+		if (args.size() != 2) throw EvalException("Wrong amount of arguments in mod(), expected 2", "Check out \"?mod()\" to see the correct function parameters");
 
 		BigInt a = args[0]->eval(eCtx);
 		BigInt b = args[1]->eval(eCtx);
@@ -342,7 +342,7 @@ namespace stlFuncs {
 	*/
 	funcReturn exp(ExprNodes& args, EvalCtx& eCtx) {
 
-		if (args.size() != 2) throw EvalException("", "");
+		if (args.size() != 2) throw EvalException("Wrong amount of arguments in exp(), expected 2", "Check out \"?exp()\" to see the correct function parameters");
 
 		BigInt b = args[0]->eval(eCtx);
 		BigInt n = args[1]->eval(eCtx);
