@@ -122,7 +122,7 @@ BigInt BinaryExprNode::eval(EvalCtx& evalCtx){
 	case OperatorType::multiply: a.multiplyBigInt(b); break;
 	case OperatorType::divide: {
 		if (b.equals(BigInt("0"))) throw EvalException("Division by zero", "Dont divide by 0", a, BigInt(0), '/');
-		else a.divideBigInt(b);
+		else a.divideBigInt(b,false);
 	}break;
 	case OperatorType::exponentiate: throw EvalException("exponentiation not yet supported", "dont use it please", a, b, '^'); break;	//TODO: EXPONENTIATION
 	case OperatorType::assign: throw EvalException("Assignment caught in the middle of an eval", "Assignment here is only one-part like 'a=5'", a, b, '='); break;	//TODO: ASSIGNMENT

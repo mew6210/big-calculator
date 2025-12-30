@@ -262,7 +262,7 @@ namespace divHelpers {
     at about page 273 (pdf's 289) chapter 4.3.1
 
 */
-void BigInt::divideBigInt(BigInt& divisor) {
+void BigInt::divideBigInt(BigInt& divisor,bool toMute) {
     
     // Handle trivial cases using existing methods
     if (divisor.biggerThan(*this) && (isPositive && divisor.isPositive)) {
@@ -276,7 +276,7 @@ void BigInt::divideBigInt(BigInt& divisor) {
         uint64_t remainder = moduloChunkInt(divisor.chunks[0]);
         divideChunkInt(divisor.chunks[0],true);
         isPositive = !(isPositive ^ divisor.isPositive);
-        if(remainder!=0) std::cout << "Division did not produce a whole number, remainder: " << remainder << "\n";
+        if(remainder!=0 && !toMute) std::cout << "Division did not produce a whole number, remainder: " << remainder << "\n";
         
         return;
     }
@@ -390,7 +390,7 @@ void BigInt::divideBigInt(BigInt& divisor) {
         isPositive = true;
     }
 
-    if (!u.equals(BigInt("0"))) {
+    if (!u.equals(BigInt("0")) && !toMute) {
         std::cout << "Division did not produce a whole number, remainder: " << u.toString()<<"\n";
     }
 }

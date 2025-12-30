@@ -77,7 +77,7 @@ public:
 	void multiplyBigInt(BigInt& bi);
 
 	void divideChunkInt(uChunkInt val, bool toMute = false);
-	void divideBigInt(BigInt& bi);
+	void divideBigInt(BigInt& bi,bool toMute);
 
 	uChunkInt moduloChunkInt(uChunkInt val);
 
@@ -90,7 +90,11 @@ public:
 	void print();
 	void flipSign() { isPositive = !isPositive; };
 	bool isNegative() { return !isPositive; }
-
+	bool isZero() { 
+		if (chunks.size() == 0) return true;
+		if (chunks.size() == 1 && chunks[0] == 0) return true;
+		else return false;
+		 }
 	friend BigInt add(BigInt& a, BigInt& b);
 	friend BigInt subtract(BigInt& a, BigInt& b);
 	friend BigInt abs(BigInt& a);

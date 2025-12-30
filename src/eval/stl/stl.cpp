@@ -334,6 +334,37 @@ namespace stlFuncs {
 		
 		return funcReturn{ res.remainder,true};
 	}
+
+	/*
+		@brief fast exponentiation algorithm
+		to avoid multiplying n times, fast exponentiation algorithm is used
+		source: https://math-sites.uncg.edu/sites/pauli/112/HTML/secfastexp.html
+	*/
+	funcReturn exp(ExprNodes& args, EvalCtx& eCtx) {
+
+		if (args.size() != 2) throw EvalException("", "");
+
+		BigInt b = args[0]->eval(eCtx);
+		BigInt n = args[1]->eval(eCtx);
+
+		BigInt a = BigInt(1);
+
+		BigInt c = b;
+
+		while (!n.isZero()) {
+			BigInt r = divideUnsigned(n, BigInt(2)).remainder;
+
+			if (r.equals(BigInt("1"))) {
+				a.multiplyBigInt(c);
+			}
+			BigInt temp = BigInt(2);
+			n.divideBigInt(temp,true);
+
+			c.multiplyBigInt(c);
+		}
+		return funcReturn{ a,true };
+	}
+
 }
 
 /*
@@ -451,11 +482,19 @@ std::vector<stlFunc> stlFunctions = {
 	"",
 	stlFuncs::clearSave
 	},
+	
 	{"mod",
 	"\tReturns remainder of the division between 2 parameters",
 	"\tTwo parameters, any expressions",
 	"\t\"mod(5,3)\" returns 2, because its the remainder of division 5 / 3",
 	stlFuncs::mod
+	},
+	
+	{"exp",
+	"\tReturns first parameter exponentiated to second parameter",
+	"\tTwo parameters, any expressions",
+	"\t\"exp(2,3)\" returns 8 becase 2^3",
+	stlFuncs::exp
 	}
 
 };
