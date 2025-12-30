@@ -254,23 +254,28 @@ namespace divHelpers {
     
 }
 
-void BigInt::divideBigInt(BigInt& divisor) {
-    // Handle division by zero
-    if (divisor.chunks.empty()) {
-        throw std::runtime_error("Division by zero");
-    }
+/*
+    @brief implements knuth's algorithm d for long division of any base
 
+    each step is marked as Dx where x is the number of a step
+
+*/
+void BigInt::divideBigInt(BigInt& divisor) {
+    
     // Handle trivial cases using existing methods
-    if (divisor.biggerThan(*this)) {
+    if (divisor.biggerThan(*this) && (isPositive && divisor.isPositive)) {
         chunks = { 0 };
         isPositive = true;
         return;
     }
 
+    //fast path for divisor chunk's <2, since knuth's algorithm d doesnt allow divisor's with less digits than 2
     if (divisor.chunks.size() == 1) {
         uint64_t remainder = moduloChunkInt(divisor.chunks[0]);
-        divideChunkInt(divisor.chunks[0]);
+        divideChunkInt(divisor.chunks[0],true);
         isPositive = !(isPositive ^ divisor.isPositive);
+        if(remainder!=0) std::cout << "Division did not produce a whole number, remainder: " << remainder << "\n";
+        
         return;
     }
 
@@ -279,23 +284,27 @@ void BigInt::divideBigInt(BigInt& divisor) {
     isPositive = true;
     divisor.isPositive = true;
 
-    // Normalize using helper function
+
+    // D1[Normalize]
     uint64_t vn_1 = divisor.chunks.back();
     uint64_t d = divHelpers::computeNormalizationFactor(vn_1);
 
-    // Create working copies
+    // D0 [Define]
     BigInt u = *this;      // Dividend (will become remainder)
     BigInt v = divisor;    // Divisor
 
+    //D1[Normalize]
     // Normalize if needed
     if (d > 1) {
         u.multiplyChunkInt(d);
         v.multiplyChunkInt(d);
     }
 
+    //D0 [Define]
     size_t m = u.chunks.size() - v.chunks.size();
     size_t n = v.chunks.size();
 
+    //D0 [Define]
     // Create quotient
     BigInt quotient;
     quotient.chunks.resize(m + 1, 0);
@@ -305,9 +314,11 @@ void BigInt::divideBigInt(BigInt& divisor) {
     uint64_t v1 = v.chunks[n - 1];
     uint64_t v0 = (n > 1) ? v.chunks[n - 2] : 0;
 
+    //D1 [Normalize]
     // Add an extra zero digit to u as required by Algorithm D
     u.chunks.push_back(0);
 
+    // D2 [Initialize j]
     // Main division loop - Knuth's Algorithm D
     for (int j = m; j >= 0; j--) {
         // Get three high digits of current window in u
@@ -318,14 +329,16 @@ void BigInt::divideBigInt(BigInt& divisor) {
         if (idx - 1 < u.chunks.size()) u1 = u.chunks[idx - 1];
         if (idx - 2 < u.chunks.size()) u0 = u.chunks[idx - 2];
 
+        //D3 [Calculate qhat]
         // Estimate quotient digit using helper function
         uint64_t qhat = divHelpers::estimateQuotient(u2, u1, u0, v1, v0);
 
+        //D5 [Test qhat] //knuth says at most 2 adjustments needed
         // Adjust qhat if necessary (at most 2 times)
         for (int adjust = 0; adjust < 2; adjust++) {
             if (isQuotientTooLarge(u, v, qhat, j)) {
                 if (qhat > 0) {
-                    qhat--;
+                    qhat--;     //D6[Add back] 
                 }
             }
             else {
@@ -333,9 +346,11 @@ void BigInt::divideBigInt(BigInt& divisor) {
             }
         }
 
+        //D4 [Multiply and subtract]
         // Subtract v × qhat from u using helper function
         subtractMultiple(u, v, qhat, j);
 
+        //D5 [Store qj]
         // Store quotient digit
         quotient.chunks[j] = qhat;
 
@@ -347,7 +362,7 @@ void BigInt::divideBigInt(BigInt& divisor) {
             }
             break;
         }
-    }
+    }   //D7 [Loop on j]
 
     // Remove any extra zero we added
     u.trimTrailingChunks();
@@ -355,6 +370,7 @@ void BigInt::divideBigInt(BigInt& divisor) {
         u.chunks.push_back(0);
     }
 
+    //D8 [Unnormalize]
     // Denormalize remainder if needed
     if (d > 1) {
         u.divideChunkInt(d, true);
@@ -372,8 +388,8 @@ void BigInt::divideBigInt(BigInt& divisor) {
         isPositive = true;
     }
 
-    if (!u.equals(0)) {
-        std::cout << "Remainder exists: " << u.toString()<<"\n";
+    if (!u.equals(BigInt("0"))) {
+        std::cout << "Division did not produce a whole number, remainder: " << u.toString()<<"\n";
     }
 }
 
@@ -389,11 +405,6 @@ DivResult divideUnsigned(BigInt a, BigInt b) {
     u.isPositive = true;
     v.isPositive = true;
 
-    // Handle division by zero
-    if (v.chunks.empty() || (v.chunks.size() == 1 && v.chunks[0] == 0)) {
-        throw std::runtime_error("Division by zero");
-    }
-
     // Handle trivial cases
     if (v.biggerThan(u)) {
         result.quotient.chunks = { 0 };
@@ -404,7 +415,7 @@ DivResult divideUnsigned(BigInt a, BigInt b) {
 
     if (v.chunks.size() == 1) {
         uChunkInt rem = u.moduloChunkInt(v.chunks[0]);
-        u.divideChunkInt(v.chunks[0]);
+        u.divideChunkInt(v.chunks[0],true);
         result.quotient = u;
         result.remainder.chunks = { rem };
         result.remainder.isPositive = true;
@@ -482,23 +493,9 @@ DivResult divideUnsigned(BigInt a, BigInt b) {
         u.divideChunkInt(d, true);
     }
 
+
     result.remainder = u;
     result.remainder.isPositive = true;
 
     return result;
 }
-/*
-void BigInt::divideBigInt(BigInt& bi) {
-
-    if (bi.chunks.size() == 1) {
-        divideChunkInt(bi.chunks[0], true);
-        return;
-    }
-
-
-    auto res = divideUnsigned(*this, bi);
-    std::cout << "quotient: " << res.quotient.toString()<<"\n";
-    std::cout << "reminder: " << res.remainder.toString();
-
-}
-*/
