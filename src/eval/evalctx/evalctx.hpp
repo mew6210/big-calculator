@@ -13,6 +13,8 @@ struct EvalCtx {
 	std::string fileToExec="";
 	bool shouldPrint = true;
 	std::vector<UserFunc> userFunctions;
+	bool showLexerOutput = false;
+	bool showParserOutput = false;
 
 	BigInt getVar(const std::string& name);
 	bool varExists(std::string& name);

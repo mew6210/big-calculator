@@ -38,7 +38,7 @@ void AppState::handleFileLoad() {
 //lexer wrapper
 void AppState::lex(){
     tokens = lexer.getTokensFromString(src);
-    //lexer.printTokens();
+    if(evaluator.evalCtx.showLexerOutput) lexer.printTokens();
 }
 
 //parser wrapper
@@ -46,7 +46,7 @@ void AppState::parse(){
     parser.setTokens(tokens);
     parser.setSrc(src);
     parser.parse();
-    //parser.print();
+    if(evaluator.evalCtx.showParserOutput) parser.print();
 }
 
 //evaluator wrapper

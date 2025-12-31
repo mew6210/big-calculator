@@ -364,6 +364,33 @@ namespace stlFuncs {
 		}
 		return funcReturn{ a,true };
 	}
+	
+	funcReturn lexerOutput(ExprNodes& args, EvalCtx& eCtx) {
+
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in lexerOutput(), expected 1", "Check out \"?lexerOutput()\" to see the correct function parameters");
+
+		BigInt var = args[0]->eval(eCtx);
+
+		if(var.equals(BigInt(1))) eCtx.showLexerOutput = true;
+		if (var.isZero()) eCtx.showLexerOutput = false;
+
+		eCtx.shouldPrint = false;
+		return funcReturn{ BigInt(0),false };
+	}
+
+
+	funcReturn parserOutput(ExprNodes& args, EvalCtx& eCtx) {
+
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in parserOutput(), expected 1", "Check out \"?parserOutput()\" to see the correct function parameters");
+
+		BigInt var = args[0]->eval(eCtx);
+
+		if (var.equals(BigInt(1))) eCtx.showParserOutput = true;
+		if (var.isZero()) eCtx.showParserOutput = false;
+
+		eCtx.shouldPrint = false;
+		return funcReturn{ BigInt(0),false };
+	}
 
 }
 
@@ -495,6 +522,20 @@ std::vector<stlFunc> stlFunctions = {
 	"\tTwo parameters, any expressions",
 	"\t\"exp(2,3)\" returns 8 becase 2^3",
 	stlFuncs::exp
+	},
+	
+	{ "lexerOutput",
+	"\tToggles if lexer output should be printed to the console",
+	"\tOnly one parameter, any expression that evaluates to either 0 or 1, if its something else it ignores it",
+	"\t\"lexerOutput(1)\" now lexer output will be shown in console",
+	stlFuncs::lexerOutput
+	},
+
+	{ "parserOutput",
+	"\tToggles if parser output should be printed to the console",
+	"\tOnly one parameter, any expression that evaluates to either 0 or 1, if its something else it ignores it",
+	"\t\"parserOutput(1)\" now parser output will be shown in console",
+	stlFuncs::parserOutput
 	}
 
 };
