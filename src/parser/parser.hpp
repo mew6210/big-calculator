@@ -16,8 +16,7 @@ class Parser {
 		{TokenType::plusSign,10},
 		{TokenType::minusSign,10},
 		{TokenType::multipSign,20},
-		{TokenType::divSign,20},
-		{TokenType::exponentSign,30}
+		{TokenType::divSign,20}
 	};
 
 	Token getNextToken();

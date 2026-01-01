@@ -12,6 +12,7 @@ void checkSubtr();
 void checkDiv();
 void checkMod();
 void checkExp();
+
 typedef uint64_t uChunkInt;
 typedef int64_t chunkInt;
 
@@ -23,6 +24,15 @@ struct Remainder {
 	uint64_t value;
 	uint64_t chunkPos;
 };
+
+struct DivResult;
+
+struct uint128Emul {
+	uint64_t high;
+	uint64_t low;
+};
+
+uint128Emul mult64to128(uint64_t op1, uint64_t op2);
 
 class BigInt {
 
@@ -67,25 +77,28 @@ public:
 	void multiplyBigInt(BigInt& bi);
 
 	void divideChunkInt(uChunkInt val, bool toMute = false);
+	void divideBigInt(BigInt& bi,bool toMute);
 
 	uChunkInt moduloChunkInt(uChunkInt val);
 
-	void exponentiateChunkInt(uChunkInt val);
-	
-
-	std::string toString();
+	std::string toString() const;
 	void inspectChunks(chunkDisplayMode cdm);
 	void inspectChunks(chunkDisplayMode cdm, int indent);
 	void print();
 	void flipSign() { isPositive = !isPositive; };
 	bool isNegative() { return !isPositive; }
-
+	bool isZero() { if (chunks.size() == 0) return true;if (chunks.size() == 1 && chunks[0] == 0) return true; else return false;}
 	friend BigInt add(BigInt& a, BigInt& b);
 	friend BigInt subtract(BigInt& a, BigInt& b);
 	friend BigInt abs(BigInt& a);
+	friend DivResult divideUnsigned(BigInt a, BigInt b);
+
+	friend bool isQuotientTooLarge(BigInt& u, BigInt& v, uint64_t qhat, size_t j);
+	friend void subtractMultiple(BigInt& u, BigInt& v, uint64_t qhat, size_t j);
+
 };
 
-struct uint128Emul {
-	uint64_t high;
-	uint64_t low;
+struct DivResult {
+	BigInt quotient;
+	BigInt remainder;
 };

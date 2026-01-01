@@ -38,7 +38,7 @@ void AppState::handleFileLoad() {
 //lexer wrapper
 void AppState::lex(){
     tokens = lexer.getTokensFromString(src);
-    //lexer.printTokens();
+    if(evaluator.evalCtx.showLexerOutput) lexer.printTokens();
 }
 
 //parser wrapper
@@ -46,7 +46,7 @@ void AppState::parse(){
     parser.setTokens(tokens);
     parser.setSrc(src);
     parser.parse();
-    //parser.print();
+    if(evaluator.evalCtx.showParserOutput) parser.print();
 }
 
 //evaluator wrapper
@@ -68,8 +68,21 @@ void AppState::cleanup() {
 }
 
 void AppState::execute() {
+    if (src == "") return;
     lex();
     parse();
     eval();
     cleanup();
+}
+
+void checkForStart(AppState& state) {
+
+    std::ifstream file("start.txt");
+
+    if (file.good()) {
+        state.setFileToExec("start.txt");
+        state.executeFile();
+        std::cout << "file with previous vars and funcs found and loaded successfully\n";
+    }
+    else return;
 }

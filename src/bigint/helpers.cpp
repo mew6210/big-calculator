@@ -104,11 +104,11 @@ void checkSubtr() {
 
 void checkDiv() {
 
-	BigInt a = BigInt("55340232221128654850");
-	uint64_t b = 5;
-	a.divideChunkInt(b);
+	BigInt a = BigInt("10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+	BigInt b = BigInt("100000000000000000000000000000000000000000000000001");
+	a.divideBigInt(b,false);
+	std::cout << a.toString() << "\n";
 
-	a.inspectChunks(chunkDisplayMode::decimal);
 }
 
 void checkMod() {
@@ -117,9 +117,4 @@ void checkMod() {
 
 	uint64_t remainder = a.moduloChunkInt(b);
 	std::cout << "remainder: " << remainder;
-}
-void checkExp() {
-	BigInt a = BigInt(10);
-	a.exponentiateChunkInt(0);
-	a.inspectChunks(chunkDisplayMode::decimal);
 }

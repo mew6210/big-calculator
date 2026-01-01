@@ -12,7 +12,6 @@ enum class TokenType {
     assignOp = 9,
     comma = 10,
     undefined = 11,
-    exponentSign = 12,
     tokEOF = 13
 };
 

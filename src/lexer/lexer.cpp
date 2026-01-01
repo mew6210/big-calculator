@@ -15,7 +15,6 @@ std::unordered_map<char,TokenType> singleOpsToEnumMap = {
     {'/',TokenType::divSign},
     {'=',TokenType::assignOp},
     {',',TokenType::comma},
-    {'^',TokenType::exponentSign}
 };
 
 /*
@@ -220,7 +219,6 @@ void Lexer::printTokens(){
         case TokenType::identifier: std::cout << "some variable named: "<<token.value<<" "<<printTokenPosAndLength(token)<<"\n";     break;
         case TokenType::assignOp:   std::cout << "assign operation "<<printTokenPosAndLength(token)<<"\n";  break;
         case TokenType::comma:      std::cout << "comma " << printTokenPosAndLength(token) << "\n";         break;
-        case TokenType::exponentSign: std::cout << "exponent sign" << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::tokEOF: std::cout << "end of file token\n";                                         break;
         case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";                                       break;
         }

@@ -3,6 +3,7 @@
 #include "funcreturn.hpp"
 #include <algorithm>
 #include <fstream>
+#include <cstdio>
 
 using ExprNodes = std::vector<std::unique_ptr<ExprNode>>;
 
@@ -62,6 +63,20 @@ namespace helpers {
 		}
 
 		return prev[m];
+	}
+
+	std::string userFuncToStr(const UserFunc& func) {
+		std::string ret;
+		ret += func.name;
+		ret += "(";
+		for (size_t i = 0; i < func.params.size(); i++) {
+			ret += func.params[i];
+			if (i != func.params.size() - 1) ret += ",";
+		}
+		ret += ")";
+		ret += " = " + func.definition->toString();
+
+		return ret;
 	}
 
 }
@@ -134,7 +149,7 @@ namespace stlFuncs {
 			"\tIf you want to check all avalible functions and their documentation, type \"showfunctions()\"\n"
 			"NEXT STEPS\n"
 			"\tPlay around, have fun and maybe try to break it, im curious how it behaves under user unpredictability\n"
-			"\tType \"showfunctions()\" to check out other features\n"
+			"\tType \"showFunctions()\" to check out other features\n"
 			"\tAlso if you are unsure about some function, u can write \"?\" at the start of it to get its description,like:\n"
 			"\t?help()\n"
 			;
@@ -247,13 +262,8 @@ namespace stlFuncs {
 
 		for (const auto& func : eCtx.userFunctions) {
 
-			std::cout << func.name << "(";
-			for (size_t i = 0; i < func.params.size(); i++) {
-				std::cout<<func.params[i];
-				if (i != func.params.size() - 1) std::cout << ",";
-			}
-			std::cout << ")";
-			std::cout << " = " << func.definition->toString();
+			std::string userFuncStr = helpers::userFuncToStr(func);
+			std::cout << userFuncStr;
 			std::cout << "\n";
 		}
 		eCtx.shouldPrint = false;
@@ -274,6 +284,109 @@ namespace stlFuncs {
 		std::ifstream file(fileName);
 
 		if (!file.good()) throw EvalException("No such file", fileName+" does not exist");
+
+		eCtx.shouldPrint = false;
+		return funcReturn{ BigInt(0),false };
+	}
+
+	//void
+	funcReturn save(ExprNodes& args, EvalCtx& eCtx) {
+
+		std::ofstream file("start.txt",std::ios::trunc); //clear file on open
+
+		for (const auto& var : eCtx.vars) {
+			file << var.first + " = " + var.second.toString()<<"\n";
+		}
+
+		for (const auto& func : eCtx.userFunctions) {
+			file<<helpers::userFuncToStr(func);
+			file<< "\n";
+		}
+
+		eCtx.shouldPrint = false;
+		return funcReturn{ BigInt(0),false }; //file auto closed
+	}
+
+	//void
+	funcReturn clearSave(ExprNodes& args, EvalCtx& eCtx) {
+
+		int status = remove("start.txt");	//remove save file
+
+		if (status==0) {
+			std::cout << "Save successfully deleted\n";
+		}
+		else {
+			std::cout << "Error removing save file\n";
+		}
+
+		eCtx.shouldPrint = false;
+		return funcReturn{ BigInt(0),false }; 
+	}
+
+	funcReturn mod(ExprNodes& args, EvalCtx& eCtx) {
+
+		if (args.size() != 2) throw EvalException("Wrong amount of arguments in mod(), expected 2", "Check out \"?mod()\" to see the correct function parameters");
+
+		BigInt a = args[0]->eval(eCtx);
+		BigInt b = args[1]->eval(eCtx);
+
+		auto res = divideUnsigned(a, b);
+		
+		return funcReturn{ res.remainder,true};
+	}
+
+	/*
+		@brief fast exponentiation algorithm
+		to avoid multiplying n times, fast exponentiation algorithm is used
+		source: https://math-sites.uncg.edu/sites/pauli/112/HTML/secfastexp.html
+	*/
+	funcReturn exp(ExprNodes& args, EvalCtx& eCtx) {
+
+		if (args.size() != 2) throw EvalException("Wrong amount of arguments in exp(), expected 2", "Check out \"?exp()\" to see the correct function parameters");
+
+		BigInt b = args[0]->eval(eCtx);
+		BigInt n = args[1]->eval(eCtx);
+
+		BigInt a = BigInt(1);
+
+		BigInt c = b;
+
+		while (!n.isZero()) {
+			BigInt r = divideUnsigned(n, BigInt(2)).remainder;
+
+			if (r.equals(BigInt("1"))) {
+				a.multiplyBigInt(c);
+			}
+			BigInt temp = BigInt(2);
+			n.divideBigInt(temp,true);
+
+			c.multiplyBigInt(c);
+		}
+		return funcReturn{ a,true };
+	}
+	
+	funcReturn lexerOutput(ExprNodes& args, EvalCtx& eCtx) {
+
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in lexerOutput(), expected 1", "Check out \"?lexerOutput()\" to see the correct function parameters");
+
+		BigInt var = args[0]->eval(eCtx);
+
+		if(var.equals(BigInt(1))) eCtx.showLexerOutput = true;
+		if (var.isZero()) eCtx.showLexerOutput = false;
+
+		eCtx.shouldPrint = false;
+		return funcReturn{ BigInt(0),false };
+	}
+
+
+	funcReturn parserOutput(ExprNodes& args, EvalCtx& eCtx) {
+
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in parserOutput(), expected 1", "Check out \"?parserOutput()\" to see the correct function parameters");
+
+		BigInt var = args[0]->eval(eCtx);
+
+		if (var.equals(BigInt(1))) eCtx.showParserOutput = true;
+		if (var.isZero()) eCtx.showParserOutput = false;
 
 		eCtx.shouldPrint = false;
 		return funcReturn{ BigInt(0),false };
@@ -382,6 +495,47 @@ std::vector<stlFunc> stlFunctions = {
 	"\tOnly one parameter, has to be a variable, which is the name to the file, including extension",
 	"\t\"execFile(test1.txt)\" executes contents of a \"test.txt\" file",
 	stlFuncs::execFile
+	},
+
+	{"save",
+	"\tSaves variables and functions to a file, that will be loaded at the next startup",
+	"\tNone, any are ignored",
+	"",
+	stlFuncs::save
+	},
+	{"clearSave",
+	"\tDeletes the save file made by \"save()\"",
+	"\tNone, any are ignored",
+	"",
+	stlFuncs::clearSave
+	},
+	
+	{"mod",
+	"\tReturns remainder of the division between 2 parameters",
+	"\tTwo parameters, any expressions",
+	"\t\"mod(5,3)\" returns 2, because its the remainder of division 5 / 3",
+	stlFuncs::mod
+	},
+	
+	{"exp",
+	"\tReturns first parameter exponentiated to second parameter",
+	"\tTwo parameters, any expressions",
+	"\t\"exp(2,3)\" returns 8 becase 2^3",
+	stlFuncs::exp
+	},
+	
+	{ "lexerOutput",
+	"\tToggles if lexer output should be printed to the console",
+	"\tOnly one parameter, any expression that evaluates to either 0 or 1, if its something else it ignores it",
+	"\t\"lexerOutput(1)\" now lexer output will be shown in console",
+	stlFuncs::lexerOutput
+	},
+
+	{ "parserOutput",
+	"\tToggles if parser output should be printed to the console",
+	"\tOnly one parameter, any expression that evaluates to either 0 or 1, if its something else it ignores it",
+	"\t\"parserOutput(1)\" now parser output will be shown in console",
+	stlFuncs::parserOutput
 	}
 
 };
