@@ -149,7 +149,7 @@ namespace stlFuncs {
 			"\tIf you want to check all avalible functions and their documentation, type \"showfunctions()\"\n"
 			"NEXT STEPS\n"
 			"\tPlay around, have fun and maybe try to break it, im curious how it behaves under user unpredictability\n"
-			"\tType \"showfunctions()\" to check out other features\n"
+			"\tType \"showFunctions()\" to check out other features\n"
 			"\tAlso if you are unsure about some function, u can write \"?\" at the start of it to get its description,like:\n"
 			"\t?help()\n"
 			;

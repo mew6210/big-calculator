@@ -68,6 +68,7 @@ void AppState::cleanup() {
 }
 
 void AppState::execute() {
+    if (src == "") return;
     lex();
     parse();
     eval();
