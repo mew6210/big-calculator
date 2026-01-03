@@ -3,24 +3,6 @@
 
 std::numeric_limits<uChunkInt> CHUNKINTLIMIT;
 
-void checkBigInt() {
-
-	BigInt a = BigInt(0);
-	BigInt b = BigInt(0);
-	BigInt c = BigInt(CHUNKINTLIMIT.max());
-
-	for (uint64_t i = 0; i < 5000000000; i++) {
-		a.addChunkInt(CHUNKINTLIMIT.max());
-	}
-	a.inspectChunks(chunkDisplayMode::hex);
-	for (uint64_t i = 0; i < 3; i++) {
-		b.addChunkInt(CHUNKINTLIMIT.max());
-	}
-	b.inspectChunks(chunkDisplayMode::hex);
-	a.addBigInt(b);
-	a.inspectChunks(chunkDisplayMode::hex);
-}
-
 void chunkIntToHex(uChunkInt x) {
 	std::cout << std::setw(sizeof(uChunkInt) * 2) << std::setfill('0') << std::hex << x;
 }
@@ -82,39 +64,4 @@ void BigInt::resizeBigInts(BigInt& bi) {
 	size_t maxSize = std::max(chunks.size(), bi.chunks.size());
 	chunks.resize(maxSize, 0);
 	bi.chunks.resize(maxSize, 0);
-}
-
-void checkmultip() {
-	BigInt a = BigInt("999999999999999999");
-	a.inspectChunks(chunkDisplayMode::decimal);
-	BigInt b = BigInt("999999999999999999");
-	b.inspectChunks(chunkDisplayMode::decimal);
-	a.multiplyBigInt(b);
-	a.inspectChunks(chunkDisplayMode::decimal);
-}
-
-void checkSubtr() {
-
-	BigInt a = BigInt("100");
-	BigInt b = BigInt("50");
-	
-	a.subtractBigInt(b);
-	a.inspectChunks(chunkDisplayMode::decimal);
-}
-
-void checkDiv() {
-
-	BigInt a = BigInt("10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
-	BigInt b = BigInt("100000000000000000000000000000000000000000000000001");
-	a.divideBigInt(b,false);
-	std::cout << a.toString() << "\n";
-
-}
-
-void checkMod() {
-	BigInt a = BigInt("55340232221128654851");
-	uint64_t b = 234;
-
-	uint64_t remainder = a.moduloChunkInt(b);
-	std::cout << "remainder: " << remainder;
 }

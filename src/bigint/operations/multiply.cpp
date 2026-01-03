@@ -1,6 +1,6 @@
 #include "../bigint.hpp"
 
-typedef std::vector<uChunkInt> Chunks;
+using Chunks =  std::vector<uChunkInt>;
 
 uint128Emul mult64to128(uint64_t op1, uint64_t op2) {	//stack overflow came in clutch
 	uint64_t u1 = (op1 & 0xffffffff);
@@ -129,22 +129,6 @@ void BigInt::multiplyBigInt(BigInt& bi) {
 	isPositive = determineMultSign(isPositive, bi.isPositive);
 }
 
-void BigInt::multiplyChunkInt32(uChunkInt val) {
-	uint64_t carry = 0;
-	for (size_t i = 0; i < chunks.size(); ++i) {
-		uint64_t prod = (uint64_t)chunks[i] * (uint64_t)val + carry;	//multip result
-		chunks[i] = static_cast<uChunkInt>(prod & 0xFFFFFFFFu);		//set current chunk to low 32 bits
-		carry = prod >> 32;	//set carry to high 32 bits
-	}
-
-	if (carry) addChunkInt(static_cast<uChunkInt>(carry), chunks.size());	//push high 32-bits to the next chunk
-}
-
 void BigInt::multiplyChunkInt(uChunkInt val) {
-
-	switch (sizeof(uChunkInt)) {
-	case 8: multiplyChunkInt64(val); break; //uint64_t
-	case 4: multiplyChunkInt32(val); break; //uint32_t
-	}
-
+	multiplyChunkInt64(val);
 }

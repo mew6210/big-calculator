@@ -157,7 +157,6 @@ uChunkInt BigInt::moduloChunkInt(uChunkInt val) {
 }
 
 bool isQuotientTooLarge(BigInt& u, BigInt& v, uint64_t qhat, size_t j) {
-    size_t n = v.chunks.size();
 
     // Simple test: if qhat == 0, it can't be too large
     if (qhat == 0) return false;
