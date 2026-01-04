@@ -146,7 +146,7 @@ namespace stlFuncs {
 			"\t\"a = 5\" assigns a to 5, and can be reused later like so \"a + 2\" returns 7\n\n"
 			"\tParenthesis are also supported\n"
 			"\tFunctions are also supported\n" 
-			"\tIf you want to check all avalible functions and their documentation, type \"showfunctions()\"\n"
+			"\tIf you want to check all avalible functions and their documentation, type \"showFunctions()\"\n"
 			"NEXT STEPS\n"
 			"\tPlay around, have fun and maybe try to break it, im curious how it behaves under user unpredictability\n"
 			"\tType \"showFunctions()\" to check out other features\n"
