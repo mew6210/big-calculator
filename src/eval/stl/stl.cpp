@@ -254,7 +254,7 @@ namespace stlFuncs {
 
 		BigInt var = args[0]->eval(eCtx);
 
-		return funcReturn{ var.toString().size(),true };
+		return funcReturn{ BigInt(var.toString().size()),true };
 	}
 
 	//void

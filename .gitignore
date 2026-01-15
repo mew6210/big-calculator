@@ -1,3 +1,4 @@
 out/
 .vs/
 CmakeSettings.json
+CmakePresets.json
