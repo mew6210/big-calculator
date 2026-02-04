@@ -58,7 +58,7 @@ namespace {
         @brief returns 1 if minus sign represents a negative sign, and 0 if it represents subtraction
     */
     bool isNegativeSign(const char cur_index, const TokenType& lastTok) { 
-        return singleOpsToEnumMap[cur_index] == TokenType::minusSign && (lastTok != TokenType::numLiteral && lastTok != TokenType::identifier);
+        return singleOpsToEnumMap[cur_index] == TokenType::minusSign && (lastTok != TokenType::numLiteral && lastTok != TokenType::identifier && lastTok!=TokenType::closeParen);
     }
 }
 

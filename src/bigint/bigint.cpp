@@ -30,21 +30,38 @@ BigInt::BigInt(const std::string& s) {
 }
 
 std::string BigInt::toString() const {
-	if (chunks.size() == 0) return "0";
-	std::string ret = "";
-	std::vector<uChunkInt> zero = { 0 };
-	BigInt selfCopy = BigInt();
-	selfCopy.chunks = chunks;
-	selfCopy.isPositive = isPositive;
-	while (!selfCopy.chunks.empty()) {
-		uChunkInt mod = selfCopy.moduloChunkInt(10);
-		selfCopy.divideChunkInt(10,true);
-		char toAdd = mod + '0';
-		ret.push_back(toAdd);
-	}
-	std::reverse(ret.begin(), ret.end());
-	if (!isPositive) ret.insert(0,1,'-');
-	return ret;
+    if (chunks.empty())
+        return "0";
+
+    BigInt tmp;
+    tmp.chunks = chunks;
+    tmp.isPositive = true;
+
+    static constexpr uChunkInt DEC_BASE = 1000000000000000000ULL; // 10^18
+    static constexpr int DEC_DIGITS = 18;
+
+    std::vector<uChunkInt> blocks;
+    blocks.reserve(chunks.size());
+
+    while (!tmp.chunks.empty()) {
+        uChunkInt rem = tmp.moduloChunkInt(DEC_BASE);
+        tmp.divideChunkInt(DEC_BASE, true);
+        blocks.push_back(rem);
+    }
+
+    std::string result;
+
+    result = std::to_string(blocks.back());
+    for (int i = (int)blocks.size() - 2; i >= 0; --i) {
+        std::string part = std::to_string(blocks[i]);
+        result.append(DEC_DIGITS - part.length(), '0');
+        result += part;
+    }
+
+    if (!isPositive)
+        result.insert(result.begin(), '-');
+
+    return result;
 }
 
 void BigInt::print() {
