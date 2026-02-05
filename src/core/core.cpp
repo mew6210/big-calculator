@@ -22,6 +22,10 @@ void AppState::handleFileLoad() {
 
     std::ifstream file(fileName);
 
+    if (!file.is_open()) {
+        std::cout << "Error: Could not open \"" << fileName << "\" \n";
+    }
+
     std::vector<std::string> lines;
     std::string line = "";
     while (std::getline(file, line)) {
@@ -85,4 +89,67 @@ void checkForStart(AppState& state) {
         std::cout << "file with previous vars and funcs found and loaded successfully\n";
     }
     else return;
+}
+
+void handleInteractiveMode() {
+    AppState state = initApp();
+    checkForStart(state);   //check for saved things
+    std::string line = "";
+    while (true) {
+        std::cout << ">";
+        std::getline(std::cin, line);
+
+        state.setSrc(line);
+        state.execute();
+    }
+}
+
+
+bool isStrFile(const char* c){
+    if (!c) return false;
+    return std::strchr(c, '.') != nullptr;
+}
+
+void handleFileExecution(const char* c) {
+
+    AppState state = AppState();
+    checkForStart(state);   //check for saved things
+    
+    state.setFileToExec(c);
+    state.executeFile();
+
+}
+
+void handleCodeExecution(int argc, char** args) {
+
+    std::string code;
+
+    int i = 1;
+    while (i != argc) {
+        code.append(args[i]);
+        code.append(" ");
+        i++;
+    }
+
+    AppState state = AppState();
+    checkForStart(state);
+    state.setSrc(code);
+    state.execute();
+
+}
+
+void handleCmdArgs(int argc, char** argv) {
+
+    switch (argc) {
+    case 1: handleInteractiveMode(); return;
+    case 2: {
+        if (isStrFile(argv[1])) { handleFileExecution(argv[1]); return; }
+        else break;
+    
+    }break;
+    default: break;
+    }
+    
+    handleCodeExecution(argc, argv);
+
 }

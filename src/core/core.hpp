@@ -30,3 +30,5 @@ public:
 AppState initApp();
 
 void checkForStart(AppState& a);
+
+void handleCmdArgs(int argc, char** argv);
