@@ -1,15 +1,7 @@
 #include "core/core.hpp"
 
-int main(){
+int main(int argc,char** argv){
 
-    AppState state = initApp();
-    checkForStart(state);   //check for saved things
-    std::string line = "";
-    while (true) {
-        std::cout << ">";
-        std::getline(std::cin, line);
-        
-        state.setSrc(line);
-        state.execute();
-    }
+    handleCmdArgs(argc, argv);
+
 }   //main returns success automatically
