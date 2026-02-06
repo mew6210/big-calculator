@@ -30,6 +30,7 @@ class Parser {
 	std::unique_ptr<ExprNode> parseBinOpRHS(int exprPrec,std::unique_ptr<ExprNode> lhs);
 	std::unique_ptr<ExprNode> parseTopLevelExpr();
 	std::unique_ptr<ExprNode> parseExpression();
+	std::unique_ptr<ExprNode> parseBlock();
 
 	std::unique_ptr<ExprNode> parseErrorLog(const std::string& msg,const std::string& note);
 public:

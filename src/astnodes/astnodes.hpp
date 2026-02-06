@@ -13,7 +13,8 @@ enum class NodeType {
 	BigInt,
 	Var,
 	BinExpr,
-	CallExpr
+	CallExpr,
+	Block
 };
 
 /*
@@ -102,3 +103,12 @@ public:
 	NodeType type() override;
 };
 
+class Block : public ExprNode {
+public:
+	std::vector<std::unique_ptr<ExprNode>> lines;	//roots
+
+	void print(int indent) override;
+	BigInt eval(EvalCtx&) override;
+	std::string toString() override;
+	NodeType type() override;
+};

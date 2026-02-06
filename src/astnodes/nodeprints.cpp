@@ -92,3 +92,17 @@ std::string BinaryExprNode::toString() {
 std::string VariableExprNode::toString() {
 	return name;
 }
+
+
+void Block::print(int ident) {
+	std::cout << std::string(ident, ' ') << "some block lol, size: " << lines.size();
+}
+BigInt Block::eval(EvalCtx&){
+	return BigInt(0);
+}
+std::string Block::toString(){
+	return "some block lol, size: ";
+}
+NodeType Block::type(){
+	return NodeType::Block;
+}

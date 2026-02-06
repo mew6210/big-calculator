@@ -27,3 +27,4 @@ struct Token {
     uint64_t startPos;
     uint64_t length;
 };
+

@@ -3,6 +3,21 @@
 using std::unique_ptr;
 using std::make_unique;
 
+std::string tokensToString(const std::vector<Token>& tokens){
+	std::string result;
+
+	size_t totalSize = 0;
+	for (const auto& t : tokens)
+		totalSize += t.value.size();
+	result.reserve(totalSize);
+
+	for (const auto& token : tokens){
+		result += token.value;
+	}
+
+	return result;
+}
+
 /*
 	@brief helper function for printing error messages during parsing stage
 
@@ -103,6 +118,7 @@ unique_ptr<ExprNode> Parser::parsePrimary() {
 	case TokenType::identifier: return parseIdentifierExpr();
 	case TokenType::numLiteral: return parseNumberExpr();
 	case TokenType::openParen: return parseParenExpr();
+	case TokenType::openCurl: return parseBlock();
 	default: return parseErrorLog("Something went very wrong","i dont know man");
 	}
 }
@@ -119,6 +135,31 @@ int Parser::getTokPrecedence() {
 	return tokPrecedence;
 }
 
+
+unique_ptr<ExprNode> Parser::parseBlock() {
+
+	getNextToken(); //eat {
+	auto block = std::make_unique<Block>();
+
+	while (curTok.type != TokenType::closeCurl) {
+
+		std::vector<Token> buf;
+
+		while (curTok.type != TokenType::semiColon) {
+			buf.push_back(curTok);
+			getNextToken();
+		}
+		getNextToken(); //eat ;
+		Parser p;
+		p.setTokens(buf);
+		p.setSrc(tokensToString(buf));
+		p.parse();
+
+		block->lines.push_back(p.getRoot());
+	}
+	return block;
+}
+
 /*
 	@brief parses expressions like `2+3*6` based on its precedence
 
@@ -129,6 +170,7 @@ unique_ptr<ExprNode> Parser::parseExpression() {
 
 	return parseBinOpRHS(0, std::move(lhs));
 }
+
 
 /*
 	@brief simplified operator-precendence parser
