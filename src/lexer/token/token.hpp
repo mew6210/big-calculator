@@ -6,6 +6,7 @@ enum class TokenType {
     comma,
     openCurl,
     closeCurl,
+    semiColon,
 
     plusSign ,
     minusSign ,

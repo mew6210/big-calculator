@@ -12,6 +12,7 @@ std::unordered_map<char,TokenType> singleOpsToEnumMap = {
     {'{',TokenType::openCurl},
     {'}',TokenType::closeCurl},
     {',',TokenType::comma},
+    {';',TokenType::semiColon},
 
     {'+',TokenType::plusSign},
     {'-',TokenType::minusSign},
@@ -226,6 +227,7 @@ void Lexer::printTokens(){
         case TokenType::tokEOF: std::cout << "end of file token\n";                                         break;
         case TokenType::closeCurl: std::cout << "close curl " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::openCurl: std::cout << "open curl " << printTokenPosAndLength(token) << "\n"; break;
+        case TokenType::semiColon: std::cout << "semicolon " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";                                       break;
         }
     }
