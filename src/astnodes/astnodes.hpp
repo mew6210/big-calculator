@@ -106,6 +106,7 @@ public:
 class Block : public ExprNode {
 public:
 	std::vector<std::unique_ptr<ExprNode>> lines;	//roots
+	EvalCtx m_EvalCtx;
 
 	void print(int indent) override;
 	BigInt eval(EvalCtx&) override;

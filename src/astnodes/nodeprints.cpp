@@ -2,6 +2,7 @@
 #include <map>
 #include <iostream>
 #include "../eval/evalException.hpp"
+#include "../eval/eval.hpp"
 
 //printing
 void BinaryExprNode::print(int indent = 0) {
@@ -97,8 +98,23 @@ std::string VariableExprNode::toString() {
 void Block::print(int ident) {
 	std::cout << std::string(ident, ' ') << "some block lol, size: " << lines.size();
 }
-BigInt Block::eval(EvalCtx&){
-	return BigInt(0);
+BigInt Block::eval(EvalCtx& eCtx){
+	
+	Evaluator ev;
+	ev.evalCtx = std::move(m_EvalCtx);
+	for (size_t i = 0; i < lines.size()-1; i++) {
+		ev.setASTRoot(lines[i]);	
+		ev.evalCtx.shouldPrint = false;
+		ev.eval();
+		lines[i] = std::move(ev.ASTRoot);
+	}
+
+	ev.setASTRoot(lines[lines.size() - 1]);
+	BigInt ret = ev.evalRet();
+	lines[lines.size() - 1] = std::move(ev.ASTRoot);
+	m_EvalCtx = std::move(ev.evalCtx);
+	return ret;
+
 }
 std::string Block::toString(){
 	return "some block lol, size: ";

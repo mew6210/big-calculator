@@ -35,6 +35,21 @@ void Evaluator::eval() {
 	}
 }
 
+BigInt Evaluator::evalRet() {
+	try {
+		if (isRootAssign(ASTRoot)) {	//if its an assignment, treat it like so
+			handleAssignRoot();
+		}
+		else {
+			BigInt res = ASTRoot->eval(evalCtx);	//otherwise treat it like a basic evaluation, no variable assigning
+			return res;	
+		}
+	}
+	catch (EvalException& e) {
+		e.printEvalErr();
+	}
+}
+
 bool isVarSignNegative(const std::string& s) {	
 	return s[0] == '-';
 }
