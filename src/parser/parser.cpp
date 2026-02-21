@@ -190,6 +190,7 @@ unique_ptr<ExprNode> Parser::parseBlock() {
 
 		block->lines.push_back(p.getRoot());
 	}
+	getNextToken(); //eat }
 	return block;
 }
 
