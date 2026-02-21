@@ -63,8 +63,7 @@ unique_ptr<ExprNode> Parser::parseNumberExpr() {
 /*
 	@brief handles `(...)`
 */
-unique_ptr<ExprNode> Parser::parseParenExpr() {
-
+unique_ptr<ExprNode> Parser::parseParenExpr() {	
 	getNextToken(); //eat (
 	
 	auto v = parseExpression();		//handle expression inside ()
@@ -135,6 +134,31 @@ int Parser::getTokPrecedence() {
 	return tokPrecedence;
 }
 
+std::vector<Token> Parser::AppBufWithBlock() {
+	int depth = 1;
+	std::vector<Token> buf;
+	while (depth !=0) {
+		if (curTok.type == TokenType::openCurl) depth += 1;
+		if (curTok.type == TokenType::closeCurl) depth -= 1;
+
+		buf.push_back(curTok);
+		getNextToken();
+	}
+
+	return buf;
+}
+
+std::vector<Token> mergeTokenVec(std::vector<Token>& a, std::vector<Token>& b) {
+	std::vector<Token> c = {};
+
+	for (const auto& aa : a) {
+		c.push_back(aa);
+	}
+	for (const auto& bb :b) {
+		c.push_back(bb);
+	}
+	return c;
+}
 
 unique_ptr<ExprNode> Parser::parseBlock() {
 
@@ -144,11 +168,20 @@ unique_ptr<ExprNode> Parser::parseBlock() {
 	while (curTok.type != TokenType::closeCurl) {
 
 		std::vector<Token> buf;
-
 		while (curTok.type != TokenType::semiColon) {
-			buf.push_back(curTok);
-			getNextToken();
+			if (curTok.type == TokenType::openCurl) {
+				buf.push_back(curTok);
+				getNextToken();
+				auto buf2 = std::move(AppBufWithBlock());
+				buf = mergeTokenVec(buf, buf2);
+				break;
+			}
+			else {
+				buf.push_back(curTok);
+				getNextToken();
+			}
 		}
+		
 		getNextToken(); //eat ;
 		Parser p;
 		p.setTokens(buf);
