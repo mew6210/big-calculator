@@ -32,6 +32,7 @@ class Parser {
 	std::unique_ptr<ExprNode> parseExpression();
 
 	std::vector<Token> AppBufWithBlock();
+	std::vector<Token> collectTokensUntilSemiColon();
 	std::unique_ptr<ExprNode> parseBlock();
 
 	std::unique_ptr<ExprNode> parseErrorLog(const std::string& msg,const std::string& note);
