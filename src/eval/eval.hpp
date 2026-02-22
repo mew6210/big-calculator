@@ -9,6 +9,7 @@ struct Evaluator {
 	void handleAssignVar(BinaryExprNode* ASTRootAssignNode);
 	void handleAssignUserFunc(BinaryExprNode* ASTRootAssignNode);
 	void eval();
+	BigInt evalRet();
 	void handleAssignRoot();
 	void setSrc(std::string& src_) { src = src_; };
 	void setASTRoot(std::unique_ptr<ExprNode>& root_) { ASTRoot = std::move(root_); };

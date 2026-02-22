@@ -13,7 +13,8 @@ enum class NodeType {
 	BigInt,
 	Var,
 	BinExpr,
-	CallExpr
+	CallExpr,
+	Block
 };
 
 /*
@@ -51,10 +52,11 @@ public:
 	@brief node for expressions like `2+3`
 */
 class BinaryExprNode : public ExprNode {
+public:
 	std::unique_ptr<ExprNode> lhs, rhs;
 	OperatorType op;
 
-public:
+
 	BinaryExprNode(std::unique_ptr<ExprNode>&& lhsT, std::unique_ptr<ExprNode>&& rhsT, OperatorType& opT) : lhs(std::move(lhsT)), rhs(std::move(rhsT)), op(opT) {}
 	void print(int indent) override;
 	OperatorType getOp() { return op; };
@@ -102,3 +104,13 @@ public:
 	NodeType type() override;
 };
 
+class Block : public ExprNode {
+public:
+	std::vector<std::unique_ptr<ExprNode>> lines;	//roots
+	EvalCtx m_EvalCtx;
+
+	void print(int indent) override;
+	BigInt eval(EvalCtx&) override;
+	std::string toString() override;
+	NodeType type() override;
+};

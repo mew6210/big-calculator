@@ -35,12 +35,28 @@ void Evaluator::eval() {
 	}
 }
 
+BigInt Evaluator::evalRet() {
+	try {
+		if (isRootAssign(ASTRoot)) {	//if its an assignment, treat it like so
+			handleAssignRoot();
+		}
+		else {
+			BigInt res = ASTRoot->eval(evalCtx);	//otherwise treat it like a basic evaluation, no variable assigning
+			return res;	
+		}
+	}
+	catch (EvalException& e) {
+		e.printEvalErr();
+	}
+}
+
 bool isVarSignNegative(const std::string& s) {	
 	return s[0] == '-';
 }
 
 void Evaluator::handleAssignVar(BinaryExprNode* ASTRootAssignNode) {	//dont need to free this pointer, since its not owning
-	auto rhs = ASTRootAssignNode->getRhs()->eval(evalCtx);	//evaluate right hand side
+	auto rhs = ASTRootAssignNode->getRhs();	//evaluate right hand side
+	auto rhValue = rhs->eval(evalCtx);
 	auto lhs = ASTRootAssignNode->getLhs();
 	auto lhsVar = dynamic_cast<VariableExprNode*>(lhs.get());	//treat it like varexprnode
 	std::string varName = lhsVar->getName();
@@ -49,17 +65,20 @@ void Evaluator::handleAssignVar(BinaryExprNode* ASTRootAssignNode) {	//dont need
 		//display a helpful message that converts illegal expression to a legal, and still correct one
 		// '-g=5' => 'g=-5'
 		std::string noteStr = "Instead, do: " + varName.erase(0, 1) + " = ";
-		rhs.flipSign();
-		noteStr += rhs.toString();
+		rhValue.flipSign();
+		noteStr += rhValue.toString();
 
 		throw EvalException("Do not assign values to negative variables", noteStr);
 	}
 
 	//assign variable
 	if (evalCtx.varExists(varName)) {
-		evalCtx.assignVar(varName, rhs);
+		evalCtx.assignVar(varName, rhValue);
 	}
-	else evalCtx.vars.push_back({ varName,std::move(rhs) });
+	else evalCtx.vars.push_back({ varName,std::move(rhValue) });
+
+	ASTRootAssignNode->rhs = std::move(rhs);
+	ASTRootAssignNode->lhs = std::move(lhs);
 }
 
 void Evaluator::handleAssignUserFunc(BinaryExprNode* ASTRootAssignNode) {

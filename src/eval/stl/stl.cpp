@@ -620,7 +620,19 @@ std::optional<BigInt> funcDispatch(std::string& funcName,ExprNodes& args, EvalCt
 			
 			newEvalCtx.vars = vars;
 			newEvalCtx.userFunctions = std::move(eCtx.userFunctions);
-			auto val = func.definition->eval(newEvalCtx);
+
+			BigInt val = BigInt(0);
+
+			if (func.definition->type() != NodeType::Block) {
+				val = func.definition->eval(newEvalCtx);
+			}
+			else {
+				auto def = reinterpret_cast<Block*>(func.definition.get());
+				def->m_EvalCtx = std::move(newEvalCtx);
+				val = def->eval(newEvalCtx); //this newEvalCtx doesnt matter
+				newEvalCtx.userFunctions = std::move(def->m_EvalCtx.userFunctions);
+			}
+
 			eCtx.userFunctions = std::move(newEvalCtx.userFunctions);
 			return val;
 		}

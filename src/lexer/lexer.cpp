@@ -9,12 +9,17 @@
 std::unordered_map<char,TokenType> singleOpsToEnumMap = {
     {'(',TokenType::openParen},
     {')',TokenType::closeParen},
+    {'{',TokenType::openCurl},
+    {'}',TokenType::closeCurl},
+    {',',TokenType::comma},
+    {';',TokenType::semiColon},
+
     {'+',TokenType::plusSign},
     {'-',TokenType::minusSign},
     {'*',TokenType::multipSign},
     {'/',TokenType::divSign},
-    {'=',TokenType::assignOp},
-    {',',TokenType::comma},
+    {'=',TokenType::assignOp}
+    
 };
 
 /*
@@ -58,7 +63,7 @@ namespace {
         @brief returns 1 if minus sign represents a negative sign, and 0 if it represents subtraction
     */
     bool isNegativeSign(const char cur_index, const TokenType& lastTok) { 
-        return singleOpsToEnumMap[cur_index] == TokenType::minusSign && (lastTok != TokenType::numLiteral && lastTok != TokenType::identifier && lastTok!=TokenType::closeParen);
+        return singleOpsToEnumMap[cur_index] == TokenType::minusSign && (lastTok != TokenType::numLiteral && lastTok != TokenType::identifier && lastTok!=TokenType::closeParen&& lastTok!=TokenType::closeCurl);
     }
 }
 
@@ -220,6 +225,9 @@ void Lexer::printTokens(){
         case TokenType::assignOp:   std::cout << "assign operation "<<printTokenPosAndLength(token)<<"\n";  break;
         case TokenType::comma:      std::cout << "comma " << printTokenPosAndLength(token) << "\n";         break;
         case TokenType::tokEOF: std::cout << "end of file token\n";                                         break;
+        case TokenType::closeCurl: std::cout << "close curl " << printTokenPosAndLength(token) << "\n"; break;
+        case TokenType::openCurl: std::cout << "open curl " << printTokenPosAndLength(token) << "\n"; break;
+        case TokenType::semiColon: std::cout << "semicolon " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";                                       break;
         }
     }
