@@ -32,7 +32,7 @@ void VariableExprNode::print(int indent = 0) {
 void CallExprNode::print(int indent = 0) {
 	std::cout << std::string(indent, ' ') << "CallExprNode: " << funcName << "\n";
 	for (size_t i = 0; i < args.size(); i++) {
-		std::cout << std::string(indent, ' ') << "Arg" << i << ": ";
+		std::cout << std::string(indent, ' ') << "Arg" << i << ": "<<"\n";
 		args[i]->print(indent + 4);
 	}
 }
@@ -96,7 +96,12 @@ std::string VariableExprNode::toString() {
 
 
 void Block::print(int ident) {
-	std::cout << std::string(ident, ' ') << "some block lol, size: " << lines.size();
+	std::cout << std::string(ident, ' ') << "Block{ \n";
+
+	for (size_t i = 0; i < lines.size(); i++) {
+		std::cout << std::string(ident, ' ') << "line " << i << ": " << lines[i]->toString()<<";\n";
+	}
+	std::cout << std::string(ident, ' ') << "}\n";
 }
 BigInt Block::eval(EvalCtx& eCtx){
 	
@@ -117,7 +122,17 @@ BigInt Block::eval(EvalCtx& eCtx){
 
 }
 std::string Block::toString(){
-	return "some block lol, size: ";
+	std::string ret;
+	ret+="Block: \n";
+
+	for (size_t i = 0; i < lines.size(); i++) {
+		ret += "line ";
+		ret += std::to_string(i);
+		ret += ": ";
+		ret += lines[i]->toString();
+		ret+=";\n";
+	}
+	return ret;
 }
 NodeType Block::type(){
 	return NodeType::Block;
