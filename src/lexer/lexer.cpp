@@ -22,6 +22,11 @@ std::unordered_map<char,TokenType> singleOpsToEnumMap = {
     
 };
 
+std::unordered_map<std::string, TokenType> reservedKeywords = {
+    {"if",TokenType::ifKeyword},
+    {"else",TokenType::elseKeyword}
+};
+
 /*
     @brief functions that are used only by lexer
 */
@@ -109,6 +114,10 @@ Token Lexer::handleIdentifierToken(const std::string& tok,const uint64_t& startP
     return Token{ TokenType::identifier,tok,startPos,tok.size()};
 }
 
+Token handleKeywordIdentifier(const std::string& nameBuf, const uint64_t& startingPos) {
+    return Token{ reservedKeywords[nameBuf],nameBuf,startingPos,nameBuf.size() };
+}
+
 /*
     @brief handles any strings that arent single-char tokens
 
@@ -135,7 +144,10 @@ Token Lexer::handleMultipleCharInstruction() {
         return handleNumberLiteralToken(nameBuf,startingPos);
     }
     else {
-        return handleIdentifierToken(nameBuf,startingPos);
+        if (reservedKeywords.count(nameBuf)) {
+            return handleKeywordIdentifier(nameBuf,startingPos);
+        }
+        else return handleIdentifierToken(nameBuf,startingPos);
     }
 }
 
@@ -228,6 +240,8 @@ void Lexer::printTokens(){
         case TokenType::closeCurl: std::cout << "close curl " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::openCurl: std::cout << "open curl " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::semiColon: std::cout << "semicolon " << printTokenPosAndLength(token) << "\n"; break;
+        case TokenType::ifKeyword: std::cout << "ifKeyword " << printTokenPosAndLength(token) << "\n"; break;
+        case TokenType::elseKeyword: std::cout << "elseKeyword " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";                                       break;
         }
     }
