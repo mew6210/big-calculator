@@ -24,7 +24,9 @@ std::unordered_map<char,TokenType> singleOpsToEnumMap = {
 
 std::unordered_map<std::string, TokenType> reservedKeywords = {
     {"if",TokenType::ifKeyword},
-    {"else",TokenType::elseKeyword}
+    {"else",TokenType::elseKeyword},
+    {"equals",TokenType::equalKeyword},
+    {"notEquals",TokenType::notEqualKeyword},
 };
 
 /*
@@ -242,6 +244,7 @@ void Lexer::printTokens(){
         case TokenType::semiColon: std::cout << "semicolon " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::ifKeyword: std::cout << "ifKeyword " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::elseKeyword: std::cout << "elseKeyword " << printTokenPosAndLength(token) << "\n"; break;
+        case TokenType::equalKeyword: std::cout << "equalKeyword " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";                                       break;
         }
     }
