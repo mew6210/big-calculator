@@ -143,6 +143,14 @@ BigInt BinaryExprNode::eval(EvalCtx& evalCtx){
 		if (b.equals(BigInt("0"))) throw EvalException("Division by zero", "Dont divide by 0", a, BigInt(0), '/');
 		else a.divideBigInt(b,false);
 	}break;
+	case OperatorType::equal: {
+		if (a.equals(b)) return {1};
+		else return {0};
+	} break;
+	case OperatorType::notEqual: {
+		if (a.equals(b)) return 0;
+		else return 1;
+	}
 	case OperatorType::assign: throw EvalException("Assignment caught in the middle of an eval", "Assignment here is only one-part like 'a=5'", a, b, '='); break;	//TODO: ASSIGNMENT
 	case OperatorType::undefined: throw EvalException("Unkown operation", "avalible operations are: +,-,*,/,^", a, b, '?'); break;
 	}

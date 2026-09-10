@@ -10,6 +10,8 @@ OperatorType tokenToOper(const Token& tok) {
 	case TokenType::minusSign: return OperatorType::subtract;
 	case TokenType::multipSign: return OperatorType::multiply;
 	case TokenType::divSign: return OperatorType::divide;
+	case TokenType::equalKeyword: return OperatorType::equal;
+	case TokenType::notEqualKeyword: return OperatorType::notEqual;
 	default: return OperatorType::undefined;
 	}
 }
