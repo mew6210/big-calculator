@@ -129,6 +129,7 @@ unique_ptr<ExprNode> Parser::parsePrimary() {
 	case TokenType::openParen: return parseParenExpr();
 	case TokenType::openCurl: return parseBlock();
 	case TokenType::ifKeyword: return parseIf();
+	case TokenType::returnKeyword: return parseReturn();
 	default: return parseErrorLog("Something went very wrong","i dont know man");
 	}
 }
@@ -186,6 +187,12 @@ void appendLineToBlock(unique_ptr<Block>& block,std::vector<Token>& tokBuf) {
 	p.parse();
 
 	block->lines.push_back(p.getRoot());
+}
+
+unique_ptr<ExprNode> Parser::parseReturn() {
+	getNextToken(); //eat "return"
+	auto val = parseExpression();
+	return std::make_unique<ReturnNode>(std::move(val));
 }
 
 unique_ptr<ExprNode> Parser::parseBlock() {

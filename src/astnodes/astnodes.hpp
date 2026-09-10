@@ -15,7 +15,8 @@ enum class NodeType {
 	BinExpr,
 	CallExpr,
 	Block,
-	IfStmt
+	IfStmt,
+	Return
 };
 
 /*
@@ -129,4 +130,21 @@ public:
 	BigInt eval(EvalCtx&) override;
 	std::string toString() override;
 	NodeType type() override;
+};
+
+class ReturnNode : public ExprNode {
+	std::unique_ptr<ExprNode> val;
+public:
+	ReturnNode(std::unique_ptr<ExprNode> val):val(std::move(val)){}
+
+	void print(int indent) override;
+	BigInt eval(EvalCtx&) override;
+	std::string toString() override;
+	NodeType type() override;
+};
+
+class ReturnException : std::exception {
+public:
+	BigInt value;
+	ReturnException(BigInt v) : value(v) {}
 };

@@ -184,3 +184,8 @@ BigInt IfStmtNode::eval(EvalCtx& ectx){
 	}
 	else return {0};
 }
+
+BigInt ReturnNode::eval(EvalCtx& ectx) {
+	BigInt returnValue = val->eval(ectx);
+	throw ReturnException(returnValue);
+}

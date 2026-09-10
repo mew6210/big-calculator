@@ -108,19 +108,35 @@ void Block::print(int ident) {
 BigInt Block::eval(EvalCtx& eCtx){
 	
 	Evaluator ev;
+	BigInt retVal;
+	bool set = false;
+
 	ev.evalCtx = std::move(m_EvalCtx);
 	for (size_t i = 0; i < lines.size()-1; i++) {
 		ev.setASTRoot(lines[i]);	
 		ev.evalCtx.shouldPrint = false;
-		ev.eval();
+		try {
+			ev.eval();
+		}catch (ReturnException& ret) {
+			retVal = ret.value;
+			set = true;
+			lines[i] = std::move(ev.ASTRoot);
+			break;
+		}
+
 		lines[i] = std::move(ev.ASTRoot);
 	}
 
+	if (set) {
+		m_EvalCtx = std::move(ev.evalCtx);
+		return retVal;
+	}
+
 	ev.setASTRoot(lines[lines.size() - 1]);
-	BigInt ret = ev.evalRet();
+	retVal = ev.evalRet();
 	lines[lines.size() - 1] = std::move(ev.ASTRoot);
 	m_EvalCtx = std::move(ev.evalCtx);
-	return ret;
+	return retVal;
 
 }
 std::string Block::toString(){
@@ -156,3 +172,14 @@ std::string IfStmtNode::toString() {
 		+ body->toString();
 }
 
+void ReturnNode::print(int indent) {
+	//TODO: implement print
+}
+
+std::string ReturnNode::toString() {
+	return "Return node: "+val->toString();
+}
+
+NodeType ReturnNode::type() {
+	return NodeType::Return;
+}

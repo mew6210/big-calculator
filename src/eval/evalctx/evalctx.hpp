@@ -15,6 +15,7 @@ struct EvalCtx {
 	std::vector<UserFunc> userFunctions;
 	bool showLexerOutput = false;
 	bool showParserOutput = false;
+	bool insideBlock = false;
 
 	BigInt getVar(const std::string& name);
 	bool varExists(std::string& name);

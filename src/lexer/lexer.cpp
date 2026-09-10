@@ -27,6 +27,7 @@ std::unordered_map<std::string, TokenType> reservedKeywords = {
     {"else",TokenType::elseKeyword},
     {"equals",TokenType::equalKeyword},
     {"notEquals",TokenType::notEqualKeyword},
+    {"return",TokenType::returnKeyword}
 };
 
 /*
@@ -245,6 +246,8 @@ void Lexer::printTokens(){
         case TokenType::ifKeyword: std::cout << "ifKeyword " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::elseKeyword: std::cout << "elseKeyword " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::equalKeyword: std::cout << "equalKeyword " << printTokenPosAndLength(token) << "\n"; break;
+        case TokenType::notEqualKeyword: std::cout<<"notEqualKeyword"<<printTokenPosAndLength(token)<<"\n";break;
+        case TokenType::returnKeyword: std::cout<<"returnKeyword"<<printTokenPosAndLength(token)<<"\n";break;
         case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";                                       break;
         }
     }

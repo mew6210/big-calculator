@@ -75,7 +75,12 @@ void AppState::execute() {
     if (src == "") return;
     lex();
     parse();
-    eval();
+    try {
+        eval();
+    }catch (ReturnException& ret) {
+        printError(ErrMsg{src,0,"Return found outside a block","If u want to return something u should put it in a block",ErrType::Evaluator});
+    }
+
     cleanup();
 }
 

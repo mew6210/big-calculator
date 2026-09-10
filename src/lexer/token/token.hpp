@@ -18,6 +18,7 @@ enum class TokenType {
     elseKeyword,
     equalKeyword,
     notEqualKeyword,
+    returnKeyword,
 
     numLiteral,
     identifier,
