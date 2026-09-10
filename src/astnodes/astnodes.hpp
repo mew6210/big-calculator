@@ -14,7 +14,8 @@ enum class NodeType {
 	Var,
 	BinExpr,
 	CallExpr,
-	Block
+	Block,
+	IfStmt
 };
 
 /*
@@ -108,6 +109,21 @@ class Block : public ExprNode {
 public:
 	std::vector<std::unique_ptr<ExprNode>> lines;	//roots
 	EvalCtx m_EvalCtx;
+
+	void print(int indent) override;
+	BigInt eval(EvalCtx&) override;
+	std::string toString() override;
+	NodeType type() override;
+};
+
+class IfStmtNode : public ExprNode{
+	std::unique_ptr<ExprNode> cond;
+	std::unique_ptr<ExprNode> body;
+public:
+	IfStmtNode(std::unique_ptr<ExprNode> cond,
+		std::unique_ptr<ExprNode> body):
+	cond(std::move(cond)),
+	body(std::move(body)) {}
 
 	void print(int indent) override;
 	BigInt eval(EvalCtx&) override;

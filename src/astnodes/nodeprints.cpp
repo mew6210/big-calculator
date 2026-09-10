@@ -103,6 +103,8 @@ void Block::print(int ident) {
 	}
 	std::cout << std::string(ident, ' ') << "}\n";
 }
+
+//TODO: statement like this: f(x) = {if(x){inspect(x);};} generates a undefined x error
 BigInt Block::eval(EvalCtx& eCtx){
 	
 	Evaluator ev;
@@ -137,3 +139,8 @@ std::string Block::toString(){
 NodeType Block::type(){
 	return NodeType::Block;
 }
+
+void IfStmtNode::print(int indent = 0) {}
+NodeType IfStmtNode::type() {return NodeType::IfStmt;}
+std::string IfStmtNode::toString() {return "tempString";}
+

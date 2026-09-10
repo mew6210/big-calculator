@@ -109,6 +109,16 @@ unique_ptr<ExprNode> Parser::parseIdentifierExpr() {
 	return make_unique<CallExprNode>(idName, args);
 }
 
+std::unique_ptr<ExprNode> Parser::parseIf(){
+
+	getNextToken(); //eat "if"
+	if (curTok.type != TokenType::openParen) parseErrorLog("Expected ( after 'if'","Insert (condition) after 'if'");
+	auto cond = parseParenExpr();
+	auto body = parseBlock();
+
+	return std::make_unique<IfStmtNode>(std::move(cond),std::move(body));
+}
+
 /*
 	@brief parses most basic expressions, like 'a' or '5' or '(...)'
 */
@@ -118,6 +128,7 @@ unique_ptr<ExprNode> Parser::parsePrimary() {
 	case TokenType::numLiteral: return parseNumberExpr();
 	case TokenType::openParen: return parseParenExpr();
 	case TokenType::openCurl: return parseBlock();
+	case TokenType::ifKeyword: return parseIf();
 	default: return parseErrorLog("Something went very wrong","i dont know man");
 	}
 }

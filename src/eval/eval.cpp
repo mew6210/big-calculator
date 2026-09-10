@@ -169,3 +169,10 @@ BigInt CallExprNode::eval(EvalCtx& ectx) {
 	else return BigInt(0);
 
 }
+
+BigInt IfStmtNode::eval(EvalCtx& ectx){
+	if (cond->eval(ectx).equals(1)){
+		return body->eval(ectx);
+	}
+	else return {0};
+}
