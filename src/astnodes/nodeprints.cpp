@@ -140,7 +140,19 @@ NodeType Block::type(){
 	return NodeType::Block;
 }
 
-void IfStmtNode::print(int indent = 0) {}
+void IfStmtNode::print(int indent) {
+	std::cout << std::string(indent, ' ') << "If statement node:\n";
+	std::cout << std::string(indent, ' ') << "Condition: \n";
+	cond->print(indent+4);
+	std::cout << std::string(indent, ' ') << "Body: \n";
+	body->print(indent+4);
+	std::cout << "\n";
+}
 NodeType IfStmtNode::type() {return NodeType::IfStmt;}
-std::string IfStmtNode::toString() {return "tempString";}
+std::string IfStmtNode::toString() {
+	return "If statement, condition: "+
+		cond->toString()
+		+" \nbody: "
+		+ body->toString();
+}
 
