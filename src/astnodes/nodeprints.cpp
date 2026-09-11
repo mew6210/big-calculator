@@ -173,7 +173,8 @@ std::string IfStmtNode::toString() {
 }
 
 void ReturnNode::print(int indent) {
-	//TODO: implement print
+	std::cout<<std::string(indent,' ')<<"Return: \n";
+	val->print(indent+4);
 }
 
 std::string ReturnNode::toString() {
