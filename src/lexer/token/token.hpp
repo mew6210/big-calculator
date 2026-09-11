@@ -13,7 +13,13 @@ enum class TokenType {
     multipSign ,
     divSign ,
     assignOp ,
-    
+
+    ifKeyword,
+    elseKeyword,
+    equalKeyword,
+    notEqualKeyword,
+    returnKeyword,
+
     numLiteral,
     identifier,
     

@@ -103,22 +103,40 @@ void Block::print(int ident) {
 	}
 	std::cout << std::string(ident, ' ') << "}\n";
 }
+
+//TODO: statement like this: f(x) = {if(x){inspect(x);};} generates a undefined x error
 BigInt Block::eval(EvalCtx& eCtx){
 	
 	Evaluator ev;
+	BigInt retVal;
+	bool set = false;
+
 	ev.evalCtx = std::move(m_EvalCtx);
 	for (size_t i = 0; i < lines.size()-1; i++) {
 		ev.setASTRoot(lines[i]);	
 		ev.evalCtx.shouldPrint = false;
-		ev.eval();
+		try {
+			ev.eval();
+		}catch (ReturnException& ret) {
+			retVal = ret.value;
+			set = true;
+			lines[i] = std::move(ev.ASTRoot);
+			break;
+		}
+
 		lines[i] = std::move(ev.ASTRoot);
 	}
 
+	if (set) {
+		m_EvalCtx = std::move(ev.evalCtx);
+		return retVal;
+	}
+
 	ev.setASTRoot(lines[lines.size() - 1]);
-	BigInt ret = ev.evalRet();
+	retVal = ev.evalRet();
 	lines[lines.size() - 1] = std::move(ev.ASTRoot);
 	m_EvalCtx = std::move(ev.evalCtx);
-	return ret;
+	return retVal;
 
 }
 std::string Block::toString(){
@@ -136,4 +154,33 @@ std::string Block::toString(){
 }
 NodeType Block::type(){
 	return NodeType::Block;
+}
+
+void IfStmtNode::print(int indent) {
+	std::cout << std::string(indent, ' ') << "If statement node:\n";
+	std::cout << std::string(indent, ' ') << "Condition: \n";
+	cond->print(indent+4);
+	std::cout << std::string(indent, ' ') << "Body: \n";
+	body->print(indent+4);
+	std::cout << "\n";
+}
+NodeType IfStmtNode::type() {return NodeType::IfStmt;}
+std::string IfStmtNode::toString() {
+	return "If statement, condition: "+
+		cond->toString()
+		+" \nbody: "
+		+ body->toString();
+}
+
+void ReturnNode::print(int indent) {
+	std::cout<<std::string(indent,' ')<<"Return: \n";
+	val->print(indent+4);
+}
+
+std::string ReturnNode::toString() {
+	return "Return node: "+val->toString();
+}
+
+NodeType ReturnNode::type() {
+	return NodeType::Return;
 }

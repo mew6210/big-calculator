@@ -13,6 +13,8 @@ class Parser {
 	std::unique_ptr<ExprNode> root;
 	std::map<TokenType, int> precedenceMap = {
 		{TokenType::assignOp,1},
+		{TokenType::notEqualKeyword,5},
+		{TokenType::equalKeyword,5},
 		{TokenType::plusSign,10},
 		{TokenType::minusSign,10},
 		{TokenType::multipSign,20},
@@ -24,7 +26,8 @@ class Parser {
 	std::unique_ptr<ExprNode> parseNumberExpr();
 	std::unique_ptr<ExprNode> parseParenExpr();
 	std::unique_ptr<ExprNode> parseIdentifierExpr();
-
+	std::unique_ptr<ExprNode> parseIf();
+	std::unique_ptr<ExprNode> parseReturn();
 	std::unique_ptr<ExprNode> parsePrimary();
 	int getTokPrecedence();
 	std::unique_ptr<ExprNode> parseBinOpRHS(int exprPrec,std::unique_ptr<ExprNode> lhs);
