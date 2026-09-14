@@ -1,9 +1,7 @@
 #pragma once
 #include <vector>
-#include <utility>
 #include <string>
 #include <iostream>
-#include <limits>
 
 typedef uint64_t uChunkInt;
 typedef int64_t chunkInt;
@@ -32,9 +30,9 @@ class BigInt {
 	bool isPositive;
 
 	void borrow(size_t pos);
-	int compareChunks(const BigInt& bi);
-	bool areSignsDifferent(const BigInt& bi);
-	bool compareSigns(const BigInt& bi);
+	int compareChunks(const BigInt& bi) const;
+	bool areSignsDifferent(const BigInt& bi) const;
+	bool compareSigns(const BigInt& bi) const;
 	void trimTrailingChunks();
 	void resizeBigInts(BigInt& bi);
 
@@ -52,36 +50,36 @@ public:
 	BigInt(const BigInt&) = default;
 
 	//comparsions
-	bool biggerThan(const BigInt& bi);
-	bool smallerThan(const BigInt& bi);
-	bool equals(const BigInt& bi);
+	bool biggerThan(const BigInt& bi) const;
+	bool smallerThan(const BigInt& bi) const;
+	bool equals(const BigInt& bi) const;
 
 	//arithmetic
 	void addChunkInt(uChunkInt val);
 	void addChunkInt(uChunkInt val, uChunkInt startChunk);
-	void addBigInt(BigInt& bi);
+	void addBigInt(const BigInt& bi);
 
 	void subtractChunkInt(uChunkInt val);
 	void subtractBigInt(BigInt& bi);
 	
 	void multiplyChunkInt(uChunkInt val);
-	void multiplyBigInt(BigInt& bi);
+	void multiplyBigInt(const BigInt& bi);
 
 	void divideChunkInt(uChunkInt val, bool toMute = false);
 	void divideBigInt(BigInt& bi,bool toMute);
 
 	uChunkInt moduloChunkInt(uChunkInt val);
 
-	std::string toString() const;
-	void inspectChunks(chunkDisplayMode cdm);
-	void inspectChunks(chunkDisplayMode cdm, int indent);
-	void print();
+	[[nodiscard]] std::string toString() const;
+	void inspectChunks(chunkDisplayMode cdm) const;
+	void inspectChunks(chunkDisplayMode cdm, int indent) const;
+	void print() const;
 	void flipSign() { isPositive = !isPositive; };
-	bool isNegative() { return !isPositive; }
-	bool isZero() { if (chunks.size() == 0) return true;if (chunks.size() == 1 && chunks[0] == 0) return true; else return false;}
-	friend BigInt add(BigInt& a, BigInt& b);
+	[[nodiscard]] bool isNegative() const { return !isPositive; }
+	[[nodiscard]] bool isZero() const { if (chunks.empty()) return true;if (chunks.size() == 1 && chunks[0] == 0) return true; else return false;}
+	friend BigInt add(BigInt& a, const BigInt& b);
 	friend BigInt subtract(BigInt& a, BigInt& b);
-	friend BigInt abs(BigInt& a);
+	friend BigInt abs(const BigInt& a);
 	friend DivResult divideUnsigned(BigInt a, BigInt b);
 
 	friend bool isQuotientTooLarge(BigInt& u, BigInt& v, uint64_t qhat, size_t j);

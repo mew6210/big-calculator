@@ -1,6 +1,6 @@
 #include "../bigint.hpp"
 
-void BigInt::addChunkInt(uChunkInt val) {
+void BigInt::addChunkInt(const uChunkInt val) {
 
 	uChunkInt carry = val;
 	size_t i = 0;
@@ -16,7 +16,7 @@ void BigInt::addChunkInt(uChunkInt val) {
 	}
 }
 
-void BigInt::addChunkInt(uChunkInt val, uChunkInt startChunk) {
+void BigInt::addChunkInt(const uChunkInt val, const uChunkInt startChunk) {
 	uChunkInt carry = val;
 	size_t i = startChunk; //start from a different chunk than the first one
 
@@ -24,14 +24,14 @@ void BigInt::addChunkInt(uChunkInt val, uChunkInt startChunk) {
 		if (i == chunks.size())
 			chunks.push_back(0);
 
-		uChunkInt sum = chunks[i] + carry;
+		const uChunkInt sum = chunks[i] + carry;
 		carry = (sum < chunks[i]) ? 1 : 0;
 		chunks[i] = sum;
 		i++;
 	}
 }
 
-BigInt add(BigInt& a, BigInt& b) {
+BigInt add(BigInt& a, const BigInt& b) {
 	a.chunks.resize(std::max(a.chunks.size(), b.chunks.size()));
 
 	for (size_t i = 0; i < b.chunks.size(); i++) {
@@ -40,14 +40,14 @@ BigInt add(BigInt& a, BigInt& b) {
 	return a;
 }
 
-BigInt abs(BigInt& a) {
+BigInt abs(const BigInt& a) {
 	BigInt b = BigInt(0);
 	b.chunks = a.chunks;
 	b.isPositive = true;
 	return b;
 }
 
-void BigInt::addBigInt(BigInt& bi) {
+void BigInt::addBigInt(const BigInt& bi) {
 	
 	BigInt absA = abs(*this);
 	BigInt absB = abs(bi);
