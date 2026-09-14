@@ -1,6 +1,5 @@
 #include "eval.hpp"
 #include "../astnodes/astnodes.hpp"
-#include "../logging/logging.hpp"
 #include <optional>
 #include "evalException.hpp"
 #include "stl/stl.hpp"
@@ -174,8 +173,7 @@ BigInt CallExprNode::eval(EvalCtx& ectx) {
 	auto var = funcDispatch(funcName, args, ectx);
 
 	if (var) return var.value();
-	else return BigInt(0);
-
+	else return {0};
 }
 
 BigInt IfStmtNode::eval(EvalCtx& ectx){

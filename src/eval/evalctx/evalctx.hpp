@@ -10,7 +10,7 @@ struct UserFunc;
 */
 struct EvalCtx {
 	std::vector<std::pair<std::string, BigInt>> vars;
-	std::string fileToExec="";
+	std::string fileToExec;
 	bool shouldPrint = true;
 	std::vector<UserFunc> userFunctions;
 	bool showLexerOutput = false;
