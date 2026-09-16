@@ -78,7 +78,7 @@ void AppState::execute() {
     try {
         eval();
     }catch (ReturnException& ret) {
-        printError(ErrMsg{src,0,"Return found outside a block","If u want to return something u should put it in a block",ErrType::Evaluator});
+        std::cout<<"Error: Return found outside a block, that's illegal\n";
     }
 
     cleanup();

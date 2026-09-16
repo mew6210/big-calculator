@@ -133,7 +133,15 @@ BigInt Block::eval(EvalCtx& eCtx){
 	}
 
 	ev.setASTRoot(lines[lines.size() - 1]);
-	retVal = ev.evalRet();
+	try {
+		retVal = ev.evalRet();
+	}catch (ReturnException& ret) {
+		retVal = ret.value;
+		lines[lines.size() - 1] = std::move(ev.ASTRoot);
+		m_EvalCtx = std::move(ev.evalCtx);
+		return retVal;
+	}
+
 	lines[lines.size() - 1] = std::move(ev.ASTRoot);
 	m_EvalCtx = std::move(ev.evalCtx);
 	return retVal;
