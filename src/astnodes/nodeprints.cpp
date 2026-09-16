@@ -110,7 +110,7 @@ BigInt Block::eval(EvalCtx& eCtx){
 	Evaluator ev;
 	BigInt retVal;
 	bool set = false;
-
+	m_EvalCtx.setParent(eCtx);
 	ev.evalCtx = std::move(m_EvalCtx);
 	for (size_t i = 0; i < lines.size()-1; i++) {
 		ev.setASTRoot(lines[i]);	

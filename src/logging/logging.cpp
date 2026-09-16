@@ -32,5 +32,5 @@ void printError(const ErrMsg& errMsg) {
     printErrType(errMsg.type);
     std::cout << errMsg.msg << "\n";                  //error content  
     std::cout << "Note: " << errMsg.note << "\n";     //guiding instruction
-    exit(1);
+    //exit(1);
 }
