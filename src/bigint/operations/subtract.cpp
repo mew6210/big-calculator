@@ -12,7 +12,7 @@ void BigInt::borrow(size_t pos) {
 	}
 	else {
 		borrow(pos + 1);	//if it is 0, we have to try borrowing further
-		chunks[pos] = CHUNKINTLIMIT2.max();
+		chunks[pos] = std::numeric_limits<unsigned long long>::max();
 	}
 }
 
@@ -21,14 +21,14 @@ void BigInt::borrow(size_t pos) {
 */
 void BigInt::subtractChunkInt(uChunkInt val) {
 	
-	if (chunks.size() == 0) return;		//something went wrong
+	if (chunks.empty()) return;		//something went wrong
 
 	if (val <= chunks[0]) {
 		chunks[0] -= val;	//if val is smaller than first chunk, we can easily subtract it
 	}
 	else {
 		borrow(1);	//if its not, we have to borrow
-		uint64_t diff = CHUNKINTLIMIT2.max() - val+1;	//+1, because chunkintlimit.max returns max HOLDABLE amount, but my base is 2^64, not 2^64 -1 
+		uint64_t diff = std::numeric_limits<uChunkInt>::max() - val+1;	//+1, because chunkintlimit.max returns max HOLDABLE amount, but my base is 2^64, not 2^64 -1
 		chunks[0] += diff;
 	}
 	trimTrailingChunks();
@@ -45,7 +45,7 @@ BigInt subtract(BigInt& a, BigInt& b){
 		}
 		else {
 			a.borrow(i + 1);
-			uint64_t diff = CHUNKINTLIMIT2.max() - b.chunks[i] + 1;
+			uint64_t diff = std::numeric_limits<unsigned long long>::max() - b.chunks[i] + 1;
 			a.chunks[i] += diff;
 		}
 	}

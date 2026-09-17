@@ -7,7 +7,7 @@
 	- returns -1 if argument bigint is bigger
 	@param BigInt - other number
 */
-int BigInt::compareChunks(const BigInt& bi) {
+int BigInt::compareChunks(const BigInt& bi) const {
 	int currentBigger = 1;
 	int currentSmaller = -1;
 	if (!isPositive && !bi.isPositive) { //if both numbers are negative, those values should be reversed
@@ -33,28 +33,28 @@ int BigInt::compareChunks(const BigInt& bi) {
 * 
 * returns true if signs of two numbers are different, false otherwise
 */
-bool BigInt::areSignsDifferent(const BigInt& bi) {
+bool BigInt::areSignsDifferent(const BigInt& bi) const {
 	return isPositive != bi.isPositive;
 }
 
 /*
 * @brief internal helper function 
 * 
-*- returns 1 if sign comparsion indicates that `this` is bigger
+*- returns true if sign comparsion indicates that `this` is bigger
 *
-*- returns 0 if sign comparsion indicates that parameter bigint is bigger
+*- returns false if sign comparsion indicates that parameter bigint is bigger
 */
-bool BigInt::compareSigns(const BigInt& bi) {
+bool BigInt::compareSigns(const BigInt& bi) const {
 
 	if (isPositive && !bi.isPositive) {
-		return 1;
+		return true;
 	}
 	else if (!isPositive && bi.isPositive) {
-		return 0;
+		return false;
 	}
 	else {
 		std::cout << "something went wrong\n";
-		return 0;
+		return false;
 	}
 }
 
@@ -64,7 +64,7 @@ bool BigInt::compareSigns(const BigInt& bi) {
 	First checks signs, then looks at values
 
 */
-bool BigInt::biggerThan(const BigInt& bi) {
+bool BigInt::biggerThan(const BigInt& bi) const {
 
 	if (areSignsDifferent(bi)) {
 		return compareSigns(bi);
@@ -72,14 +72,14 @@ bool BigInt::biggerThan(const BigInt& bi) {
 	else return compareChunks(bi) == 1;
 }
 
-bool BigInt::smallerThan(const BigInt& bi) {
+bool BigInt::smallerThan(const BigInt& bi) const {
 	if (areSignsDifferent(bi)) {
 		return !compareSigns(bi);
 	}
 	else return compareChunks(bi) == -1;
 }
 
-bool BigInt::equals(const BigInt& bi) {
+bool BigInt::equals(const BigInt& bi) const {
 	if (areSignsDifferent(bi)) return false;
 	else return compareChunks(bi) == 0;
 }

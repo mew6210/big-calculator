@@ -110,7 +110,7 @@ BigInt Block::eval(EvalCtx& eCtx){
 	Evaluator ev;
 	BigInt retVal;
 	bool set = false;
-
+	m_EvalCtx.setParent(eCtx);
 	ev.evalCtx = std::move(m_EvalCtx);
 	for (size_t i = 0; i < lines.size()-1; i++) {
 		ev.setASTRoot(lines[i]);	
@@ -133,7 +133,16 @@ BigInt Block::eval(EvalCtx& eCtx){
 	}
 
 	ev.setASTRoot(lines[lines.size() - 1]);
-	retVal = ev.evalRet();
+	try {
+		retVal = ev.evalRet();
+		eCtx.shouldPrint = ev.evalCtx.shouldPrint;
+	}catch (ReturnException& ret) {
+		retVal = ret.value;
+		lines[lines.size() - 1] = std::move(ev.ASTRoot);
+		m_EvalCtx = std::move(ev.evalCtx);
+		return retVal;
+	}
+
 	lines[lines.size() - 1] = std::move(ev.ASTRoot);
 	m_EvalCtx = std::move(ev.evalCtx);
 	return retVal;
@@ -178,7 +187,7 @@ void ReturnNode::print(int indent) {
 }
 
 std::string ReturnNode::toString() {
-	return "Return node: "+val->toString();
+	return "return "+val->toString();
 }
 
 NodeType ReturnNode::type() {

@@ -1,18 +1,18 @@
 #include "bigint.hpp"
 #include <iomanip>
 
-std::numeric_limits<uChunkInt> CHUNKINTLIMIT;
-
-void chunkIntToHex(uChunkInt x) {
-	std::cout << std::setw(sizeof(uChunkInt) * 2) << std::setfill('0') << std::hex << x;
+namespace {
+	void chunkIntToHex(uChunkInt x) {
+		std::cout << std::setw(sizeof(uChunkInt) * 2) << std::setfill('0') << std::hex << x;
+	}
 }
 
-void BigInt::inspectChunks(chunkDisplayMode cdm) {
+void BigInt::inspectChunks(chunkDisplayMode cdm) const {
 	std::cout << "------------\n";
 	std::cout << "sign: ";
 	if (isPositive) std::cout << "+\n";
 	else std::cout << "-\n";
-	if (chunks.size() == 0) {
+	if (chunks.empty()) {
 		std::cout << "no chunks to display, empty bigint\n";
 		std::cout << "------------\n";
 		return;
@@ -31,12 +31,12 @@ void BigInt::inspectChunks(chunkDisplayMode cdm) {
 	std::cout << "------------\n";
 }
 
-void BigInt::inspectChunks(chunkDisplayMode cdm,int indent) {
+void BigInt::inspectChunks(chunkDisplayMode cdm,int indent) const {
 	std::cout << std::string(indent,' ') << "------------\n";
 	std::cout << std::string(indent, ' ') << "sign: ";
 	if (isPositive) std::cout << "+\n";
 	else std::cout << "-\n";
-	if (chunks.size() == 0) {
+	if (chunks.empty()) {
 		std::cout << std::string(indent, ' ') << "no chunks to display, empty bigint\n";
 		std::cout << std::string(indent, ' ') << "------------\n";
 		return;

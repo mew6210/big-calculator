@@ -10,12 +10,11 @@ using ExprNodes = std::vector<std::unique_ptr<ExprNode>>;
 namespace helpers {
 
 	void printFuncLabel(const std::string& name) {
+		constexpr size_t totalWidth = 20;
 
-		const int totalWidth = 20;
-
-		int dashCount = totalWidth - name.size();
-		int left = dashCount / 2;
-		int right = dashCount - left;
+		const size_t dashCount = totalWidth - name.size();
+		const size_t left = dashCount / 2;
+		const size_t right = dashCount - left;
 
 		std::cout << "<" << std::string(left, '-');
 		std::cout << name;
@@ -68,12 +67,12 @@ namespace helpers {
 	std::string userFuncToStr(const UserFunc& func) {
 		std::string ret;
 		ret += func.name;
-		ret += "(";
+		ret += '(';
 		for (size_t i = 0; i < func.params.size(); i++) {
 			ret += func.params[i];
-			if (i != func.params.size() - 1) ret += ",";
+			if (i != func.params.size() - 1) ret += ',';
 		}
-		ret += ")";
+		ret += ')';
 		ret += " = " + func.definition->toString();
 
 		return ret;
@@ -101,22 +100,26 @@ chunkDisplayMode getChunkDisplayModeFromBigInt(BigInt& bi) {
 */
 namespace stlFuncs {
 
+	funcReturn voidReturn() {
+		return {.value = BigInt(0),.hasValue =false};
+	}
+
 	//void
-	funcReturn inspect(ExprNodes& args, EvalCtx& eCtx) {
+	funcReturn inspect(const ExprNodes& args, EvalCtx& eCtx) {
 		chunkDisplayMode cdm = chunkDisplayMode::decimal;
 		if (args.size() > 2) throw EvalException("Too many arguments in inspect()", "Check out \"?inspect()\" to see the correct function parameters");
-		if (args.size() == 0) throw EvalException("Expected at least 1 argument in inspect()", "Check out \"?inspect()\" to see the correct function parameters");
+		if (args.empty()) throw EvalException("Expected at least 1 argument in inspect()", "Check out \"?inspect()\" to see the correct function parameters");
 
 		if (args.size() == 2) {
 			BigInt cdmVar = args[1]->eval(eCtx);
 			cdm = getChunkDisplayModeFromBigInt(cdmVar);
 		}
 
-		BigInt var = args[0]->eval(eCtx);
+		const BigInt var = args[0]->eval(eCtx);
 
 		var.inspectChunks(cdm);
 		eCtx.shouldPrint = false; //dont print result, which is 0
-		return { BigInt(0),false }; //dont return anything
+		return voidReturn(); //dont return anything
 	}
 
 	//void
@@ -154,19 +157,19 @@ namespace stlFuncs {
 			"\t?help()\n"
 			;
 		eCtx.shouldPrint = false; //dont print result, which is 0
-		return { BigInt(0),false }; //dont return anything
+		return voidReturn(); //dont return anything
 	}
 
 	//void
 	funcReturn showVars(ExprNodes& args, EvalCtx& eCtx) {
-		for (auto& var : eCtx.vars) {
-			std::cout << var.first << " = " << var.second.toString() << "\n";
+		for (auto& [name, value] : eCtx.vars) {
+			std::cout << name << " = " << value.toString() << "\n";
 		}
 		eCtx.shouldPrint = false; //dont print result, which is 0
-		return { BigInt(0),false }; //dont return anything
+		return voidReturn(); //dont return anything
 	}
 
-	funcReturn abs(ExprNodes& args, EvalCtx& eCtx) {
+	funcReturn abs(const ExprNodes& args, EvalCtx& eCtx) {
 		
 		if (args.size() != 1) throw EvalException("Too many arguments in abs(), expected 1", "Check out \"?abs()\" to see the correct function parameters");
 
@@ -174,10 +177,10 @@ namespace stlFuncs {
 		if (var.isNegative()) {
 			var.flipSign();
 		}
-		return funcReturn{ var ,true};
+		return funcReturn{ .value = var ,.hasValue = true};
 	}
 
-	funcReturn max(ExprNodes& args, EvalCtx& eCtx) {
+	funcReturn max(const ExprNodes& args, EvalCtx& eCtx) {
 
 		if (args.size() != 2) throw EvalException("Wrong amount of arguments in max(), expected 2", "Check out \"?max()\" to see the correct function parameters");
 
@@ -186,30 +189,30 @@ namespace stlFuncs {
 		
 		if (var1.biggerThan(var2)) return funcReturn { var1,true };
 		if (var2.biggerThan(var1)) return funcReturn{ var2, true };
-		return funcReturn{ var1,true };
+		return funcReturn{ .value = var1,.hasValue = true };
 	}
 
-	funcReturn min(ExprNodes& args, EvalCtx& eCtx) {
+	funcReturn min(const ExprNodes& args, EvalCtx& eCtx) {
 
 		if (args.size() != 2) throw EvalException("Wrong amount of arguments in min(), expected 2", "Check out \"?min()\" to see the correct function parameters");
 
-		BigInt var1 = args[0]->eval(eCtx);
-		BigInt var2 = args[1]->eval(eCtx);
+		const BigInt var1 = args[0]->eval(eCtx);
+		const BigInt var2 = args[1]->eval(eCtx);
 
 		if (var1.biggerThan(var2)) return funcReturn{ var2,true };
 		if (var2.biggerThan(var1)) return funcReturn{ var1, true };
-		return funcReturn{ var1,true };
+		return funcReturn{ .value = var1,.hasValue = true };
 	}
 
 	//void
-	funcReturn cmp(ExprNodes& args, EvalCtx& eCtx) {
+	funcReturn cmp(const ExprNodes& args, EvalCtx& eCtx) {
 
 		if (args.size() != 2) throw EvalException("Wrong amount of arguments in cmp(), expected 2", "Check out \"?cmp()\" to see the correct function parameters");
 
-		BigInt var1 = args[0]->eval(eCtx);
-		BigInt var2 = args[1]->eval(eCtx);
+		const BigInt var1 = args[0]->eval(eCtx);
+		const BigInt var2 = args[1]->eval(eCtx);
 
-		
+
 		if (var1.biggerThan(var2)){
 			std::cout << args[0]->toString() << " is bigger\n";
 		}
@@ -221,10 +224,10 @@ namespace stlFuncs {
 		}
 
 		eCtx.shouldPrint = false; //dont print result, which is 0
-		return funcReturn{ var1,false }; //dont return anything
+		return voidReturn(); //dont return anything
 	}
 
-	funcReturn sum(ExprNodes& args, EvalCtx& eCtx) {
+	funcReturn sum(const ExprNodes& args, EvalCtx& eCtx) {
 
 		BigInt sum = BigInt(0);
 
@@ -233,28 +236,28 @@ namespace stlFuncs {
 			sum.addBigInt(var);
 		}
 
-		return funcReturn{ sum,true };
+		return funcReturn{ .value = sum,.hasValue = true };
 	}
 
-	funcReturn prod(ExprNodes& args, EvalCtx& eCtx) {
+	funcReturn prod(const ExprNodes& args, EvalCtx& eCtx) {
 
 		BigInt sum = BigInt(1);
 
-		for (auto& arg : args) {
+		for (const auto& arg : args) {
 			BigInt var = arg->eval(eCtx);
 			sum.multiplyBigInt(var);
 		}
 
-		return funcReturn{ sum,true };
+		return funcReturn{ .value = sum,.hasValue = true };
 	}
 
-	funcReturn cntDigits(ExprNodes& args, EvalCtx& eCtx) {
+	funcReturn cntDigits(const ExprNodes& args, EvalCtx& eCtx) {
 
 		if (args.size() != 1) throw EvalException("Wrong amount of arguments in cntDigits(), expected 1", "Check out \"?cntDigits()\" to see the correct function parameters");
 
 		BigInt var = args[0]->eval(eCtx);
 
-		return funcReturn{ BigInt(var.toString().size()),true };
+		return funcReturn{ .value = BigInt(var.toString().size()),.hasValue = true };
 	}
 
 	//void
@@ -271,7 +274,7 @@ namespace stlFuncs {
 	}
 
 	//void
-	funcReturn execFile(ExprNodes& args, EvalCtx& eCtx) {
+	funcReturn execFile(const ExprNodes& args, EvalCtx& eCtx) {
 
 		if (args.size() != 1) throw EvalException("Wrong amount of arguments in execFile(), expected 1", "Check out \"?execFile()\" to see the correct function parameters");
 		if (args[0]->type() != NodeType::Var) throw EvalException("Given argument has to be a variable", "Check out \"?execFile()\" to see the correct function parameters");
@@ -286,7 +289,7 @@ namespace stlFuncs {
 		if (!file.good()) throw EvalException("No such file", fileName+" does not exist");
 
 		eCtx.shouldPrint = false;
-		return funcReturn{ BigInt(0),false };
+		return voidReturn();
 	}
 
 	//void
@@ -304,7 +307,7 @@ namespace stlFuncs {
 		}
 
 		eCtx.shouldPrint = false;
-		return funcReturn{ BigInt(0),false }; //file auto closed
+		return voidReturn(); //file auto closed
 	}
 
 	//void
@@ -320,19 +323,19 @@ namespace stlFuncs {
 		}
 
 		eCtx.shouldPrint = false;
-		return funcReturn{ BigInt(0),false }; 
+		return voidReturn();
 	}
 
-	funcReturn mod(ExprNodes& args, EvalCtx& eCtx) {
+	funcReturn mod(const ExprNodes& args, EvalCtx& eCtx) {
 
 		if (args.size() != 2) throw EvalException("Wrong amount of arguments in mod(), expected 2", "Check out \"?mod()\" to see the correct function parameters");
 
 		BigInt a = args[0]->eval(eCtx);
 		BigInt b = args[1]->eval(eCtx);
 
-		auto res = divideUnsigned(a, b);
+		auto [quotient, remainder] = divideUnsigned(a, b);
 		
-		return funcReturn{ res.remainder,true};
+		return funcReturn{ .value = remainder,.hasValue = true};
 	}
 
 	/*
@@ -340,7 +343,7 @@ namespace stlFuncs {
 		to avoid multiplying n times, fast exponentiation algorithm is used
 		source: https://math-sites.uncg.edu/sites/pauli/112/HTML/secfastexp.html
 	*/
-	funcReturn exp(ExprNodes& args, EvalCtx& eCtx) {
+	funcReturn exp(const ExprNodes& args, EvalCtx& eCtx) {
 
 		if (args.size() != 2) throw EvalException("Wrong amount of arguments in exp(), expected 2", "Check out \"?exp()\" to see the correct function parameters");
 
@@ -362,7 +365,7 @@ namespace stlFuncs {
 
 			c.multiplyBigInt(c);
 		}
-		return funcReturn{ a,true };
+		return funcReturn{ .value = a,.hasValue = true };
 	}
 	
 	funcReturn lexerOutput(ExprNodes& args, EvalCtx& eCtx) {
@@ -375,7 +378,7 @@ namespace stlFuncs {
 		if (var.isZero()) eCtx.showLexerOutput = false;
 
 		eCtx.shouldPrint = false;
-		return funcReturn{ BigInt(0),false };
+		return voidReturn();
 	}
 
 
@@ -389,7 +392,7 @@ namespace stlFuncs {
 		if (var.isZero()) eCtx.showParserOutput = false;
 
 		eCtx.shouldPrint = false;
-		return funcReturn{ BigInt(0),false };
+		return voidReturn();
 	}
 
 }
@@ -546,25 +549,24 @@ std::vector<stlFunc> stlFunctions = {
 namespace stlFuncs {
 	//void
 	funcReturn showFunctions(ExprNodes& args, EvalCtx& eCtx) {
-		
 		for (auto& func : stlFunctions) helpers::printStlFuncInfo(func);
 		eCtx.shouldPrint = false;	//dont print result, which is 0
-		return funcReturn{ BigInt(0),false };	//dont return anything
+		return voidReturn();	//dont return anything
 	}
 }
 
-void handleFuncNotFound(std::string& funcName) {
+void handleFuncNotFound(const std::string& funcName) {
 
 	using Distance = std::pair<std::string, uint64_t>;
 	std::vector<Distance> distances;
 
 	//check how similiar current stl function names are to user's input
 	for (auto& func : stlFunctions) {
-		distances.push_back({ func.funcName,helpers::levenshteinDistance(funcName,func.funcName) });
+		distances.emplace_back( func.funcName,helpers::levenshteinDistance(funcName,func.funcName) );
 	}
 
 	//sort so that first element is the most likely
-	std::sort(distances.begin(), distances.end(), [](Distance& distance1, Distance& distance2) {
+	std::ranges::sort(distances, [](const Distance& distance1, const Distance& distance2) {
 		return distance1.second < distance2.second;
 		});
 
@@ -605,17 +607,21 @@ std::optional<BigInt> funcDispatch(std::string& funcName,ExprNodes& args, EvalCt
 	}
 
 	//check for user functions
-	for (auto& func : eCtx.userFunctions) {
+	for (auto& [name, params, definition] : eCtx.userFunctions) {
 
-		if (funcName == func.name) {
+		if (funcName == name) {
 			
-			if (func.params.size() != args.size()) throw EvalException("Argument mismatch, " "function " + func.name + " expects " + std::to_string(func.params.size()) + " arguments, but " + std::to_string(args.size()) + " were provided","Check out ?"+func.name+"()");
+			if (params.size() != args.size())
+				throw EvalException("Argument mismatch, " "function " + name
+					+ " expects " + std::to_string(params.size())
+					+ " arguments, but " + std::to_string(args.size())
+					+ " were provided","Check out ?"+name+"()");
 
 			EvalCtx newEvalCtx{};
 			std::vector<std::pair<std::string,BigInt>> vars;
 			
-			for (size_t i = 0; i < func.params.size();i++) {
-				vars.push_back({ func.params[i],args[i]->eval(eCtx) });
+			for (size_t i = 0; i < params.size();i++) {
+				vars.emplace_back( params[i],args[i]->eval(eCtx) );
 			}
 			
 			newEvalCtx.vars = vars;
@@ -623,11 +629,11 @@ std::optional<BigInt> funcDispatch(std::string& funcName,ExprNodes& args, EvalCt
 
 			BigInt val = BigInt(0);
 
-			if (func.definition->type() != NodeType::Block) {
-				val = func.definition->eval(newEvalCtx);
+			if (definition->type() != NodeType::Block) {
+				val = definition->eval(newEvalCtx);
 			}
 			else {
-				auto def = reinterpret_cast<Block*>(func.definition.get());
+				auto def = reinterpret_cast<Block*>(definition.get());
 				def->m_EvalCtx = std::move(newEvalCtx);
 				val = def->eval(newEvalCtx); //this newEvalCtx doesnt matter
 				newEvalCtx.userFunctions = std::move(def->m_EvalCtx.userFunctions);

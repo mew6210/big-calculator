@@ -3,8 +3,7 @@
 BigInt::BigInt(const chunkInt& val) {
 	chunks.resize(1);
 	chunks[0] = abs(val);
-	if (val > 0) isPositive = true;
-	else if (val < 0) isPositive = false;
+	if (val < 0) isPositive = false;
 	else isPositive = true;
 }
 
@@ -49,10 +48,8 @@ std::string BigInt::toString() const {
         blocks.push_back(rem);
     }
 
-    std::string result;
-
-    result = std::to_string(blocks.back());
-    for (int i = (int)blocks.size() - 2; i >= 0; --i) {
+    std::string result = std::to_string(blocks.back());
+    for (int i = static_cast<int>(blocks.size()) - 2; i >= 0; --i) {
         std::string part = std::to_string(blocks[i]);
         result.append(DEC_DIGITS - part.length(), '0');
         result += part;
@@ -64,6 +61,6 @@ std::string BigInt::toString() const {
     return result;
 }
 
-void BigInt::print() {
+void BigInt::print() const {
 	std::cout << this->toString() << "\n";
 }

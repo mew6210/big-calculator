@@ -1,6 +1,5 @@
 #include "eval.hpp"
 #include "../astnodes/astnodes.hpp"
-#include "../logging/logging.hpp"
 #include <optional>
 #include "evalException.hpp"
 #include "stl/stl.hpp"
@@ -35,10 +34,13 @@ void Evaluator::eval() {
 	}
 }
 
+//TODO: probably only one eval should be valid, so eval above should be deleted
 BigInt Evaluator::evalRet() {
 	try {
 		if (isRootAssign(ASTRoot)) {	//if its an assignment, treat it like so
 			handleAssignRoot();
+			evalCtx.shouldPrint = false;
+			return {0};
 		}
 		else {
 			BigInt res = ASTRoot->eval(evalCtx);	//otherwise treat it like a basic evaluation, no variable assigning
@@ -174,8 +176,7 @@ BigInt CallExprNode::eval(EvalCtx& ectx) {
 	auto var = funcDispatch(funcName, args, ectx);
 
 	if (var) return var.value();
-	else return BigInt(0);
-
+	else return {0};
 }
 
 BigInt IfStmtNode::eval(EvalCtx& ectx){

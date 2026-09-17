@@ -23,7 +23,7 @@ uint128Emul mult64to128(uint64_t op1, uint64_t op2) {	//stack overflow came in c
 	return uint128Emul{ hi,lo };
 }
 
-void BigInt::multiplyChunkInt64(uChunkInt val) {
+void BigInt::multiplyChunkInt64(const uChunkInt val) {
 	std::vector<Remainder> remainders = {};
 
 	uint64_t originalSize = chunks.size();
@@ -42,7 +42,7 @@ void BigInt::multiplyChunkInt64(uChunkInt val) {
 */
 namespace {
 	//almost the same as 'addChunkInt'
-	void addChunkIntExternal(Chunks& chunks, uChunkInt val, uChunkInt startChunk) {
+	void addChunkIntExternal(Chunks& chunks, const uChunkInt val, const uChunkInt startChunk) {
 		uChunkInt carry = val;
 		size_t i = startChunk; //start from a different chunk than the first one
 
@@ -57,7 +57,7 @@ namespace {
 		}
 	}
 	//almost the same as 'multiplyChunkInt64'
-	Chunks multiplyChunkInt64External(const Chunks& chunks, uChunkInt val) {
+	Chunks multiplyChunkInt64External(const Chunks& chunks, const uChunkInt val) {
 		std::vector<Remainder> remainders = {};
 		Chunks subsituteChunks = chunks;
 
@@ -77,8 +77,8 @@ namespace {
 }
 
 void BigInt::sumUpRemainders(std::vector<Remainder>& remainders) {
-	for (auto& remainder : remainders) {
-		addChunkInt(remainder.value, remainder.chunkPos);
+	for (auto& [value,chunkPos] : remainders) {
+		addChunkInt(value, chunkPos);
 	}
 	remainders.clear();
 }
@@ -112,17 +112,18 @@ Chunks sumUpMultiplicationResults(const std::vector<Chunks>& sums) {
 	return result;
 }
 
-bool determineMultSign(bool& sign1,bool& sign2) {
+bool determineMultSign(const bool& sign1, const bool& sign2) {
 	return sign1 == sign2;
 }
 
-void BigInt::multiplyBigInt(BigInt& bi) {
+void BigInt::multiplyBigInt(const BigInt& bi) {
 	std::vector<Chunks> sums;
-	for (size_t i = 0; i < bi.chunks.size(); i++) {		//for every chunk in 2nd bigint
-		auto result = multiplyChunkInt64External(chunks,bi.chunks[i]);	//multiply every single chunk in 1st bigint
+	for (const uChunkInt& chunk : bi.chunks) {		//for every chunk in 2nd bigint
+		auto result = multiplyChunkInt64External(chunks,chunk);	//multiply every single chunk in 1st bigint
 		sums.push_back(result);
 	}
-	if (sums.size() == 0) { chunks = {}; return; }
+
+	if (sums.empty()) { chunks = {}; return; }
 	auto resultChunks = sumUpMultiplicationResults(sums);
 	chunks = resultChunks;
 	trimTrailingChunks();
