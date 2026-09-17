@@ -38,12 +38,13 @@ bool EvalCtx::varExists(std::string& name) {
 		[name](const std::pair<std::string,BigInt>& p){return p.first == name;});
 
 	if (isLocal) return isLocal;
-	if (parentCtx) parentCtx->varExists(name);
+	if (parentCtx) return parentCtx->varExists(name);
 
 	return false;
 }
 
 //assign var by name and value
+//nested example: {a = 5; {a = 3; return 1;}; return a;}    returns 3
 void EvalCtx::assignVar(std::string& name, BigInt& bi) {
 	for (auto& var : vars) {
 		if (var.first == name) {
@@ -55,7 +56,6 @@ void EvalCtx::assignVar(std::string& name, BigInt& bi) {
 	if (parentCtx) parentCtx->assignVar(name,bi);
 }
 
-//example usage: {f(x) = 2 * x; return f(3);}    returns 6
 bool EvalCtx::funcExists(std::string& name) {
 	auto isLocal = std::ranges::any_of(userFunctions,[name](UserFunc& func){return func.name == name;});
 	if (isLocal) return isLocal;
@@ -63,7 +63,7 @@ bool EvalCtx::funcExists(std::string& name) {
 	return false;
 }
 
-//example usage: {f(x) = 2; {f(x) = 3; return 1;};return f(5);}      returns 3, because f(x) is edited
+//nested example: {f(x) = 2; {f(x) = 3; return 1;};return f(5);}      returns 3, because f(x) is edited
 void EvalCtx::assignFunc(UserFunc& userFunc) {
 	for (auto& func : userFunctions) {
 		if (func.name == userFunc.name) {
