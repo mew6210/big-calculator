@@ -39,6 +39,8 @@ BigInt Evaluator::evalRet() {
 	try {
 		if (isRootAssign(ASTRoot)) {	//if its an assignment, treat it like so
 			handleAssignRoot();
+			evalCtx.shouldPrint = false;
+			return {0};
 		}
 		else {
 			BigInt res = ASTRoot->eval(evalCtx);	//otherwise treat it like a basic evaluation, no variable assigning
