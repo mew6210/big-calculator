@@ -55,21 +55,24 @@ void EvalCtx::assignVar(std::string& name, BigInt& bi) {
 	if (parentCtx) parentCtx->assignVar(name,bi);
 }
 
-//TODO: implement parentCtx recursion, as in functions above
+//example usage: {f(x) = 2 * x; return f(3);}    returns 6
 bool EvalCtx::funcExists(std::string& name) {
-	return std::ranges::any_of(userFunctions,[name](UserFunc& func){return func.name == name;});
+	auto isLocal = std::ranges::any_of(userFunctions,[name](UserFunc& func){return func.name == name;});
+	if (isLocal) return isLocal;
+	if (parentCtx) return parentCtx->funcExists(name);
+	return false;
 }
 
-//TODO: implement parentCtx recursion, as in functions above
+//example usage: {f(x) = 2; {f(x) = 3; return 1;};return f(5);}      returns 3, because f(x) is edited
 void EvalCtx::assignFunc(UserFunc& userFunc) {
-
 	for (auto& func : userFunctions) {
 		if (func.name == userFunc.name) {
 			func.params = std::move(userFunc.params);
 			func.definition = std::move(userFunc.definition);
+			return;
 		}
 	}
-
+	if (parentCtx) parentCtx->assignFunc(userFunc);
 }
 
 void EvalCtx::setParent(EvalCtx& eCtx) {

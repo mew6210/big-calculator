@@ -186,7 +186,7 @@ void ReturnNode::print(int indent) {
 }
 
 std::string ReturnNode::toString() {
-	return "Return node: "+val->toString();
+	return "return "+val->toString();
 }
 
 NodeType ReturnNode::type() {

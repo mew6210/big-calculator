@@ -34,6 +34,7 @@ void Evaluator::eval() {
 	}
 }
 
+//TODO: probably only one eval should be valid, so eval above should be deleted
 BigInt Evaluator::evalRet() {
 	try {
 		if (isRootAssign(ASTRoot)) {	//if its an assignment, treat it like so
