@@ -10,7 +10,7 @@ void introduce(){
 
 AppState initApp(){
     introduce();
-    return AppState();
+    return {};
 }
 
 void AppState::handleFileLoad() {
@@ -18,7 +18,7 @@ void AppState::handleFileLoad() {
     std::string fileName = evaluator.evalCtx.fileToExec;
     evaluator.evalCtx.fileToExec = "";
 
-    if (fileName == "") return; //if no file to execute, just leave
+    if (fileName.empty()) return; //if no file to execute, just leave
 
     std::ifstream file(fileName);
 
@@ -27,13 +27,13 @@ void AppState::handleFileLoad() {
     }
 
     std::vector<std::string> lines;
-    std::string line = "";
+    std::string line;
     while (std::getline(file, line)) {
         lines.push_back(line);
     }
 
-    for (const auto& line : lines) {
-        setSrc(line);
+    for (const auto& lineFromLines : lines) {
+        setSrc(lineFromLines);
         execute();
     }
     fileName = "";
@@ -58,7 +58,12 @@ void AppState::eval(){
     evaluator.setSrc(src);
     auto root = parser.getRoot();       //setASTRoot only takes lvalues, so this variable is actually necessary XD
     evaluator.setASTRoot(root);
-    evaluator.eval();
+    try {
+        evaluator.eval();
+    }catch (ReturnException& _) {
+        std::cout<<"Error: Return found outside a block, that's illegal\n";
+        return;
+    }
     
     handleFileLoad();
 }
@@ -72,23 +77,15 @@ void AppState::cleanup() {
 }
 
 void AppState::execute() {
-    if (src == "") return;
+    if (src.empty()) return;
     lex();
     parse();
-    try {
-        eval();
-    }catch (ReturnException& ret) {
-        std::cout<<"Error: Return found outside a block, that's illegal\n";
-    }
-
+    eval();
     cleanup();
 }
 
 void checkForStart(AppState& state) {
-
-    std::ifstream file("start.txt");
-
-    if (file.good()) {
+    if (std::ifstream file("start.txt"); file.good()) {
         state.setFileToExec("start.txt");
         state.executeFile();
         std::cout << "file with previous vars and funcs found and loaded successfully\n";
@@ -99,7 +96,7 @@ void checkForStart(AppState& state) {
 void handleInteractiveMode() {
     AppState state = initApp();
     checkForStart(state);   //check for saved things
-    std::string line = "";
+    std::string line;
     while (true) {
         std::cout << ">";
         std::getline(std::cin, line);
@@ -117,12 +114,11 @@ bool isStrFile(const char* c){
 
 void handleFileExecution(const char* c) {
 
-    AppState state = AppState();
+    AppState state = {};
     checkForStart(state);   //check for saved things
     
     state.setFileToExec(c);
     state.executeFile();
-
 }
 
 void handleCodeExecution(int argc, char** args) {
@@ -136,11 +132,10 @@ void handleCodeExecution(int argc, char** args) {
         i++;
     }
 
-    AppState state = AppState();
+    AppState state = {};
     checkForStart(state);
     state.setSrc(code);
     state.execute();
-
 }
 
 void handleCmdArgs(int argc, char** argv) {
@@ -156,5 +151,4 @@ void handleCmdArgs(int argc, char** argv) {
     }
     
     handleCodeExecution(argc, argv);
-
 }

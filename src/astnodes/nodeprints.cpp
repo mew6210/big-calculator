@@ -104,7 +104,6 @@ void Block::print(int ident) {
 	std::cout << std::string(ident, ' ') << "}\n";
 }
 
-//TODO: statement like this: f(x) = {if(x){inspect(x);};} generates a undefined x error
 BigInt Block::eval(EvalCtx& eCtx){
 	
 	Evaluator ev;
