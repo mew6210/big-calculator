@@ -3,6 +3,7 @@
 #include <iostream>
 #include "../eval/evalException.hpp"
 #include "../eval/eval.hpp"
+#include "../eval/stl/stl.hpp"
 
 //printing
 void BinaryExprNode::print(int indent = 0) {
@@ -93,7 +94,6 @@ std::string BinaryExprNode::toString() {
 std::string VariableExprNode::toString() {
 	return name;
 }
-
 
 void Block::print(int ident) {
 	std::cout << std::string(ident, ' ') << "Block{ \n";
@@ -191,4 +191,66 @@ std::string ReturnNode::toString() {
 
 NodeType ReturnNode::type() {
 	return NodeType::Return;
+}
+
+BigInt BigIntNode::eval(EvalCtx&) {
+	return val;
+}
+
+BigInt BinaryExprNode::eval(EvalCtx& evalCtx){
+	BigInt a = lhs->eval(evalCtx);
+	BigInt b = rhs->eval(evalCtx);
+
+	switch (op) {
+	case OperatorType::add: a.addBigInt(b); break;
+	case OperatorType::subtract: a.subtractBigInt(b); break;
+	case OperatorType::multiply: a.multiplyBigInt(b); break;
+	case OperatorType::divide: {
+		if (b.equals(BigInt("0"))) throw EvalException("Division by zero", "Dont divide by 0", a, BigInt(0), '/');
+		else a.divideBigInt(b,false);
+	}break;
+	case OperatorType::equal: {
+		if (a.equals(b)) return {1};
+		else return {0};
+	} break;
+	case OperatorType::notEqual: {
+		if (a.equals(b)) return 0;
+		else return 1;
+	}
+	case OperatorType::assign: throw EvalException("Assignment caught in the middle of an eval", "Assignment here is only one-part like 'a=5'", a, b, '='); break;
+	case OperatorType::undefined: throw EvalException("Unkown operation", "avalible operations are: +,-,*,/,^", a, b, '?'); break;
+	}
+
+	return a;
+}
+
+BigInt VariableExprNode::eval(EvalCtx& ectx) {
+	std::string varName = getName();
+	BigInt ret = ectx.getVar(varName);
+	if (varName[0] == '-') {		//if somebody types in -g, it should be recognized as negative g, not '-g' variable
+		varName.erase(0,1);
+		ret = ectx.getVar(varName);
+		ret.flipSign();
+	}
+	return ret;
+}
+
+BigInt CallExprNode::eval(EvalCtx& ectx) {
+
+	auto var = funcDispatch(funcName, args, ectx);
+
+	if (var) return var.value();
+	else return {0};
+}
+
+BigInt IfStmtNode::eval(EvalCtx& ectx){
+	if (cond->eval(ectx).equals(1)){
+		return body->eval(ectx);
+	}
+	else return {0};
+}
+
+BigInt ReturnNode::eval(EvalCtx& ectx) {
+	BigInt returnValue = val->eval(ectx);
+	throw ReturnException(returnValue);
 }
