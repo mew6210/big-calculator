@@ -117,7 +117,7 @@ BigInt Block::eval(EvalCtx& eCtx){
 		try {
 			ev.eval();
 		}catch (ReturnException& ret) {
-			retVal = ret.value;
+			retVal = ret.getVal();
 			set = true;
 			lines[i] = std::move(ev.ASTRoot);
 			break;
@@ -136,7 +136,7 @@ BigInt Block::eval(EvalCtx& eCtx){
 		retVal = ev.evalRet();
 		eCtx.shouldPrint = ev.evalCtx.shouldPrint;
 	}catch (ReturnException& ret) {
-		retVal = ret.value;
+		retVal = ret.getVal();
 		lines[lines.size() - 1] = std::move(ev.ASTRoot);
 		m_EvalCtx = std::move(ev.evalCtx);
 		return retVal;
@@ -252,5 +252,5 @@ BigInt IfStmtNode::eval(EvalCtx& ectx){
 
 BigInt ReturnNode::eval(EvalCtx& ectx) {
 	BigInt returnValue = val->eval(ectx);
-	throw ReturnException(returnValue);
+	throw ReturnException(returnValue,toString());
 }

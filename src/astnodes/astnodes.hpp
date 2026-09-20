@@ -4,6 +4,7 @@
 #include "astoper.hpp"
 #include <map>
 #include <string>
+#include <utility>
 #include "../eval/evalctx/evalctx.hpp"
 
 /*
@@ -144,7 +145,11 @@ public:
 };
 
 class ReturnException : std::exception {
-public:
 	BigInt value;
-	ReturnException(BigInt v) : value(v) {}
+	std::string src;
+
+public:
+	ReturnException(const BigInt& v,std::string s) : value(v),src(std::move(s)) {}
+	[[nodiscard]] std::string getSrc() const noexcept {return src;}
+	[[nodiscard]] BigInt getVal() const noexcept {return value;}
 };

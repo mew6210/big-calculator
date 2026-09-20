@@ -60,8 +60,8 @@ void AppState::eval(){
     evaluator.setASTRoot(root);
     try {
         evaluator.eval();
-    }catch (ReturnException& _) {
-        std::cout<<"Error: Return found outside a block, that's illegal\n";
+    }catch (ReturnException& ret) {
+        printError(ErrMsg{ret.getSrc(),0,"Return outside block statement","Only blocks can return something, like so: {return 3;}",ErrType::Evaluator});
         return;
     }
     
