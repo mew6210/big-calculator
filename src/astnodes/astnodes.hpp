@@ -172,9 +172,10 @@ public:
 class IfChainNode : public ExprNode {
 	using IfChain = std::vector<std::unique_ptr<IfStmtNode>>;
 
-	IfChain ifs;
+	IfChain branches;
 
 public:
+	IfChainNode(IfChain chain): branches(std::move(chain)){}
 	void print(int indent) override;
 	BigInt eval(EvalCtx&) override;
 	std::string toString() override;

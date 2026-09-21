@@ -22,6 +22,7 @@ class Parser {
 	};
 
 	Token getNextToken();
+	Token peekNextToken();
 
 	std::unique_ptr<ExprNode> parseNumberExpr();
 	std::unique_ptr<ExprNode> parseParenExpr();
