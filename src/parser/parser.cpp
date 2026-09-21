@@ -116,7 +116,11 @@ std::unique_ptr<ExprNode> Parser::parseIf(){
 	auto cond = parseParenExpr();
 	auto body = parseBlock();
 
-	return std::make_unique<IfStmtNode>(std::move(cond),std::move(body));
+	return std::make_unique<IfStmtNode>(
+		std::move(cond),
+		std::move(body),
+		IfStmtNode::IfStmtNodeType::If
+		);
 }
 
 /*

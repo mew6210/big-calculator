@@ -193,6 +193,25 @@ NodeType ReturnNode::type() {
 	return NodeType::Return;
 }
 
+//TODO: Implement
+void IfChainNode::print(int indent) {
+
+}
+
+//TODO: Implement
+BigInt IfChainNode::eval(EvalCtx&) {
+	return {0};
+}
+
+//TODO: Implement
+std::string IfChainNode::toString() {
+	return "";
+}
+
+NodeType IfChainNode::type() {
+	return NodeType::IfChain;
+}
+
 BigInt BigIntNode::eval(EvalCtx&) {
 	return val;
 }
@@ -254,3 +273,5 @@ BigInt ReturnNode::eval(EvalCtx& ectx) {
 	BigInt returnValue = val->eval(ectx);
 	throw ReturnException(returnValue,toString());
 }
+
+

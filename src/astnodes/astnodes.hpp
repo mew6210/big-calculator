@@ -17,6 +17,7 @@ enum class NodeType {
 	CallExpr,
 	Block,
 	IfStmt,
+	IfChain,
 	Return
 };
 
@@ -119,13 +120,27 @@ public:
 };
 
 class IfStmtNode : public ExprNode{
+
+public:
+	enum class IfStmtNodeType {
+		If,
+		ElseIf,
+		Else
+	};
+
+private:
 	std::unique_ptr<ExprNode> cond;
 	std::unique_ptr<ExprNode> body;
+	IfStmtNodeType ifType;
+
 public:
 	IfStmtNode(std::unique_ptr<ExprNode> cond,
-		std::unique_ptr<ExprNode> body):
+		std::unique_ptr<ExprNode> body,
+		IfStmtNodeType type
+		):
 	cond(std::move(cond)),
-	body(std::move(body)) {}
+	body(std::move(body)),
+	ifType(type){}
 
 	void print(int indent) override;
 	BigInt eval(EvalCtx&) override;
@@ -152,4 +167,16 @@ public:
 	ReturnException(const BigInt& v,std::string s) : value(v),src(std::move(s)) {}
 	[[nodiscard]] std::string getSrc() const noexcept {return src;}
 	[[nodiscard]] BigInt getVal() const noexcept {return value;}
+};
+
+class IfChainNode : public ExprNode {
+	using IfChain = std::vector<std::unique_ptr<IfStmtNode>>;
+
+	IfChain ifs;
+
+public:
+	void print(int indent) override;
+	BigInt eval(EvalCtx&) override;
+	std::string toString() override;
+	NodeType type() override;
 };
