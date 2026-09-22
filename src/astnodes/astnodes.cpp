@@ -173,6 +173,15 @@ void IfStmtNode::print(int indent) {
 	std::cout << "\n";
 }
 NodeType IfStmtNode::type() {return NodeType::IfStmt;}
+
+BigInt IfStmtNode::evalCond(EvalCtx& ectx) const {
+	return cond->eval(ectx);
+}
+
+BigInt IfStmtNode::evalBody(EvalCtx& ectx) const {
+	return body->eval(ectx);
+}
+
 std::string IfStmtNode::toString() {
 	return "If statement, condition: "+
 		cond->toString()
@@ -198,8 +207,17 @@ void IfChainNode::print(int indent) {
 
 }
 
-//TODO: Implement
-BigInt IfChainNode::eval(EvalCtx&) {
+BigInt IfChainNode::eval(EvalCtx& ectx) {
+	for (const auto & branch : branches) {
+
+		if (branch->getIfType()== IfStmtNode::IfStmtNodeType::Else) {
+			return branch -> evalBody(ectx);
+		}
+
+		if (branch->evalCond(ectx).equals(1))
+			return branch->evalBody(ectx);
+	}
+
 	return {0};
 }
 

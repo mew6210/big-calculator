@@ -146,6 +146,11 @@ public:
 	BigInt eval(EvalCtx&) override;
 	std::string toString() override;
 	NodeType type() override;
+
+	BigInt evalCond(EvalCtx&) const;
+	BigInt evalBody(EvalCtx&) const;
+	 [[nodiscard]] bool isConditionNull() const {return !cond;}
+	[[nodiscard]] IfStmtNodeType getIfType() const {return ifType;}
 };
 
 class ReturnNode : public ExprNode {
