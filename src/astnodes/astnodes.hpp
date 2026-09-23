@@ -149,8 +149,10 @@ public:
 
 	BigInt evalCond(EvalCtx&) const;
 	BigInt evalBody(EvalCtx&) const;
-	 [[nodiscard]] bool isConditionNull() const {return !cond;}
+	[[nodiscard]] bool isConditionNull() const {return !cond;}
 	[[nodiscard]] IfStmtNodeType getIfType() const {return ifType;}
+	void printBody(int indent) const {body->print(indent);}
+	void printCond(int indent) const;
 };
 
 class ReturnNode : public ExprNode {

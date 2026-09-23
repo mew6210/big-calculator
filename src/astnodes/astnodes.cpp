@@ -99,7 +99,7 @@ void Block::print(int ident) {
 	std::cout << std::string(ident, ' ') << "Block{ \n";
 
 	for (size_t i = 0; i < lines.size(); i++) {
-		std::cout << std::string(ident, ' ') << "line " << i << ": " << lines[i]->toString()<<";\n";
+		std::cout << std::string(ident+4, ' ') << "line " << i << ": " << lines[i]->toString()<<";\n";
 	}
 	std::cout << std::string(ident, ' ') << "}\n";
 }
@@ -189,6 +189,15 @@ std::string IfStmtNode::toString() {
 		+ body->toString();
 }
 
+void IfStmtNode::printCond(int indent) const {
+	if (cond) {
+		cond->print(indent);
+	}
+	else {
+		std::cout<<std::string(" ",indent)<<"No condition";
+	}
+}
+
 void ReturnNode::print(int indent) {
 	std::cout<<std::string(indent,' ')<<"Return: \n";
 	val->print(indent+4);
@@ -202,9 +211,33 @@ NodeType ReturnNode::type() {
 	return NodeType::Return;
 }
 
+static std::string ifNodeTypeToString(IfStmtNode::IfStmtNodeType type) {
+	switch (type) {
+	case IfStmtNode::IfStmtNodeType::If: return "If";
+		break;
+	case IfStmtNode::IfStmtNodeType::ElseIf: return "Else if";
+		break;
+	case IfStmtNode::IfStmtNodeType::Else: return "Else";
+		break;
+	}
+	return "If";
+}
+
 //TODO: Implement
 void IfChainNode::print(int indent) {
+	std::cout<<std::string(" ",indent)<<"IfChainNode: \n";
 
+	for (const auto& branch: branches) {
+		std::cout
+		<<std::string(" ",indent+4)
+		<<ifNodeTypeToString(branch->getIfType())
+		<<" Branch: \n";
+		std::cout<<std::string(" ",indent+4)<<"Condition: \n";
+		branch->printCond(indent+8);
+		std::cout<<std::string(" ",indent+4)<<"Body: \n";
+		branch->printBody(indent+8);
+
+	}
 }
 
 BigInt IfChainNode::eval(EvalCtx& ectx) {
