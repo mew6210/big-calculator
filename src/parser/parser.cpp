@@ -214,7 +214,7 @@ std::vector<Token> Parser::collectTokensUntilSemiColon() {
 			auto buf2 = std::move(AppBufWithBlock());
 
 			buf.insert(buf.end(), buf2.begin(), buf2.end());
-			break;
+			//break;
 		}
 		else {
 			buf.push_back(curTok);
