@@ -198,6 +198,15 @@ void IfStmtNode::printCond(int indent) const {
 	}
 }
 
+std::string IfStmtNode::toStringCond() const noexcept {
+	if (cond) {
+		return cond->toString();
+	}
+	else {
+		return "No condition";
+	}
+}
+
 void ReturnNode::print(int indent) {
 	std::cout<<std::string(indent,' ')<<"Return: \n";
 	val->print(indent+4);
@@ -223,7 +232,6 @@ static std::string ifNodeTypeToString(IfStmtNode::IfStmtNodeType type) {
 	return "If";
 }
 
-//TODO: Implement
 void IfChainNode::print(int indent) {
 	std::cout<<std::string(" ",indent)<<"IfChainNode: \n";
 
@@ -256,7 +264,18 @@ BigInt IfChainNode::eval(EvalCtx& ectx) {
 
 //TODO: Implement
 std::string IfChainNode::toString() {
-	return "";
+
+	std::string result = "IfChainNode: \n";
+
+	for (const auto& branch : branches) {
+		result += "    " + ifNodeTypeToString(branch->getIfType()) + " Branch: \n";
+		result += "    Condition: \n";
+		result += "        " + branch->toStringCond() + "\n";
+		result += "    Body: \n";
+		result += "        " + branch->toStringBody() + "\n";
+	}
+
+	return result;
 }
 
 NodeType IfChainNode::type() {

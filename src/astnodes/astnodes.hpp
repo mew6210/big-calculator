@@ -153,6 +153,8 @@ public:
 	[[nodiscard]] IfStmtNodeType getIfType() const {return ifType;}
 	void printBody(int indent) const {body->print(indent);}
 	void printCond(int indent) const;
+	[[nodiscard]] std::string toStringBody() const noexcept {return body->toString();}
+	[[nodiscard]] std::string toStringCond() const noexcept;
 };
 
 class ReturnNode : public ExprNode {
