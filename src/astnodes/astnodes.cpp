@@ -262,7 +262,6 @@ BigInt IfChainNode::eval(EvalCtx& ectx) {
 	return {0};
 }
 
-//TODO: Implement
 std::string IfChainNode::toString() {
 
 	std::string result = "IfChainNode: \n";
