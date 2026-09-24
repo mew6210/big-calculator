@@ -4,6 +4,7 @@
 #include "astoper.hpp"
 #include <map>
 #include <string>
+#include <utility>
 #include "../eval/evalctx/evalctx.hpp"
 
 /*
@@ -16,6 +17,7 @@ enum class NodeType {
 	CallExpr,
 	Block,
 	IfStmt,
+	IfChain,
 	Return
 };
 
@@ -118,18 +120,41 @@ public:
 };
 
 class IfStmtNode : public ExprNode{
+
+public:
+	enum class IfStmtNodeType {
+		If,
+		ElseIf,
+		Else
+	};
+
+private:
 	std::unique_ptr<ExprNode> cond;
 	std::unique_ptr<ExprNode> body;
+	IfStmtNodeType ifType;
+
 public:
 	IfStmtNode(std::unique_ptr<ExprNode> cond,
-		std::unique_ptr<ExprNode> body):
+		std::unique_ptr<ExprNode> body,
+		IfStmtNodeType type
+		):
 	cond(std::move(cond)),
-	body(std::move(body)) {}
+	body(std::move(body)),
+	ifType(type){}
 
 	void print(int indent) override;
 	BigInt eval(EvalCtx&) override;
 	std::string toString() override;
 	NodeType type() override;
+
+	BigInt evalCond(EvalCtx&) const;
+	BigInt evalBody(EvalCtx&) const;
+	[[nodiscard]] bool isConditionNull() const {return !cond;}
+	[[nodiscard]] IfStmtNodeType getIfType() const {return ifType;}
+	void printBody(int indent) const {body->print(indent);}
+	void printCond(int indent) const;
+	[[nodiscard]] std::string toStringBody() const noexcept {return body->toString();}
+	[[nodiscard]] std::string toStringCond() const noexcept;
 };
 
 class ReturnNode : public ExprNode {
@@ -144,7 +169,24 @@ public:
 };
 
 class ReturnException : std::exception {
-public:
 	BigInt value;
-	ReturnException(BigInt v) : value(v) {}
+	std::string src;
+
+public:
+	ReturnException(const BigInt& v,std::string s) : value(v),src(std::move(s)) {}
+	[[nodiscard]] std::string getSrc() const noexcept {return src;}
+	[[nodiscard]] BigInt getVal() const noexcept {return value;}
+};
+
+class IfChainNode : public ExprNode {
+	using IfChain = std::vector<std::unique_ptr<IfStmtNode>>;
+
+	IfChain branches;
+
+public:
+	IfChainNode(IfChain chain): branches(std::move(chain)){}
+	void print(int indent) override;
+	BigInt eval(EvalCtx&) override;
+	std::string toString() override;
+	NodeType type() override;
 };

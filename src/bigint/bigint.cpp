@@ -9,6 +9,7 @@ BigInt::BigInt(const chunkInt& val) {
 
 BigInt::BigInt() {
 	chunks = {};
+	chunks.push_back(0);
 	isPositive = true;
 }
 
@@ -16,6 +17,13 @@ BigInt::BigInt() {
 	- input correctness is checked by lexer, so no need to check if everything is a digit here
 */
 BigInt::BigInt(const std::string& s) {
+
+	if (s == "0") {
+		chunks = {0};
+		isPositive = true;
+		return;
+	}
+
 	chunks = {}; 
 	isPositive = true; 
 	bool toSkip = false; 

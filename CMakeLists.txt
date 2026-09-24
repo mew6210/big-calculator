@@ -14,7 +14,7 @@ set(SOURCES
  "src/bigint/operations/multiply.cpp" 
  "src/bigint/helpers.cpp" 
  "src/bigint/operations/subtract.cpp"
- "src/astnodes/nodeprints.cpp"
+ "src/astnodes/astnodes.cpp"
  "src/logging/logging.cpp" 
  "src/bigint/operations/divide.cpp" 
   

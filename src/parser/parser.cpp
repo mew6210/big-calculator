@@ -109,14 +109,59 @@ unique_ptr<ExprNode> Parser::parseIdentifierExpr() {
 	return make_unique<CallExprNode>(idName, args);
 }
 
+Token Parser::peekNextToken() {
+	if (curTokIndex + 1 < tokens.size()) {
+		return tokens[curTokIndex + 1];
+	}
+	else return Token{ .type = TokenType::undefined };
+}
+
 std::unique_ptr<ExprNode> Parser::parseIf(){
+	using IfChain = std::vector<std::unique_ptr<IfStmtNode>>;
+	IfChain branches;
 
 	getNextToken(); //eat "if"
 	if (curTok.type != TokenType::openParen) parseErrorLog("Expected ( after 'if'","Insert (condition) after 'if'");
 	auto cond = parseParenExpr();
 	auto body = parseBlock();
 
-	return std::make_unique<IfStmtNode>(std::move(cond),std::move(body));
+	branches.push_back(std::make_unique<IfStmtNode>(
+		std::move(cond),
+		std::move(body),
+		IfStmtNode::IfStmtNodeType::If
+		));
+
+	while (true) {
+		if (curTok.type != TokenType::elseKeyword) break;
+		getNextToken(); //eat else
+
+		if (curTok.type == TokenType::ifKeyword) { //else if
+			getNextToken(); // eat if
+			auto elIfCondition = parseParenExpr();
+			auto elIfBody = parseBlock();
+
+			branches.push_back(std::make_unique<IfStmtNode>(
+				std::move(elIfCondition),
+				std::move(elIfBody),
+				IfStmtNode::IfStmtNodeType::ElseIf
+				));
+		} else if (curTok.type == TokenType::openCurl) { //else
+	 		auto elIfBody = parseBlock();
+
+	 		branches.push_back(std::make_unique<IfStmtNode>(
+				nullptr,
+				std::move(elIfBody),
+				IfStmtNode::IfStmtNodeType::Else
+				));
+
+			break;
+		} else { //other code
+			break;
+		}
+
+	}
+
+	return std::make_unique<IfChainNode>(std::move(branches));
 }
 
 /*
@@ -169,7 +214,7 @@ std::vector<Token> Parser::collectTokensUntilSemiColon() {
 			auto buf2 = std::move(AppBufWithBlock());
 
 			buf.insert(buf.end(), buf2.begin(), buf2.end());
-			break;
+			//break;
 		}
 		else {
 			buf.push_back(curTok);

@@ -343,9 +343,9 @@ namespace stlFuncs {
 		to avoid multiplying n times, fast exponentiation algorithm is used
 		source: https://math-sites.uncg.edu/sites/pauli/112/HTML/secfastexp.html
 	*/
-	funcReturn exp(const ExprNodes& args, EvalCtx& eCtx) {
+	funcReturn pow(const ExprNodes& args, EvalCtx& eCtx) {
 
-		if (args.size() != 2) throw EvalException("Wrong amount of arguments in exp(), expected 2", "Check out \"?exp()\" to see the correct function parameters");
+		if (args.size() != 2) throw EvalException("Wrong amount of arguments in pow(), expected 2", "Check out \"?pow()\" to see the correct function parameters");
 
 		BigInt b = args[0]->eval(eCtx);
 		BigInt n = args[1]->eval(eCtx);
@@ -520,11 +520,11 @@ std::vector<stlFunc> stlFunctions = {
 	stlFuncs::mod
 	},
 	
-	{"exp",
+	{"pow",
 	"\tReturns first parameter exponentiated to second parameter",
 	"\tTwo parameters, any expressions",
-	"\t\"exp(2,3)\" returns 8 becase 2^3",
-	stlFuncs::exp
+	"\t\"pow(2,3)\" returns 8 becase 2^3",
+	stlFuncs::pow
 	},
 	
 	{ "lexerOutput",
