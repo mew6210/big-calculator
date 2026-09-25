@@ -44,7 +44,7 @@ namespace {
     bool isSingleCharInstruction(const char& c) {
 
         if (
-            singleOpsToEnumMap.count(c)
+            singleOpsToEnumMap.contains(c)
             ) return true;
         else return false;
     }
@@ -114,7 +114,12 @@ Token Lexer::handleNumberLiteralToken(const std::string& tok,const uint64_t& sta
     @brief converts identifiers to their respective identifier tokens
 */
 Token Lexer::handleIdentifierToken(const std::string& tok,const uint64_t& startPos) {
-    return Token{ TokenType::identifier,tok,startPos,tok.size()};
+    return Token{
+        .type = TokenType::identifier,
+        .value = tok,
+        .startPos = startPos,
+        .length = tok.size()
+    };
 }
 
 Token handleKeywordIdentifier(const std::string& nameBuf, const uint64_t& startingPos) {
@@ -130,7 +135,7 @@ Token handleKeywordIdentifier(const std::string& nameBuf, const uint64_t& starti
 */
 Token Lexer::handleMultipleCharInstruction() {
 
-    std::string nameBuf = "";
+    std::string nameBuf;
     uint64_t startingPos = cur_index;
     //load name into nameBuf
     while (!isSingleCharInstruction(source[cur_index]) && !isSpace(source[cur_index]) && cur_index != source.size()) {
@@ -165,7 +170,12 @@ Token Lexer::handleSingleCharInstruction() {
     }
     else {
 
-        Token token = Token{ singleOpsToEnumMap[source[cur_index]],std::string{source[cur_index]},cur_index,1 };
+        Token token = Token{
+            .type = singleOpsToEnumMap[source[cur_index]],
+            .value = std::string{source[cur_index]},
+            .startPos = cur_index,
+            .length = 1
+        };
         cur_index++;
         lastTokenType = token.type;
         return token;
@@ -193,7 +203,6 @@ Token Lexer::parseToken(){
 }
 
 void Lexer::parseTokens(){
-
     while(cur_index < source.size()){
         auto token = parseToken();
         tokens.push_back(token);
@@ -208,7 +217,12 @@ std::vector<Token> Lexer::getTokensFromString(const std::string& s){
     cur_index = 0;
     source = s;
     parseTokens();
-    tokens.push_back(Token{ TokenType::tokEOF,"",cur_index-1,1});
+    tokens.push_back(Token{
+        .type = TokenType::tokEOF,
+        .value = "",
+        .startPos = cur_index-1,
+        .length = 1
+    });
     lastTokenType = TokenType::undefined;
     return tokens;
 }
@@ -217,7 +231,7 @@ std::vector<Token> Lexer::getTokensFromString(const std::string& s){
     @brief helper function for assembling a string with tokens position and length
 */
 std::string printTokenPosAndLength(const Token& tok){
-    std::string tokString = "";
+    std::string tokString;
     tokString.append("position: ");
     tokString.append(std::to_string(tok.startPos));
     tokString.append(" length: ");
