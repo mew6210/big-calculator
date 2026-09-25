@@ -16,6 +16,7 @@ enum class TokenType {
 
     ifKeyword,
     elseKeyword,
+    whileKeyword,
     equalKeyword,
     notEqualKeyword,
     returnKeyword,

@@ -18,7 +18,8 @@ enum class NodeType {
 	Block,
 	IfStmt,
 	IfChain,
-	Return
+	Return,
+	WhileLoop
 };
 
 /*
@@ -185,6 +186,23 @@ class IfChainNode : public ExprNode {
 
 public:
 	IfChainNode(IfChain chain): branches(std::move(chain)){}
+	void print(int indent) override;
+	BigInt eval(EvalCtx&) override;
+	std::string toString() override;
+	NodeType type() override;
+};
+
+class WhileLoopNode : public ExprNode {
+
+	std::unique_ptr<ExprNode> cond;
+	std::unique_ptr<ExprNode> body;
+
+public:
+
+	WhileLoopNode(std::unique_ptr<ExprNode> cond, std::unique_ptr<ExprNode> body):
+	cond(std::move(cond)),
+	body(std::move(body)){}
+
 	void print(int indent) override;
 	BigInt eval(EvalCtx&) override;
 	std::string toString() override;

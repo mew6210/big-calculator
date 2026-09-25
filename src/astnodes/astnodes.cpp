@@ -281,6 +281,30 @@ NodeType IfChainNode::type() {
 	return NodeType::IfChain;
 }
 
+//TODO: IMPLEMENT
+void WhileLoopNode::print(int indent) {
+
+}
+
+//TODO: IMPLEMENT
+BigInt WhileLoopNode::eval(EvalCtx& ectx) {
+	BigInt ret;
+	while (cond->eval(ectx).equals(1)) {
+		ret = body->eval(ectx);
+	}
+	return ret;
+}
+
+//TODO: IMPLEMENT
+std::string WhileLoopNode::toString() {
+	return "";
+}
+
+
+NodeType WhileLoopNode::type() {
+	return NodeType::WhileLoop;
+}
+
 BigInt BigIntNode::eval(EvalCtx&) {
 	return val;
 }

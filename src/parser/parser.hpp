@@ -29,6 +29,7 @@ class Parser {
 	std::unique_ptr<ExprNode> parseIdentifierExpr();
 	std::unique_ptr<ExprNode> parseIf();
 	std::unique_ptr<ExprNode> parseReturn();
+	std::unique_ptr<ExprNode> parseWhileLoop();
 	std::unique_ptr<ExprNode> parsePrimary();
 	int getTokPrecedence();
 	std::unique_ptr<ExprNode> parseBinOpRHS(int exprPrec,std::unique_ptr<ExprNode> lhs);
