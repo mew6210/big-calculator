@@ -59,7 +59,9 @@ void AppState::eval(){
     auto root = parser.getRoot();       //setASTRoot only takes lvalues, so this variable is actually necessary XD
     evaluator.setASTRoot(root);
     try {
-        evaluator.eval();
+        const BigInt ret = evaluator.eval();
+        if (evaluator.evalCtx.shouldPrint) ret.print();
+        evaluator.evalCtx.shouldPrint = true;
     }catch (ReturnException& ret) {
         printError(ErrMsg{ret.getSrc(),0,"Return outside block statement","Only blocks can return something, like so: {return 3;}",ErrType::Evaluator});
         return;

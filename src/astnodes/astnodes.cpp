@@ -115,7 +115,7 @@ BigInt Block::eval(EvalCtx& eCtx){
 		ev.setASTRoot(lines[i]);	
 		ev.evalCtx.shouldPrint = false;
 		try {
-			ev.eval();
+			auto _ = ev.eval();
 		}catch (ReturnException& ret) {
 			retVal = ret.getVal();
 			set = true;
@@ -133,7 +133,7 @@ BigInt Block::eval(EvalCtx& eCtx){
 
 	ev.setASTRoot(lines[lines.size() - 1]);
 	try {
-		retVal = ev.evalRet();
+		retVal = ev.eval();
 		eCtx.shouldPrint = ev.evalCtx.shouldPrint;
 	}catch (ReturnException& ret) {
 		retVal = ret.getVal();
