@@ -339,6 +339,36 @@ BigInt BinaryExprNode::eval(EvalCtx& evalCtx){
 	}
 	case OperatorType::assign: throw EvalException("Assignment caught in the middle of an eval", "Assignment here is only one-part like 'a=5'", a, b, '='); break;
 	case OperatorType::undefined: throw EvalException("Unkown operation", "avalible operations are: +,-,*,/,^", a, b, '?'); break;
+
+	case OperatorType::smallerThan: {
+		if (a.smallerThan(b)) return {1};
+		else return {0};
+	}break;
+
+	case OperatorType::biggerThan: {
+		if (a.biggerThan(b)) return {1};
+		else return {0};
+	}break;
+
+	case OperatorType::biggerOrEqualThan: {
+		if (a.biggerThan(b) || a.equals(b)) return {1};
+		else return {0};
+	}break;
+
+	case OperatorType::smallerOrEqualThan: {
+		if (a.smallerThan(b) || a.equals(b)) return {1};
+		else return {0};
+	}break;
+	case OperatorType::andOp: {
+		if (a.equals(1) && b.equals(1)) return {1};
+		else return {0};
+	}break;
+
+	case OperatorType::orOp: {
+		if (a.equals(1) || b.equals(1)) return {1};
+		else return {0};
+	}break;
+
 	}
 
 	return a;

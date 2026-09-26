@@ -244,10 +244,10 @@ unique_ptr<ExprNode> Parser::parseReturn() {
 std::unique_ptr<ExprNode> Parser::parseWhileLoop() {
 	getNextToken(); //eat while
 
-	if (curTok.type != TokenType::openParen) return parseErrorLog("TODO","TODO");
+	if (curTok.type != TokenType::openParen) return parseErrorLog("Unexpected token","Expected ( after 'while'");
 	auto cond = parseParenExpr();
 
-	if (curTok.type != TokenType::openCurl) return parseErrorLog("TODO","TODO");
+	if (curTok.type != TokenType::openCurl) return parseErrorLog("Unexpected token","Expected { after while condition");
 	auto body = parseBlock();
 
 	return std::make_unique<WhileLoopNode>(std::move(cond),std::move(body));

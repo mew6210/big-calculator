@@ -13,8 +13,18 @@ class Parser {
 	std::unique_ptr<ExprNode> root;
 	std::map<TokenType, int> precedenceMap = {
 		{TokenType::assignOp,1},
+
+		{TokenType::orOp,2},
+		{TokenType::andOp,3},
+
 		{TokenType::notEqualKeyword,5},
 		{TokenType::equalKeyword,5},
+
+        {TokenType::smallerThan,7},
+        {TokenType::smallerOrEqualThan,7},
+        {TokenType::biggerThan,7},
+        {TokenType::biggerOrEqualThan,7},
+
 		{TokenType::plusSign,10},
 		{TokenType::minusSign,10},
 		{TokenType::multipSign,20},

@@ -12,6 +12,12 @@ OperatorType tokenToOper(const Token& tok) {
 	case TokenType::divSign: return OperatorType::divide;
 	case TokenType::equalKeyword: return OperatorType::equal;
 	case TokenType::notEqualKeyword: return OperatorType::notEqual;
+	case TokenType::smallerThan: return OperatorType::smallerThan;
+	case TokenType::smallerOrEqualThan: return OperatorType::smallerOrEqualThan;
+	case TokenType::biggerThan: return OperatorType::biggerThan;
+	case TokenType::biggerOrEqualThan: return OperatorType::smallerOrEqualThan;
+	case TokenType::andOp: return OperatorType::andOp;
+	case TokenType::orOp: return OperatorType::orOp;
 	default: return OperatorType::undefined;
 	}
 }
