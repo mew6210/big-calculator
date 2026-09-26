@@ -9,7 +9,13 @@ enum class OperatorType {
 	divide,
 	undefined,
 	equal,
-	notEqual
+	notEqual,
+	smallerThan,
+	biggerThan,
+	biggerOrEqualThan,
+	smallerOrEqualThan,
+	andOp,
+	orOp
 };
 
 /*

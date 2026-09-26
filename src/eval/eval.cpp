@@ -17,24 +17,7 @@ bool isRootAssign(std::unique_ptr<ExprNode>& node) {
 	else return false;
 }
 
-void Evaluator::eval() {
-	try {
-		if (isRootAssign(ASTRoot)) {	//if its an assignment, treat it like so
-			handleAssignRoot();
-		}
-		else {
-			BigInt res = ASTRoot->eval(evalCtx);	//otherwise treat it like a basic evaluation, no variable assigning
-			if(evalCtx.shouldPrint) res.print();
-			evalCtx.shouldPrint = true;
-		}
-	}
-	catch (EvalException& e) {
-		e.printEvalErr();
-	}
-}
-
-//TODO: probably only one eval should be valid, so eval above should be deleted
-BigInt Evaluator::evalRet() {
+BigInt Evaluator::eval() {
 	try {
 		if (isRootAssign(ASTRoot)) {	//if its an assignment, treat it like so
 			handleAssignRoot();
@@ -48,6 +31,8 @@ BigInt Evaluator::evalRet() {
 	}
 	catch (EvalException& e) {
 		e.printEvalErr();
+		evalCtx.shouldPrint = false;
+		return {0};
 	}
 }
 

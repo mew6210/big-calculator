@@ -1,3 +1,4 @@
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -9,6 +10,9 @@ class Lexer{
     TokenType lastTokenType = TokenType::undefined;
     std::vector<Token> tokens;
 
+    std::optional<char> peekNextToken();
+
+    Token handleDoubleCharInstruction();
     Token parseToken();
     void parseTokens();
     Token handleNumberLiteralToken(const std::string& tok,const uint64_t& startPos);

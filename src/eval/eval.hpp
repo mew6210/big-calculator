@@ -8,8 +8,7 @@ struct Evaluator {
 
 	void handleAssignVar(BinaryExprNode* ASTRootAssignNode);
 	void handleAssignUserFunc(BinaryExprNode* ASTRootAssignNode);
-	void eval();
-	BigInt evalRet();
+ 	[[nodiscard("Printing the result is handled outside the eval, so you should probably use the eval output")]] BigInt eval();
 	void handleAssignRoot();
 	void setSrc(std::string& src_) { src = src_; };
 	void setASTRoot(std::unique_ptr<ExprNode>& root_) { ASTRoot = std::move(root_); };
