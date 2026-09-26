@@ -13,6 +13,12 @@ enum class TokenType {
     multipSign ,
     divSign ,
     assignOp ,
+    smallerThan,
+    biggerThan,
+    smallerOrEqualThan,
+    biggerOrEqualThan,
+    andOp,
+    orOp,
 
     ifKeyword,
     elseKeyword,
