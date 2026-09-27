@@ -55,17 +55,17 @@ namespace {
     enum class TokenCharCount {
         singleChar,
         doubleChar,
-        keyword,
+        multiple,
     };
 
     TokenCharCount isSingleCharInstruction(const char& currentChar, std::optional<char> nextChar) {
         if (!nextChar.has_value()) {
             if (singleOpsToEnumMap.contains(currentChar)) return TokenCharCount::singleChar;
-            else return TokenCharCount::keyword; //idk about that lol
+            else return TokenCharCount::multiple; //idk about that lol
         };
 
         if (currentChar == '!') return TokenCharCount::doubleChar; //kind of an exception
-        if (!singleOpsToEnumMap.contains(currentChar)) return TokenCharCount::keyword;
+        if (!singleOpsToEnumMap.contains(currentChar)) return TokenCharCount::multiple;
 
         if (singleOpsToEnumMap.contains(currentChar) && (
             nextChar.value() == '=' ||
@@ -180,6 +180,9 @@ Token Lexer::handleMultipleCharInstruction() {
     if (isDigit(nameBuf[0])) {
         return handleNumberLiteralToken(nameBuf,startingPos);
     }
+    else if (nameBuf[0] == '\"' && nameBuf[nameBuf.size()-1] == '\"') {
+        return handleStringLiteralToken(nameBuf,startingPos);
+    }
     else {
         if (reservedKeywords.contains(nameBuf)) {
             return handleKeywordIdentifier(nameBuf,startingPos);
@@ -210,6 +213,15 @@ Token Lexer::handleSingleCharInstruction() {
         return token;
     }
 
+}
+
+Token Lexer::handleStringLiteralToken(const std::string& buf, uint64_t startPos) {
+    return Token{
+        .type = TokenType::stringLiteral,
+        .value = buf,
+        .startPos = startPos,
+        .length = buf.size()
+    };
 }
 
 std::optional<char> Lexer::peekNextToken() {
@@ -246,7 +258,7 @@ Token Lexer::parseToken(){
     if(tokenCharType == TokenCharCount::singleChar){
         Token token = handleSingleCharInstruction();
         return token;
-    } else if(tokenCharType == TokenCharCount::keyword){
+    } else if(tokenCharType == TokenCharCount::multiple){
         Token token = handleMultipleCharInstruction();
         cur_index++;
         lastTokenType = token.type;
@@ -327,6 +339,7 @@ void Lexer::printTokens(){
         case TokenType::biggerOrEqualThan: std::cout << "biggerOrEqualThan " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::andOp: std::cout << "andOp " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::orOp: std::cout << "orOp " << printTokenPosAndLength(token) << "\n"; break;
+        case TokenType::stringLiteral: std::cout<<"some string literal with contents of: "<<token.value<<" "<< printTokenPosAndLength(token)<<"\n"; break;
         case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";break;
         }
     }
