@@ -77,6 +77,7 @@ public:
 	void flipSign() { isPositive = !isPositive; };
 	[[nodiscard]] bool isNegative() const { return !isPositive; }
 	[[nodiscard]] bool isZero() const { if (chunks.empty()) return true;if (chunks.size() == 1 && chunks[0] == 0) return true; else return false;}
+	[[nodiscard]] uint8_t getByteValue(size_t byteIndex) const;
 	void setByteToChar(size_t byteIndex,char c);
 	void reserveChunks(size_t count);
 	friend BigInt add(BigInt& a, const BigInt& b);

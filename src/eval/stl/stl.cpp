@@ -78,6 +78,20 @@ namespace helpers {
 		return ret;
 	}
 
+	std::string getStringLiteralFromBigInt(const BigInt& bi) {
+		std::string val;
+		unsigned char c = 1;
+		size_t index = 0;
+		while (c != '\0') {
+		 	uint8_t byte = bi.getByteValue(index);
+			c = byte;
+			val+=c;
+			index++;
+		}
+
+		return val;
+	}
+
 }
 
 void strToLower(std::string& s) {	//converts string to lowercase
@@ -381,7 +395,7 @@ namespace stlFuncs {
 		return voidReturn();
 	}
 
-
+	//void
 	funcReturn parserOutput(ExprNodes& args, EvalCtx& eCtx) {
 
 		if (args.size() != 1) throw EvalException("Wrong amount of arguments in parserOutput(), expected 1", "Check out \"?parserOutput()\" to see the correct function parameters");
@@ -391,6 +405,18 @@ namespace stlFuncs {
 		if (var.equals(BigInt(1))) eCtx.showParserOutput = true;
 		if (var.isZero()) eCtx.showParserOutput = false;
 
+		eCtx.shouldPrint = false;
+		return voidReturn();
+	}
+
+	//void
+	funcReturn print(ExprNodes& args,EvalCtx& eCtx) {
+
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in print(), expected 1", "Check out \"?print()\" to see the correct function parameters");
+
+		std::string literal = helpers::getStringLiteralFromBigInt(args[0]->eval(eCtx));
+		std::cout<<literal;
+		std::cout<<"\n";
 		eCtx.shouldPrint = false;
 		return voidReturn();
 	}
@@ -539,8 +565,13 @@ std::vector<stlFunc> stlFunctions = {
 	"\tOnly one parameter, any expression that evaluates to either 0 or 1, if its something else it ignores it",
 	"\t\"parserOutput(1)\" now parser output will be shown in console",
 	stlFuncs::parserOutput
+	},
+  { "print",
+  	"\tPrints a string provided to the console",
+  	"\tOnly one parameter, if its something else it ignores it",
+  	"\t\"print(\"hello\")\" will print hello to console",
+  	stlFuncs::print
 	}
-
 };
 
 /*

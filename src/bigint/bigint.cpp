@@ -73,6 +73,14 @@ void BigInt::print() const {
 	std::cout << this->toString() << "\n";
 }
 
+//TODO: maybe add bounds checking just to be safe
+uint8_t BigInt::getByteValue(size_t byteIndex) const {
+	size_t chunkIndex = byteIndex / 8;
+	size_t byteInChunkIndex = byteIndex % 8;
+
+	return static_cast<uint8_t>((chunks[chunkIndex]>>(56 - byteInChunkIndex*8)) & 0XFF);
+}
+
 void BigInt::setByteToChar(size_t byteIndex, char c) {
 	size_t chunkIndex = byteIndex / 8;
 	size_t byteInChunkIndex = byteIndex % 8;
@@ -84,5 +92,5 @@ void BigInt::setByteToChar(size_t byteIndex, char c) {
 }
 
 void BigInt::reserveChunks(const size_t count) {
-	chunks.reserve(count);
+	chunks.resize(count);
 }
