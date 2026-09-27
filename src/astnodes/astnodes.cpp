@@ -313,6 +313,25 @@ NodeType WhileLoopNode::type() {
 	return NodeType::WhileLoop;
 }
 
+//TODO: IMPLEMENT
+void StringNode::print(int indent) {
+}
+
+//TODO: IMPLEMENT
+BigInt StringNode::eval(EvalCtx&) {
+	return {0};
+}
+
+//TODO: IMPLEMENT
+std::string StringNode::toString() {
+	return "";
+}
+
+//TODO: IMPLEMENT
+NodeType StringNode::type() {
+	return NodeType::String;
+}
+
 BigInt BigIntNode::eval(EvalCtx&) {
 	return val;
 }

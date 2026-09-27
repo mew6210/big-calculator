@@ -176,6 +176,7 @@ unique_ptr<ExprNode> Parser::parsePrimary() {
 	case TokenType::ifKeyword: return parseIf();
 	case TokenType::returnKeyword: return parseReturn();
 	case TokenType::whileKeyword: return parseWhileLoop();
+	case TokenType::stringLiteral: return parseString();
 	default: return parseErrorLog("Something went very wrong","i dont know man");
 	}
 }
@@ -251,6 +252,12 @@ std::unique_ptr<ExprNode> Parser::parseWhileLoop() {
 	auto body = parseBlock();
 
 	return std::make_unique<WhileLoopNode>(std::move(cond),std::move(body));
+}
+
+std::unique_ptr<ExprNode> Parser::parseString() {
+	std::string literal = curTok.value;
+	getNextToken(); //eat literal
+	return std::make_unique<StringNode>(std::move(literal));
 }
 
 unique_ptr<ExprNode> Parser::parseBlock() {
