@@ -159,6 +159,7 @@ Token handleKeywordIdentifier(const std::string& nameBuf, const uint64_t& starti
     if it starts with a digit, then lexes it as if it was a number literal
 
     otherwise handles it as an identifier
+    TODO: spaces in string literals dont count as one string, because of !isSpace(...)
 */
 Token Lexer::handleMultipleCharInstruction() {
 

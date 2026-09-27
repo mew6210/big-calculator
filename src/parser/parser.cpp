@@ -255,7 +255,7 @@ std::unique_ptr<ExprNode> Parser::parseWhileLoop() {
 }
 
 std::unique_ptr<ExprNode> Parser::parseString() {
-	std::string literal = curTok.value;
+	std::string literal = curTok.value.substr(1,curTok.value.size()-2);
 	getNextToken(); //eat literal
 	return std::make_unique<StringNode>(std::move(literal));
 }

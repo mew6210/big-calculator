@@ -72,3 +72,17 @@ std::string BigInt::toString() const {
 void BigInt::print() const {
 	std::cout << this->toString() << "\n";
 }
+
+void BigInt::setByteToChar(size_t byteIndex, char c) {
+	size_t chunkIndex = byteIndex / 8;
+	size_t byteInChunkIndex = byteIndex % 8;
+
+	chunks[chunkIndex] |=  static_cast<uint64_t>(
+			static_cast<unsigned char>(c)
+		) << (56 - byteInChunkIndex * 8);
+
+}
+
+void BigInt::reserveChunks(const size_t count) {
+	chunks.reserve(count);
+}
