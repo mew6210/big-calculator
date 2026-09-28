@@ -254,8 +254,53 @@ std::unique_ptr<ExprNode> Parser::parseWhileLoop() {
 	return std::make_unique<WhileLoopNode>(std::move(cond),std::move(body));
 }
 
+std::string Parser::parseStringLiteral(std::string s) {
+	std::string ret;
+	size_t index = 1;
+	size_t stringSize = s.size();
+
+	while (index <stringSize) {
+		char c = s[index];
+		if (c == '"') break;
+		if (c == '\\') {
+			index++;
+			if (index >= stringSize) {
+				break; //slash at the end of string, invalid
+			}
+
+			char escaped = s[index];
+			switch (escaped) {
+			case '"': ret += '"';
+				break;
+			case '\\':
+				ret += '\\';
+				break;
+			case 'n':
+				ret += '\n';
+				break;
+			case 't':
+				ret += '\t';
+				break;
+			default:
+				ret += escaped;
+				break;
+
+			}
+			index++;
+			continue;
+
+		}
+
+		ret+=c;
+		index++;
+
+	}
+
+	return ret;
+}
+
 std::unique_ptr<ExprNode> Parser::parseString() {
-	std::string literal = curTok.value.substr(1,curTok.value.size()-2);
+	std::string literal = parseStringLiteral(curTok.value);
 	getNextToken(); //eat literal
 	return std::make_unique<StringNode>(std::move(literal));
 }

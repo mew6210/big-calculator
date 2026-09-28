@@ -50,6 +50,7 @@ class Parser {
 	std::vector<Token> AppBufWithBlock();
 	std::vector<Token> collectTokensUntilSemiColon();
 	std::unique_ptr<ExprNode> parseBlock();
+	std::string parseStringLiteral(std::string s);
 
 	std::unique_ptr<ExprNode> parseErrorLog(const std::string& msg,const std::string& note);
 public:
