@@ -153,6 +153,35 @@ Token handleKeywordIdentifier(const std::string& nameBuf, const uint64_t& starti
     return Token{ reservedKeywords[nameBuf],nameBuf,startingPos,nameBuf.size() };
 }
 
+bool isEscaped(const std::string& source, size_t index) {
+    size_t backslashes = 0;
+
+    while (index > 0 && source[index - 1] == '\\') {
+        --index;
+        ++backslashes;
+    }
+
+    return backslashes % 2 == 1;
+}
+
+Token Lexer::handleStringLiteral() {
+    std::string nameBuf;
+    uint64_t startingPos = cur_index;
+
+    nameBuf+='\"';
+    cur_index++;
+
+    while (cur_index != source.size() && (source[cur_index] != '"' || isEscaped(source,cur_index))) {
+
+        nameBuf += source[cur_index];
+        cur_index++;
+    }
+
+    nameBuf+='\"';
+
+    return handleStringLiteralToken(nameBuf,startingPos);
+}
+
 /*
     @brief handles any strings that arent single-char tokens
 
@@ -164,11 +193,13 @@ Token Lexer::handleMultipleCharInstruction() {
 
     std::string nameBuf;
     uint64_t startingPos = cur_index;
-    bool isStringLiteral = source[cur_index] == '\"';
+
+    if (source[cur_index] == '\"') return handleStringLiteral();
+
     //load name into nameBuf
     while (
         isSingleCharInstruction(source[cur_index],peekNextToken()) != TokenCharCount::singleChar &&
-        (!isSpace(source[cur_index])|| isStringLiteral)
+        (!isSpace(source[cur_index]))
         && cur_index != source.size()) {
 
         nameBuf += source[cur_index];
@@ -182,9 +213,6 @@ Token Lexer::handleMultipleCharInstruction() {
 
     if (isDigit(nameBuf[0])) {
         return handleNumberLiteralToken(nameBuf,startingPos);
-    }
-    else if (nameBuf[0] == '\"' && nameBuf[nameBuf.size()-1] == '\"') {
-        return handleStringLiteralToken(nameBuf,startingPos);
     }
     else {
         if (reservedKeywords.contains(nameBuf)) {

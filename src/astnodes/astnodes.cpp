@@ -313,8 +313,8 @@ NodeType WhileLoopNode::type() {
 	return NodeType::WhileLoop;
 }
 
-//TODO: IMPLEMENT
 void StringNode::print(int indent) {
+	std::cout<<std::string(" ",indent)<<"String literal: \""<<literal<<"\"\n";
 }
 
 BigInt StringNode::eval(EvalCtx& ectx) { //assumes uChunkInt = uint64_t
@@ -333,12 +333,10 @@ BigInt StringNode::eval(EvalCtx& ectx) { //assumes uChunkInt = uint64_t
 	return ret;
 }
 
-//TODO: IMPLEMENT
 std::string StringNode::toString() {
-	return "";
+	return literal;
 }
 
-//TODO: IMPLEMENT
 NodeType StringNode::type() {
 	return NodeType::String;
 }
