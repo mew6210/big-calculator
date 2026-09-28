@@ -159,16 +159,18 @@ Token handleKeywordIdentifier(const std::string& nameBuf, const uint64_t& starti
     if it starts with a digit, then lexes it as if it was a number literal
 
     otherwise handles it as an identifier
-    TODO: spaces in string literals dont count as one string, because of !isSpace(...)
 */
 Token Lexer::handleMultipleCharInstruction() {
 
     std::string nameBuf;
     uint64_t startingPos = cur_index;
+    bool isStringLiteral = source[cur_index] == '\"';
     //load name into nameBuf
     while (
         isSingleCharInstruction(source[cur_index],peekNextToken()) != TokenCharCount::singleChar &&
-        !isSpace(source[cur_index]) && cur_index != source.size()) {
+        (!isSpace(source[cur_index])|| isStringLiteral)
+        && cur_index != source.size()) {
+
         nameBuf += source[cur_index];
         cur_index++;
     }
