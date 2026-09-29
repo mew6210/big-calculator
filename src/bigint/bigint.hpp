@@ -80,6 +80,7 @@ public:
 	[[nodiscard]] uint8_t getByteValue(size_t byteIndex) const;
 	void setByteToChar(size_t byteIndex,char c);
 	void reserveChunks(size_t count);
+	void writeStringToChunks(std::string literal);
 	friend BigInt add(BigInt& a, const BigInt& b);
 	friend BigInt subtract(BigInt& a, BigInt& b);
 	friend BigInt abs(const BigInt& a);

@@ -319,17 +319,7 @@ void StringNode::print(int indent) {
 
 BigInt StringNode::eval(EvalCtx& ectx) { //assumes uChunkInt = uint64_t
 	BigInt ret;
-
-	const size_t literalSize = literal.size() + 1;
-	const size_t chunkRequiredSize = literalSize / 8 + 1;
-	ret.reserveChunks(chunkRequiredSize);
-
-	for (size_t i =0; i<literal.size();i++) {
-		ret.setByteToChar(i,literal[i]);
-	}
-	ret.setByteToChar(literal.size()+1,'\0');
-
-
+	ret.writeStringToChunks(literal);
 	return ret;
 }
 

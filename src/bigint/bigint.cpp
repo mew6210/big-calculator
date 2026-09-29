@@ -94,3 +94,14 @@ void BigInt::setByteToChar(size_t byteIndex, char c) {
 void BigInt::reserveChunks(const size_t count) {
 	chunks.resize(count);
 }
+
+void BigInt::writeStringToChunks(std::string literal) {
+	const size_t literalSize = literal.size() + 1;
+	const size_t chunkRequiredSize = literalSize / 8 + 1;
+	reserveChunks(chunkRequiredSize);
+
+	for (size_t i =0; i<literal.size();i++) {
+		setByteToChar(i,literal[i]);
+	}
+	setByteToChar(literal.size()+1,'\0');
+}

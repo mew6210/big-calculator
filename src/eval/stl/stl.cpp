@@ -427,16 +427,7 @@ namespace stlFuncs {
 
 		BigInt bi = args[0]->eval(eCtx);
 		std::string strLiteral = bi.toString();
-
-		const size_t literalSize = strLiteral.size() + 1;
-		const size_t chunkRequiredSize = literalSize / 8 + 1;
-		ret.reserveChunks(chunkRequiredSize);
-
-		for (size_t i =0; i<strLiteral.size();i++) {
-			ret.setByteToChar(i,strLiteral[i]);
-		}
-		ret.setByteToChar(strLiteral.size()+1,'\0');
-
+		ret.writeStringToChunks(strLiteral);
 
 		return {.value = ret,.hasValue = true};
 	}
