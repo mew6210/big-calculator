@@ -105,3 +105,16 @@ void BigInt::writeStringToChunks(std::string literal) {
 	}
 	setByteToChar(literal.size()+1,'\0');
 }
+
+std::string BigInt::getStringFromChunks() const {
+	std::string val;
+	unsigned char c = 1;
+	size_t index = 0;
+	while (c != '\0') {
+		uint8_t byte = getByteValue(index);
+		c = byte;
+		val+=c;
+		index++;
+	}
+	return val;
+}

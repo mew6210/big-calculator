@@ -78,19 +78,6 @@ namespace helpers {
 		return ret;
 	}
 
-	std::string getStringLiteralFromBigInt(const BigInt& bi) {
-		std::string val;
-		unsigned char c = 1;
-		size_t index = 0;
-		while (c != '\0') {
-		 	uint8_t byte = bi.getByteValue(index);
-			c = byte;
-			val+=c;
-			index++;
-		}
-
-		return val;
-	}
 
 }
 
@@ -414,7 +401,7 @@ namespace stlFuncs {
 
 		if (args.size() != 1) throw EvalException("Wrong amount of arguments in print(), expected 1", "Check out \"?print()\" to see the correct function parameters");
 
-		std::string literal = helpers::getStringLiteralFromBigInt(args[0]->eval(eCtx));
+		std::string literal = args[0]->eval(eCtx).getStringFromChunks();
 		std::cout<<literal;
 		std::cout<<"\n";
 		eCtx.shouldPrint = false;
@@ -431,6 +418,19 @@ namespace stlFuncs {
 
 		return {.value = ret,.hasValue = true};
 	}
+
+	funcReturn strConcat(ExprNodes& args,EvalCtx& eCtx) {
+		BigInt ret;
+		if (args.size() != 2) throw EvalException("Wrong amount of arguments in strConcat(), expected 2", "Check out \"?strConcat()\" to see the correct function parameters");
+		std::string a = args[0]->eval(eCtx).getStringFromChunks();
+		a.pop_back(); //remove null character at the end
+		std::string b = args[1]->eval(eCtx).getStringFromChunks();
+
+		ret.writeStringToChunks(a+b);
+
+		return {.value = std::move(ret),.hasValue = true};
+	}
+
 
 }
 
@@ -588,7 +588,13 @@ std::vector<stlFunc> stlFunctions = {
   "\tOnly one parameter, if its something else it ignores it",
   "\t\"a = toString(26)\" will make a = \"26\"",
   stlFuncs::toString
-    }
+    },
+  { "strConcat",
+"\tMerges 2 strings",
+"\tTwo parameters, first string and second string",
+"\t\"a = strConcat(\"hello \",\"world\")\" will make a = \"hello world\"",
+stlFuncs::strConcat
+	}
 };
 
 /*
