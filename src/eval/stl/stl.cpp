@@ -421,6 +421,26 @@ namespace stlFuncs {
 		return voidReturn();
 	}
 
+	funcReturn toString(ExprNodes& args,EvalCtx& eCtx) {
+		BigInt ret;
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in toString(), expected 1", "Check out \"?toString()\" to see the correct function parameters");
+
+		BigInt bi = args[0]->eval(eCtx);
+		std::string strLiteral = bi.toString();
+
+		const size_t literalSize = strLiteral.size() + 1;
+		const size_t chunkRequiredSize = literalSize / 8 + 1;
+		ret.reserveChunks(chunkRequiredSize);
+
+		for (size_t i =0; i<strLiteral.size();i++) {
+			ret.setByteToChar(i,strLiteral[i]);
+		}
+		ret.setByteToChar(strLiteral.size()+1,'\0');
+
+
+		return {.value = ret,.hasValue = true};
+	}
+
 }
 
 /*
@@ -571,7 +591,13 @@ std::vector<stlFunc> stlFunctions = {
   	"\tOnly one parameter, if its something else it ignores it",
   	"\t\"print(\"hello\")\" will print hello to console",
   	stlFuncs::print
-	}
+	},
+  { "toString",
+  "\tConverts a BigInt to string",
+  "\tOnly one parameter, if its something else it ignores it",
+  "\t\"a = toString(26)\" will make a = \"26\"",
+  stlFuncs::toString
+    }
 };
 
 /*
