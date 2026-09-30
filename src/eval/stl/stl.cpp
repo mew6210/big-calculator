@@ -78,6 +78,7 @@ namespace helpers {
 		return ret;
 	}
 
+
 }
 
 void strToLower(std::string& s) {	//converts string to lowercase
@@ -381,7 +382,7 @@ namespace stlFuncs {
 		return voidReturn();
 	}
 
-
+	//void
 	funcReturn parserOutput(ExprNodes& args, EvalCtx& eCtx) {
 
 		if (args.size() != 1) throw EvalException("Wrong amount of arguments in parserOutput(), expected 1", "Check out \"?parserOutput()\" to see the correct function parameters");
@@ -394,6 +395,56 @@ namespace stlFuncs {
 		eCtx.shouldPrint = false;
 		return voidReturn();
 	}
+
+	//void
+	funcReturn print(ExprNodes& args,EvalCtx& eCtx) {
+
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in print(), expected 1", "Check out \"?print()\" to see the correct function parameters");
+
+		std::string literal = args[0]->eval(eCtx).getStringFromChunks();
+		std::cout<<literal;
+		std::cout<<"\n";
+		eCtx.shouldPrint = false;
+		return voidReturn();
+	}
+
+	funcReturn toString(ExprNodes& args,EvalCtx& eCtx) {
+		BigInt ret;
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in toString(), expected 1", "Check out \"?toString()\" to see the correct function parameters");
+
+		BigInt bi = args[0]->eval(eCtx);
+		std::string strLiteral = bi.toString();
+		ret.writeStringToChunks(strLiteral);
+
+		return {.value = ret,.hasValue = true};
+	}
+
+	funcReturn strConcat(ExprNodes& args,EvalCtx& eCtx) {
+		BigInt ret;
+		if (args.size() != 2) throw EvalException("Wrong amount of arguments in strConcat(), expected 2", "Check out \"?strConcat()\" to see the correct function parameters");
+		std::string a = args[0]->eval(eCtx).getStringFromChunks();
+		a.pop_back(); //remove null character at the end
+		std::string b = args[1]->eval(eCtx).getStringFromChunks();
+
+		ret.writeStringToChunks(a+b);
+
+		return {.value = std::move(ret),.hasValue = true};
+	}
+
+	funcReturn stoi(ExprNodes& args, EvalCtx& eCtx) {
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in stoi(), expected 1", "Check out \"?stoi()\" to see the correct function parameters");
+		std::string a = args[0]->eval(eCtx).getStringFromChunks();
+		std::string parsedLiteral;
+
+		for (const auto& c : a) {
+			if (isdigit(c)) parsedLiteral+=c;
+			else break;
+		}
+		BigInt ret = BigInt(parsedLiteral);
+
+		return {.value = ret,.hasValue = true};
+	}
+
 
 }
 
@@ -539,8 +590,31 @@ std::vector<stlFunc> stlFunctions = {
 	"\tOnly one parameter, any expression that evaluates to either 0 or 1, if its something else it ignores it",
 	"\t\"parserOutput(1)\" now parser output will be shown in console",
 	stlFuncs::parserOutput
-	}
-
+	},
+  { "print",
+  	"\tPrints a string provided to the console",
+  	"\tOnly one parameter, if its something else it ignores it",
+  	"\t\"print(\"hello\")\" will print hello to console",
+  	stlFuncs::print
+	},
+  { "toString",
+  "\tConverts a BigInt to string",
+  "\tOnly one parameter, if its something else it ignores it",
+  "\t\"a = toString(26)\" will make a = \"26\"",
+  stlFuncs::toString
+    },
+  { "strConcat",
+"\tMerges 2 strings",
+"\tTwo parameters, first string and second string",
+"\t\"a = strConcat(\"hello \",\"world\")\" will make a = \"hello world\"",
+stlFuncs::strConcat
+	},
+{ "stoi",
+"\tConverts string to int",
+"\tOne parameter, a string",
+"\t\"a = stoi(\"123\")\" will make a = 123",
+stlFuncs::stoi
+}
 };
 
 /*

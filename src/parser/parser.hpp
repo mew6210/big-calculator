@@ -40,6 +40,7 @@ class Parser {
 	std::unique_ptr<ExprNode> parseIf();
 	std::unique_ptr<ExprNode> parseReturn();
 	std::unique_ptr<ExprNode> parseWhileLoop();
+	std::unique_ptr<ExprNode> parseString();
 	std::unique_ptr<ExprNode> parsePrimary();
 	int getTokPrecedence();
 	std::unique_ptr<ExprNode> parseBinOpRHS(int exprPrec,std::unique_ptr<ExprNode> lhs);
@@ -49,6 +50,7 @@ class Parser {
 	std::vector<Token> AppBufWithBlock();
 	std::vector<Token> collectTokensUntilSemiColon();
 	std::unique_ptr<ExprNode> parseBlock();
+	std::string parseStringLiteral(std::string s);
 
 	std::unique_ptr<ExprNode> parseErrorLog(const std::string& msg,const std::string& note);
 public:

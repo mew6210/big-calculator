@@ -19,7 +19,8 @@ enum class NodeType {
 	IfStmt,
 	IfChain,
 	Return,
-	WhileLoop
+	WhileLoop,
+	String
 };
 
 /*
@@ -203,6 +204,18 @@ public:
 	cond(std::move(cond)),
 	body(std::move(body)){}
 
+	void print(int indent) override;
+	BigInt eval(EvalCtx&) override;
+	std::string toString() override;
+	NodeType type() override;
+};
+
+class StringNode : public ExprNode {
+
+	std::string literal;
+
+public:
+	StringNode(std::string val): literal(std::move(val)){}
 	void print(int indent) override;
 	BigInt eval(EvalCtx&) override;
 	std::string toString() override;

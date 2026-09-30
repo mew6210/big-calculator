@@ -72,3 +72,49 @@ std::string BigInt::toString() const {
 void BigInt::print() const {
 	std::cout << this->toString() << "\n";
 }
+
+//TODO: maybe add bounds checking just to be safe
+uint8_t BigInt::getByteValue(size_t byteIndex) const {
+	size_t chunkIndex = byteIndex / 8;
+	size_t byteInChunkIndex = byteIndex % 8;
+
+	return static_cast<uint8_t>((chunks[chunkIndex]>>(56 - byteInChunkIndex*8)) & 0XFF);
+}
+
+void BigInt::setByteToChar(size_t byteIndex, char c) {
+	size_t chunkIndex = byteIndex / 8;
+	size_t byteInChunkIndex = byteIndex % 8;
+
+	chunks[chunkIndex] |=  static_cast<uint64_t>(
+			static_cast<unsigned char>(c)
+		) << (56 - byteInChunkIndex * 8);
+
+}
+
+void BigInt::reserveChunks(const size_t count) {
+	chunks.resize(count);
+}
+
+void BigInt::writeStringToChunks(std::string literal) {
+	const size_t literalSize = literal.size() + 1;
+	const size_t chunkRequiredSize = literalSize / 8 + 1;
+	reserveChunks(chunkRequiredSize);
+
+	for (size_t i =0; i<literal.size();i++) {
+		setByteToChar(i,literal[i]);
+	}
+	setByteToChar(literal.size()+1,'\0');
+}
+
+std::string BigInt::getStringFromChunks() const {
+	std::string val;
+	unsigned char c = 1;
+	size_t index = 0;
+	while (c != '\0') {
+		uint8_t byte = getByteValue(index);
+		c = byte;
+		val+=c;
+		index++;
+	}
+	return val;
+}

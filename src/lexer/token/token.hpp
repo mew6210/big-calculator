@@ -28,6 +28,7 @@ enum class TokenType {
     returnKeyword,
 
     numLiteral,
+    stringLiteral,
     identifier,
     
     undefined ,

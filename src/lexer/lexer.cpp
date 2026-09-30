@@ -55,17 +55,17 @@ namespace {
     enum class TokenCharCount {
         singleChar,
         doubleChar,
-        keyword,
+        multiple,
     };
 
     TokenCharCount isSingleCharInstruction(const char& currentChar, std::optional<char> nextChar) {
         if (!nextChar.has_value()) {
             if (singleOpsToEnumMap.contains(currentChar)) return TokenCharCount::singleChar;
-            else return TokenCharCount::keyword; //idk about that lol
+            else return TokenCharCount::multiple; //idk about that lol
         };
 
         if (currentChar == '!') return TokenCharCount::doubleChar; //kind of an exception
-        if (!singleOpsToEnumMap.contains(currentChar)) return TokenCharCount::keyword;
+        if (!singleOpsToEnumMap.contains(currentChar)) return TokenCharCount::multiple;
 
         if (singleOpsToEnumMap.contains(currentChar) && (
             nextChar.value() == '=' ||
@@ -153,6 +153,35 @@ Token handleKeywordIdentifier(const std::string& nameBuf, const uint64_t& starti
     return Token{ reservedKeywords[nameBuf],nameBuf,startingPos,nameBuf.size() };
 }
 
+bool isEscaped(const std::string& source, size_t index) {
+    size_t backslashes = 0;
+
+    while (index > 0 && source[index - 1] == '\\') {
+        --index;
+        ++backslashes;
+    }
+
+    return backslashes % 2 == 1;
+}
+
+Token Lexer::handleStringLiteral() {
+    std::string nameBuf;
+    uint64_t startingPos = cur_index;
+
+    nameBuf+='\"';
+    cur_index++;
+
+    while (cur_index != source.size() && (source[cur_index] != '"' || isEscaped(source,cur_index))) {
+
+        nameBuf += source[cur_index];
+        cur_index++;
+    }
+
+    nameBuf+='\"';
+
+    return handleStringLiteralToken(nameBuf,startingPos);
+}
+
 /*
     @brief handles any strings that arent single-char tokens
 
@@ -164,10 +193,15 @@ Token Lexer::handleMultipleCharInstruction() {
 
     std::string nameBuf;
     uint64_t startingPos = cur_index;
+
+    if (source[cur_index] == '\"') return handleStringLiteral();
+
     //load name into nameBuf
     while (
         isSingleCharInstruction(source[cur_index],peekNextToken()) != TokenCharCount::singleChar &&
-        !isSpace(source[cur_index]) && cur_index != source.size()) {
+        (!isSpace(source[cur_index]))
+        && cur_index != source.size()) {
+
         nameBuf += source[cur_index];
         cur_index++;
     }
@@ -212,6 +246,15 @@ Token Lexer::handleSingleCharInstruction() {
 
 }
 
+Token Lexer::handleStringLiteralToken(const std::string& buf, uint64_t startPos) {
+    return Token{
+        .type = TokenType::stringLiteral,
+        .value = buf,
+        .startPos = startPos,
+        .length = buf.size()
+    };
+}
+
 std::optional<char> Lexer::peekNextToken() {
     if (cur_index != source.size()) return source[cur_index + 1];
     else return std::nullopt;
@@ -246,7 +289,7 @@ Token Lexer::parseToken(){
     if(tokenCharType == TokenCharCount::singleChar){
         Token token = handleSingleCharInstruction();
         return token;
-    } else if(tokenCharType == TokenCharCount::keyword){
+    } else if(tokenCharType == TokenCharCount::multiple){
         Token token = handleMultipleCharInstruction();
         cur_index++;
         lastTokenType = token.type;
@@ -327,6 +370,7 @@ void Lexer::printTokens(){
         case TokenType::biggerOrEqualThan: std::cout << "biggerOrEqualThan " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::andOp: std::cout << "andOp " << printTokenPosAndLength(token) << "\n"; break;
         case TokenType::orOp: std::cout << "orOp " << printTokenPosAndLength(token) << "\n"; break;
+        case TokenType::stringLiteral: std::cout<<"some string literal with contents of: "<<token.value<<" "<< printTokenPosAndLength(token)<<"\n"; break;
         case TokenType::undefined:  std::cout << "I DONT KNOW T_T\n";break;
         }
     }

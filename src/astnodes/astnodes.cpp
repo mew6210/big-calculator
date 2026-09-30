@@ -313,6 +313,24 @@ NodeType WhileLoopNode::type() {
 	return NodeType::WhileLoop;
 }
 
+void StringNode::print(int indent) {
+	std::cout<<std::string(" ",indent)<<"String literal: \""<<literal<<"\"\n";
+}
+
+BigInt StringNode::eval(EvalCtx& ectx) { //assumes uChunkInt = uint64_t
+	BigInt ret;
+	ret.writeStringToChunks(literal);
+	return ret;
+}
+
+std::string StringNode::toString() {
+	return literal;
+}
+
+NodeType StringNode::type() {
+	return NodeType::String;
+}
+
 BigInt BigIntNode::eval(EvalCtx&) {
 	return val;
 }
