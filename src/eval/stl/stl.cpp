@@ -431,6 +431,20 @@ namespace stlFuncs {
 		return {.value = std::move(ret),.hasValue = true};
 	}
 
+	funcReturn stoi(ExprNodes& args, EvalCtx& eCtx) {
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in stoi(), expected 1", "Check out \"?stoi()\" to see the correct function parameters");
+		std::string a = args[0]->eval(eCtx).getStringFromChunks();
+		std::string parsedLiteral;
+
+		for (const auto& c : a) {
+			if (isdigit(c)) parsedLiteral+=c;
+			else break;
+		}
+		BigInt ret = BigInt(parsedLiteral);
+
+		return {.value = ret,.hasValue = true};
+	}
+
 
 }
 
@@ -594,7 +608,13 @@ std::vector<stlFunc> stlFunctions = {
 "\tTwo parameters, first string and second string",
 "\t\"a = strConcat(\"hello \",\"world\")\" will make a = \"hello world\"",
 stlFuncs::strConcat
-	}
+	},
+{ "stoi",
+"\tConverts string to int",
+"\tOne parameter, a string",
+"\t\"a = stoi(\"123\")\" will make a = 123",
+stlFuncs::stoi
+}
 };
 
 /*
