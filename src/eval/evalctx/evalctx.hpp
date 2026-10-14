@@ -3,6 +3,9 @@
 #include <vector>
 #include "../../bigint/bigint.hpp"
 #include <string>
+#include <unordered_map>
+
+#include "../../handle/handle.hpp"
 
 struct UserFunc;
 
@@ -10,6 +13,7 @@ struct UserFunc;
 	@brief struct for keeping information current evaluation "runtime"
 */
 struct EvalCtx {
+	using handlePtr = std::unique_ptr<Handle>;
 	EvalCtx* parentCtx = nullptr;
 
 	std::vector<std::pair<std::string, BigInt>> vars;
@@ -18,7 +22,8 @@ struct EvalCtx {
 	std::vector<UserFunc> userFunctions;
 	bool showLexerOutput = false;
 	bool showParserOutput = false;
-	bool insideBlock = false;
+	std::unordered_map<int,handlePtr> handles;
+	int curHandleIndex = 0;
 
 	BigInt getVar(const std::string& name);
 	std::optional<BigInt> findVar(const std::string& name);
@@ -28,6 +33,8 @@ struct EvalCtx {
 	bool funcExists(std::string& name);
 	void assignFunc(UserFunc& func);
 	void setParent(EvalCtx&);
+
+	int createFileResource(const std::filesystem::path& path, std::string_view mode);
 };
 
 #include "../userfunc/userfunc.hpp"

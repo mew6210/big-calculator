@@ -444,6 +444,13 @@ namespace stlFuncs {
 
 		return {.value = ret,.hasValue = true};
 	}
+	funcReturn fopen(ExprNodes& args, EvalCtx& eCtx) {
+		//TODO: FINISH ARGS CHECKING
+		std::string path = args[0]->eval(eCtx).getStringFromChunks();
+		int handle = eCtx.createFileResource(path,"r"); //TODO: ADD MODES
+
+		return {.value = BigInt(handle),.hasValue = true};
+	}
 
 
 }
@@ -614,6 +621,12 @@ stlFuncs::strConcat
 "\tOne parameter, a string",
 "\t\"a = stoi(\"123\")\" will make a = 123",
 stlFuncs::stoi
+},
+{ "fopen",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+stlFuncs::fopen
 }
 };
 
