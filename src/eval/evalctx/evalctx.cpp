@@ -79,7 +79,7 @@ void EvalCtx::setParent(EvalCtx& eCtx) {
 	parentCtx = &eCtx;
 }
 
-int EvalCtx::createFileResource(const std::filesystem::path& path, std::string_view mode) {
+uint64_t EvalCtx::createFileResource(const std::filesystem::path& path, std::string_view mode) {
 	curHandleIndex++;
 	auto fHandle = std::make_unique<FileHandle>(path,mode);
 	handles.insert({curHandleIndex,std::move(fHandle)});

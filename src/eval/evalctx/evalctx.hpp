@@ -22,7 +22,7 @@ struct EvalCtx {
 	std::vector<UserFunc> userFunctions;
 	bool showLexerOutput = false;
 	bool showParserOutput = false;
-	std::unordered_map<int,handlePtr> handles;
+	std::unordered_map<uint64_t,handlePtr> handles;
 	int curHandleIndex = 0;
 
 	BigInt getVar(const std::string& name);
@@ -34,7 +34,9 @@ struct EvalCtx {
 	void assignFunc(UserFunc& func);
 	void setParent(EvalCtx&);
 
-	int createFileResource(const std::filesystem::path& path, std::string_view mode);
+	uint64_t createFileResource(const std::filesystem::path& path, std::string_view mode);
+	
+
 };
 
 #include "../userfunc/userfunc.hpp"

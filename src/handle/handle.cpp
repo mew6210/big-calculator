@@ -2,6 +2,16 @@
 
 #include <iostream>
 
+std::string FileHandle::getContent() noexcept {
+    //TODO: MAKE SURE ITS IN READ MODE OR ANY
+    std::string content;
+    std::string line;
+    while (getline(m_file, line)) { //TODO: PROBABLY A BETTER WAY OF DOING THIS
+        content.append(line+"\n");
+    }
+    return std::move(content);
+}
+
 FileHandle::FileHandle(const std::filesystem::path& path, std::string_view mode) {
 
     m_file.open(path);

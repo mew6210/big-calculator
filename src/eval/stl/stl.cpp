@@ -453,6 +453,16 @@ namespace stlFuncs {
 
 		return {.value = BigInt(handle),.hasValue = true};
 	}
+	funcReturn fread(ExprNodes& args, EvalCtx& eCtx) {
+		BigInt bHandle = args[0]->eval(eCtx);
+		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
+		auto fileHandle = reinterpret_cast<FileHandle*>(eCtx.handles[handle].get());
+		std::string content = fileHandle->getContent();
+		BigInt a;
+		a.writeStringToChunks(content);
+
+		return {.value = a,.hasValue = true};
+	}
 
 
 }
@@ -629,6 +639,12 @@ stlFuncs::stoi
 "\tTODO: FINISH",
 "\tTODO: FINISH",
 stlFuncs::fopen
+},
+{ "fread",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+stlFuncs::fread
 }
 };
 
