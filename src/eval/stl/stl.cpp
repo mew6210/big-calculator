@@ -447,7 +447,9 @@ namespace stlFuncs {
 	funcReturn fopen(ExprNodes& args, EvalCtx& eCtx) {
 		//TODO: FINISH ARGS CHECKING
 		std::string path = args[0]->eval(eCtx).getStringFromChunks();
-		int handle = eCtx.createFileResource(path,"r"); //TODO: ADD MODES
+	    std::string mode = args[1]->eval(eCtx).getStringFromChunks();
+		mode.pop_back(); //remove null terminator
+		int handle = eCtx.createFileResource(path,mode);
 
 		return {.value = BigInt(handle),.hasValue = true};
 	}

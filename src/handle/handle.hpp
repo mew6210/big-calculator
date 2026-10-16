@@ -24,9 +24,16 @@ public:
     [[nodiscard]] bool isOpen() const noexcept {return !m_isClosed;}
 };
 
+enum class OpenFileMode {
+    Read,
+    Write,
+    Any
+};
+
 class FileHandle : public Handle {
 
     std::fstream m_file;
+    OpenFileMode m_mode;
 public:
     FileHandle(const std::filesystem::path& path, std::string_view mode);
     void close() override;

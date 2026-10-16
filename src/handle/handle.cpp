@@ -9,7 +9,26 @@ FileHandle::FileHandle(const std::filesystem::path& path, std::string_view mode)
         std::cout<<"Failed to open\n";
         return;
     }
-    std::cout<<"File opened!\n";
+
+    if (mode == "r" || mode == "read") {
+        std::cout<<"File opened for reading!\n";
+        m_mode = OpenFileMode::Read;
+    }
+
+    else if (mode == "w" || mode == "write") {
+        std::cout<<"File opened for writing!\n";
+        m_mode = OpenFileMode::Write;
+    }
+
+    else if (mode == "a" || mode == "any") {
+        std::cout<<"File opened for anything!\n";
+        m_mode = OpenFileMode::Any;
+    }
+
+    else {
+        std::cout<<"File opened with an unkown mode!";
+    }
+
     setClose(false);
 }
 
