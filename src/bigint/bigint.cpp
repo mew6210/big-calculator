@@ -13,6 +13,13 @@ BigInt::BigInt(const uChunkInt& val) {
 	isPositive = true;
 }
 
+BigInt::BigInt(int val) {
+	chunks.resize(1);
+	chunks[0] = abs(val);
+	if (val < 0) isPositive = false;
+	else isPositive = true;
+}
+
 BigInt::BigInt() {
 	chunks = {};
 	chunks.push_back(0);
