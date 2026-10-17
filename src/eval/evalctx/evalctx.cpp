@@ -85,3 +85,11 @@ uint64_t EvalCtx::createFileResource(const std::filesystem::path& path, std::str
 	handles.insert({curHandleIndex,std::move(fHandle)});
 	return curHandleIndex;
 }
+
+bool EvalCtx::closeFileResource(uint64_t handle) {
+	if (handles.contains(handle)) {
+		handles.erase(handle);
+		return true;
+	}
+	else return false;
+}

@@ -456,12 +456,22 @@ namespace stlFuncs {
 	funcReturn fread(ExprNodes& args, EvalCtx& eCtx) {
 		BigInt bHandle = args[0]->eval(eCtx);
 		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
+		if (!eCtx.handles.contains(handle)) return voidReturn(); //TODO: PROBABLY MAKE IT LOOK BETTER
 		auto fileHandle = reinterpret_cast<FileHandle*>(eCtx.handles[handle].get());
 		std::string content = fileHandle->getContent();
 		BigInt a;
 		a.writeStringToChunks(content);
 
 		return {.value = a,.hasValue = true};
+	}
+	funcReturn fclose(ExprNodes& args, EvalCtx& eCtx) {
+		BigInt bHandle = args[0]->eval(eCtx);
+		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
+		if (!eCtx.closeFileResource(handle)) {
+			//TODO: NOTIFY ABOUT RESOURCE NOT EXISTING
+		}
+
+		return voidReturn();
 	}
 
 
@@ -645,6 +655,12 @@ stlFuncs::fopen
 "\tTODO: FINISH",
 "\tTODO: FINISH",
 stlFuncs::fread
+},
+{ "fclose",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+stlFuncs::fclose
 }
 };
 

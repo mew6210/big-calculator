@@ -35,7 +35,7 @@ struct EvalCtx {
 	void setParent(EvalCtx&);
 
 	uint64_t createFileResource(const std::filesystem::path& path, std::string_view mode);
-	
+	bool closeFileResource(uint64_t handle);
 
 };
 
