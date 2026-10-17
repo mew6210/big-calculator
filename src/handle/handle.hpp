@@ -35,7 +35,7 @@ class FileHandle : public Handle {
     std::fstream m_file;
     OpenFileMode m_mode;
 public:
-    [[nodiscard]]std::string getContent() noexcept;
+    [[nodiscard]]std::string getContent();
     FileHandle(const std::filesystem::path& path, std::string_view mode);
     void close() override;
 };

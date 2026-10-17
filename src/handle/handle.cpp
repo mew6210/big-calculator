@@ -2,14 +2,18 @@
 
 #include <iostream>
 
-std::string FileHandle::getContent() noexcept {
-    //TODO: MAKE SURE ITS IN READ MODE OR ANY
-    std::string content;
-    std::string line;
-    while (getline(m_file, line)) { //TODO: PROBABLY A BETTER WAY OF DOING THIS
-        content.append(line+"\n");
+#include "../eval/evalException.hpp"
+
+std::string FileHandle::getContent() {
+    if (m_mode != OpenFileMode::Read && m_mode != OpenFileMode::Any) {
+        throw EvalException("Tried file reading in not a reading mode",
+            "If you want to read from a file, only use files created like that: 'file = fopen(...,\"r\")'");
     }
-    return std::move(content);
+
+    return {
+        std::istreambuf_iterator<char>(m_file),
+        std::istreambuf_iterator<char>()
+    };
 }
 
 FileHandle::FileHandle(const std::filesystem::path& path, std::string_view mode) {
