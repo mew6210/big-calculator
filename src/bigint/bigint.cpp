@@ -7,6 +7,12 @@ BigInt::BigInt(const chunkInt& val) {
 	else isPositive = true;
 }
 
+BigInt::BigInt(const uChunkInt& val) {
+	chunks.resize(1);
+	chunks[0] = val;
+	isPositive = true;
+}
+
 BigInt::BigInt() {
 	chunks = {};
 	chunks.push_back(0);

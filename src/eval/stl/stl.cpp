@@ -449,7 +449,7 @@ namespace stlFuncs {
 		std::string path = args[0]->eval(eCtx).getStringFromChunks();
 	    std::string mode = args[1]->eval(eCtx).getStringFromChunks();
 		mode.pop_back(); //remove null terminator
-		int handle = eCtx.createFileResource(path,mode);
+		uint64_t handle = eCtx.createFileResource(path,mode);
 
 		return {.value = BigInt(handle),.hasValue = true};
 	}

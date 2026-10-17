@@ -45,6 +45,7 @@ public:
 	//constructors
 	BigInt(const std::string& s);
 	BigInt(const chunkInt& val);
+	BigInt(const uChunkInt& val);
 	BigInt();
 	//BigInt(BigInt&&) noexcept = default;
 	BigInt(const BigInt&) = default;
