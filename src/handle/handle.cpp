@@ -76,6 +76,10 @@ bool FileHandle::hasNextChar() {
     return res;
 }
 
+void FileHandle::resetCursor() {
+    m_curReadChar = 0;
+}
+
 std::string FileHandle::getLine() {
     std::string line;
     m_file.seekg(m_curReadChar);

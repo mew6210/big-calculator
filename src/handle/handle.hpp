@@ -41,6 +41,8 @@ public:
     bool hasNextLine();
     char getChar();
     bool hasNextChar();
+    void resetCursor();
+    [[nodiscard]] int64_t getCursor() const noexcept {return m_curReadChar;}
     void close() override;
     [[nodiscard]] HandleType getHandleType() const noexcept override;
 };

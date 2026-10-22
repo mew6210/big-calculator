@@ -44,6 +44,9 @@ struct EvalCtx {
 	bool hasFileResourceNextLine(uint64_t handle);
 	char getFileResourceNextChar(uint64_t handle);
 	bool hasFileResourceNextChar(uint64_t handle);
+	void resetFileResourceCursor(uint64_t handle);
+	uint64_t getFileResourceCursor(uint64_t handle);
+
 
 };
 

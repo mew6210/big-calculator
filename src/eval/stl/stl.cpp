@@ -498,7 +498,7 @@ namespace stlFuncs {
 	}
 
 	funcReturn fgetchar(ExprNodes& args, EvalCtx& eCtx) {
-		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fgetchar(), expected 1", "Check out \"?fgetline()\" to see the correct function parameters");
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fgetchar(), expected 1", "Check out \"?fgetchar()\" to see the correct function parameters");
 		BigInt bHandle = args[0]->eval(eCtx);
 		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
 		char c = eCtx.getFileResourceNextChar(handle);
@@ -507,7 +507,7 @@ namespace stlFuncs {
 		return {.value = ret, .hasValue = true};
 	}
 	funcReturn fhaschar(ExprNodes& args, EvalCtx& eCtx) {
-		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fhasline(), expected 1", "Check out \"?fhasline()\" to see the correct function parameters");
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fhaschar(), expected 1", "Check out \"?fhaschar()\" to see the correct function parameters");
 		BigInt bHandle = args[0]->eval(eCtx);
 		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
 		bool hasNextChar = eCtx.hasFileResourceNextChar(handle);
@@ -517,6 +517,20 @@ namespace stlFuncs {
 		else {
 			return {.value = BigInt(0), . hasValue = true};
 		}
+	}
+	funcReturn fresetcursor(ExprNodes& args, EvalCtx& eCtx) {
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fresetcursor(), expected 1", "Check out \"?fresetcursor()\" to see the correct function parameters");
+		BigInt bHandle = args[0]->eval(eCtx);
+		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
+		eCtx.resetFileResourceCursor(handle);
+		return voidReturn();
+	}
+	funcReturn fgetcursor(ExprNodes& args, EvalCtx& eCtx) {
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fgetcursor(), expected 1", "Check out \"?fgetcursor()\" to see the correct function parameters");
+		BigInt bHandle = args[0]->eval(eCtx);
+		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
+		uint64_t cursor = eCtx.getFileResourceCursor(handle);
+		return {.value = BigInt(cursor), .hasValue = true};
 	}
 
 }
@@ -729,6 +743,18 @@ stlFuncs::fhaschar
 "\tTODO: FINISH",
 "\tTODO: FINISH",
 stlFuncs::fgetchar
+},
+{ "fresetcursor",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+stlFuncs::fresetcursor
+},
+{ "fgetcursor",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+stlFuncs::fgetcursor
 }
 };
 
