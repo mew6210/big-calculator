@@ -23,7 +23,7 @@ struct EvalCtx {
 	bool showLexerOutput = false;
 	bool showParserOutput = false;
 	std::unordered_map<uint64_t,handlePtr> handles;
-	int curHandleIndex = 0;
+	inline static int curHandleIndex = 0;
 
 	BigInt getVar(const std::string& name);
 	std::optional<BigInt> findVar(const std::string& name);
@@ -34,8 +34,14 @@ struct EvalCtx {
 	void assignFunc(UserFunc& func);
 	void setParent(EvalCtx&);
 
+	//File handles
+	bool resourceExists(uint64_t handle);
+	Handle* getResource(uint64_t handle);
+	HandleType getResourceType(uint64_t handle);
 	uint64_t createFileResource(const std::filesystem::path& path, std::string_view mode);
 	bool closeFileResource(uint64_t handle);
+	std::string getFileResourceNextLine(uint64_t handle);
+	bool hasFileResourceNextLine(uint64_t handle);
 
 };
 

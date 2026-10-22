@@ -17,7 +17,6 @@ std::string FileHandle::getContent() {
 }
 
 FileHandle::FileHandle(const std::filesystem::path& path, std::string_view mode) {
-
     m_file.open(path);
     if (!m_file.is_open()) {
         std::cout<<"Failed to open\n";
@@ -46,7 +45,28 @@ FileHandle::FileHandle(const std::filesystem::path& path, std::string_view mode)
     setClose(false);
 }
 
+bool FileHandle::hasNextLine() {
+    std::string line;
+    auto pos = m_file.tellg();
+    bool res = static_cast<bool>(std::getline(m_file, line));
+    m_file.clear();
+    m_file.seekg(pos);
+    return res;
+}
+
+std::string FileHandle::getLine() {
+    std::string line;
+    m_file.seekg(m_curReadChar);
+    std::getline(m_file, line);
+    m_curReadChar = m_file.tellg();
+    return line;
+}
+
 void FileHandle::close() {
     m_file.close();
     setClose(true);
+}
+
+HandleType FileHandle::getHandleType() const noexcept {
+    return HandleType::File;
 }

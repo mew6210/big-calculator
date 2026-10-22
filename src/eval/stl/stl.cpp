@@ -445,7 +445,7 @@ namespace stlFuncs {
 		return {.value = ret,.hasValue = true};
 	}
 	funcReturn fopen(ExprNodes& args, EvalCtx& eCtx) {
-		//TODO: FINISH ARGS CHECKING
+		if (args.size() != 2) throw EvalException("Wrong amount of arguments in fopen(), expected 2", "Check out \"?fopen()\" to see the correct function parameters");
 		std::string path = args[0]->eval(eCtx).getStringFromChunks();
 	    std::string mode = args[1]->eval(eCtx).getStringFromChunks();
 		mode.pop_back(); //remove null terminator
@@ -454,6 +454,7 @@ namespace stlFuncs {
 		return {.value = BigInt(handle),.hasValue = true};
 	}
 	funcReturn fread(ExprNodes& args, EvalCtx& eCtx) {
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fread(), expected 1", "Check out \"?fread()\" to see the correct function parameters");
 		BigInt bHandle = args[0]->eval(eCtx);
 		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
 		if (!eCtx.handles.contains(handle)) return voidReturn(); //TODO: PROBABLY MAKE IT LOOK BETTER
@@ -465,6 +466,7 @@ namespace stlFuncs {
 		return {.value = a,.hasValue = true};
 	}
 	funcReturn fclose(ExprNodes& args, EvalCtx& eCtx) {
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fclose(), expected 1", "Check out \"?fclose()\" to see the correct function parameters");
 		BigInt bHandle = args[0]->eval(eCtx);
 		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
 		if (!eCtx.closeFileResource(handle)) {
@@ -473,7 +475,27 @@ namespace stlFuncs {
 
 		return voidReturn();
 	}
-
+	funcReturn fgetline(ExprNodes& args, EvalCtx& eCtx) {
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fgetline(), expected 1", "Check out \"?fgetline()\" to see the correct function parameters");
+		BigInt bHandle = args[0]->eval(eCtx);
+		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
+		std::string line = eCtx.getFileResourceNextLine(handle);
+		BigInt ret = {};
+		ret.writeStringToChunks(line);
+		return {.value = ret, .hasValue = true};
+	}
+	funcReturn fhasline(ExprNodes& args, EvalCtx& eCtx) {
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fhasline(), expected 1", "Check out \"?fhasline()\" to see the correct function parameters");
+		BigInt bHandle = args[0]->eval(eCtx);
+		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
+		bool hasNextLine = eCtx.hasFileResourceNextLine(handle);
+		if (hasNextLine) {
+			return {.value = BigInt(1), .hasValue = true};
+		}
+		else {
+			return {.value = BigInt(0), . hasValue = true};
+		}
+	}
 
 }
 
@@ -661,6 +683,18 @@ stlFuncs::fread
 "\tTODO: FINISH",
 "\tTODO: FINISH",
 stlFuncs::fclose
+},
+{ "fhasline",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+stlFuncs::fhasline
+},
+{ "fgetline",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+stlFuncs::fgetline
 }
 };
 
@@ -747,6 +781,7 @@ std::optional<BigInt> funcDispatch(std::string& funcName,ExprNodes& args, EvalCt
 			
 			newEvalCtx.vars = vars;
 			newEvalCtx.userFunctions = std::move(eCtx.userFunctions);
+			newEvalCtx.handles = std::move(eCtx.handles);
 
 			BigInt val = BigInt(0);
 
@@ -758,9 +793,11 @@ std::optional<BigInt> funcDispatch(std::string& funcName,ExprNodes& args, EvalCt
 				def->m_EvalCtx = std::move(newEvalCtx);
 				val = def->eval(newEvalCtx); //this newEvalCtx doesnt matter
 				newEvalCtx.userFunctions = std::move(def->m_EvalCtx.userFunctions);
+				newEvalCtx.handles = std::move(def->m_EvalCtx.handles); //this is getting ridiculous
 			}
 
 			eCtx.userFunctions = std::move(newEvalCtx.userFunctions);
+			eCtx.handles = std::move(newEvalCtx.handles); //this is getting ridiculous p2
 			return val;
 		}
 
