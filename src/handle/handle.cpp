@@ -54,6 +54,28 @@ bool FileHandle::hasNextLine() {
     return res;
 }
 
+char FileHandle::getChar() {
+    m_file.seekg(m_curReadChar);
+    int c = m_file.get();
+    m_curReadChar = m_file.tellg();
+
+    if (c == std::char_traits<char>::eof()) {
+        throw EvalException("Read end of file","Check for ending of a file with fhaschar(file)");
+        return 0;
+    }
+    else {
+        return static_cast<char>(c);
+    }
+}
+
+bool FileHandle::hasNextChar() {
+    auto pos = m_file.tellg();
+    bool res = m_file.peek() != std::char_traits<char>::eof();
+    m_file.clear();
+    m_file.seekg(pos);
+    return res;
+}
+
 std::string FileHandle::getLine() {
     std::string line;
     m_file.seekg(m_curReadChar);

@@ -42,6 +42,8 @@ struct EvalCtx {
 	bool closeFileResource(uint64_t handle);
 	std::string getFileResourceNextLine(uint64_t handle);
 	bool hasFileResourceNextLine(uint64_t handle);
+	char getFileResourceNextChar(uint64_t handle);
+	bool hasFileResourceNextChar(uint64_t handle);
 
 };
 

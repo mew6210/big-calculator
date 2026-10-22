@@ -39,6 +39,8 @@ public:
     FileHandle(const std::filesystem::path& path, std::string_view mode);
     std::string getLine();
     bool hasNextLine();
+    char getChar();
+    bool hasNextChar();
     void close() override;
     [[nodiscard]] HandleType getHandleType() const noexcept override;
 };

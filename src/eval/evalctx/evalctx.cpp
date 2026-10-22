@@ -143,3 +143,29 @@ bool EvalCtx::hasFileResourceNextLine(uint64_t handle) {
 	throw EvalException("No such resource with this handle","This handle given does not exist, use fopen(...) first");
 	return false;
 }
+
+char EvalCtx::getFileResourceNextChar(uint64_t handle) {
+	if (resourceExists(handle)) {
+		if (getResourceType(handle) != HandleType::File) {
+			throw EvalException("Incorrect handle type","This handle is not a handle to a file");
+			return '\0';
+		}
+		auto fileHandle = dynamic_cast<FileHandle*>(getResource(handle));
+		return fileHandle->getChar();
+	}
+	throw EvalException("No such resource with this handle","This handle given does not exist, use fopen(...) first");
+	return '\0';
+}
+
+bool EvalCtx::hasFileResourceNextChar(uint64_t handle) {
+	if (resourceExists(handle)) {
+		if (getResourceType(handle) != HandleType::File) {
+			throw EvalException("Incorrect handle type","This handle is not a handle to a file");
+			return false;
+		}
+		auto fileHandle = dynamic_cast<FileHandle*>(getResource(handle));
+		return fileHandle->hasNextChar();
+	}
+	throw EvalException("No such resource with this handle","This handle given does not exist, use fopen(...) first");
+	return false;
+}

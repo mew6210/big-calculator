@@ -497,6 +497,28 @@ namespace stlFuncs {
 		}
 	}
 
+	funcReturn fgetchar(ExprNodes& args, EvalCtx& eCtx) {
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fgetchar(), expected 1", "Check out \"?fgetline()\" to see the correct function parameters");
+		BigInt bHandle = args[0]->eval(eCtx);
+		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
+		char c = eCtx.getFileResourceNextChar(handle);
+		BigInt ret = {};
+		ret.writeStringToChunks(std::string{c});
+		return {.value = ret, .hasValue = true};
+	}
+	funcReturn fhaschar(ExprNodes& args, EvalCtx& eCtx) {
+		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fhasline(), expected 1", "Check out \"?fhasline()\" to see the correct function parameters");
+		BigInt bHandle = args[0]->eval(eCtx);
+		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
+		bool hasNextChar = eCtx.hasFileResourceNextChar(handle);
+		if (hasNextChar) {
+			return {.value = BigInt(1), .hasValue = true};
+		}
+		else {
+			return {.value = BigInt(0), . hasValue = true};
+		}
+	}
+
 }
 
 /*
@@ -695,6 +717,18 @@ stlFuncs::fhasline
 "\tTODO: FINISH",
 "\tTODO: FINISH",
 stlFuncs::fgetline
+},
+{ "fhaschar",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+stlFuncs::fhaschar
+},
+{ "fgetchar",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+"\tTODO: FINISH",
+stlFuncs::fgetchar
 }
 };
 
