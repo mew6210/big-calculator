@@ -46,7 +46,7 @@ struct EvalCtx {
 	bool hasFileResourceNextChar(uint64_t handle);
 	void resetFileResourceCursor(uint64_t handle);
 	uint64_t getFileResourceCursor(uint64_t handle);
-
+	void writeToFileResource(uint64_t handle,std::string_view);
 
 };
 

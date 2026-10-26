@@ -533,6 +533,17 @@ namespace stlFuncs {
 		return {.value = BigInt(cursor), .hasValue = true};
 	}
 
+	funcReturn fwrite(ExprNodes& args, EvalCtx& eCtx) {
+		if (args.size() != 2) throw EvalException("Wrong amount of arguments in fwrite(), expected 2", "Check out \"?fwrite()\" to see the correct function parameters");
+		BigInt bHandle = args[0]->eval(eCtx);
+		std::string str = args[1]->eval(eCtx).getStringFromChunks();
+		str.pop_back(); //remove \0
+		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
+		eCtx.writeToFileResource(handle,str);
+
+		return voidReturn();
+	}
+
 }
 
 /*
@@ -546,215 +557,221 @@ namespace stlFuncs {
 
 */
 std::vector<stlFunc> stlFunctions = {
-	{"inspect"
-	,
-	"\tDisplays detailed information about the value of an expression",
-	"\tOne or two expressions, if one then only the inspected number, if 2 then first one is inspected number and 2nd one is base, which can be either 10 or 16",
-	"\t\"inspect(5*1000000000000000000000000)\",displays chunks of a number 5000000000000000000000000\n\t\"inspect(3*100,16), displays chunks of a number 300 in hexadecimal form\"",
-	stlFuncs::inspect
+	{.funcName = "inspect",
+	.funcDesc = "\tDisplays detailed information about the value of an expression",
+	.paramDesc = "\tOne or two expressions, if one then only the inspected number, if 2 then first one is inspected number and 2nd one is base, which can be either 10 or 16",
+	.exampleDesc = "\t\"inspect(5*1000000000000000000000000)\",displays chunks of a number 5000000000000000000000000\n\t\"inspect(3*100,16), displays chunks of a number 300 in hexadecimal form\"",
+	.call = stlFuncs::inspect
 	},
 
-	{"showFunctions" ,
-	"\tDisplays all functions and how they work",
-	"\tAny parameters are ignored",
-	"\tYou probably already know how to use it if you see it",
-	stlFuncs::showFunctions
+	{.funcName = "showFunctions" ,
+	.funcDesc = "\tDisplays all functions and how they work",
+	.paramDesc = "\tAny parameters are ignored",
+	.exampleDesc = "\tYou probably already know how to use it if you see it",
+	.call = stlFuncs::showFunctions
 	},
 
-	{"showVars" ,
-	"\tDisplays all declared variables",
-	"\tAny parameters are ignored",
-	"\t \"a=5\", \t\"showVars()\" ",
-	stlFuncs::showVars
+	{.funcName = "showVars" ,
+	.funcDesc = "\tDisplays all declared variables",
+	.paramDesc = "\tAny parameters are ignored",
+	.exampleDesc = "\t \"a=5\", \t\"showVars()\" ",
+	.call = stlFuncs::showVars
 	},
 
-	{"help" ,
-	"\tDisplays a quick introduction",
-	"\tAny parameters are ignored",
-	"\t \"help()\"",
-	stlFuncs::help
+	{.funcName = "help" ,
+	.funcDesc = "\tDisplays a quick introduction",
+	.paramDesc = "\tAny parameters are ignored",
+	.exampleDesc = "\t \"help()\"",
+	.call = stlFuncs::help
 	},
 
-	{"abs" ,
-	"\tReturns an absolute value of a given expression",
-	"\tOnly one parameter, any expression",
-	"\t\"abs(3-5)\" returns 2",
-	stlFuncs::abs
+	{.funcName = "abs" ,
+	.funcDesc = "\tReturns an absolute value of a given expression",
+	.paramDesc = "\tOnly one parameter, any expression",
+	.exampleDesc = "\t\"abs(3-5)\" returns 2",
+	.call = stlFuncs::abs
 	},
 
-	{"max" ,
-	"\tReturns a bigger value",
-	"\tTwo parameters, any expressions",
-	"\t\"max(100,5*3)\" returns 100",
-	stlFuncs::max
+	{.funcName = "max" ,
+	.funcDesc = "\tReturns a bigger value",
+	.paramDesc = "\tTwo parameters, any expressions",
+	.exampleDesc = "\t\"max(100,5*3)\" returns 100",
+	.call = stlFuncs::max
 	},
 
-	{"min" ,
-	"\tReturns a smaller value",
-	"\tTwo parameters, any expressions",
-	"\t\"min(-5,100)\" returns -5",
-	stlFuncs::min
+	{.funcName = "min" ,
+	.funcDesc = "\tReturns a smaller value",
+	.paramDesc = "\tTwo parameters, any expressions",
+	.exampleDesc = "\t\"min(-5,100)\" returns -5",
+	.call = stlFuncs::min
 	},
 
-	{"cmp" ,
-	"\tPrints out which value is bigger",
-	"\tTwo parameters, any expressions",
-	"\t\"cmp(5,3)\" prints out \"5 is bigger\"",
-	stlFuncs::cmp
+	{.funcName = "cmp" ,
+	.funcDesc = "\tPrints out which value is bigger",
+	.paramDesc = "\tTwo parameters, any expressions",
+	.exampleDesc = "\t\"cmp(5,3)\" prints out \"5 is bigger\"",
+	.call = stlFuncs::cmp
 	},
 
-	{"sum" ,
-	"\tReturns a sum of all the given expressions",
-	"\tAny amount of expressions",
-	"\t\"sum(5,-5,3,4)\" returns 7",
-	stlFuncs::sum
+	{.funcName = "sum" ,
+	.funcDesc = "\tReturns a sum of all the given expressions",
+	.paramDesc = "\tAny amount of expressions",
+	.exampleDesc = "\t\"sum(5,-5,3,4)\" returns 7",
+	.call = stlFuncs::sum
 	},
 
-	{"prod" ,
-	"\tReturns a product of all the given expressions",
-	"\tAny amount of expressions",
-	"\t\"prod(5,3,4)\" returns 60",
-	stlFuncs::prod
+	{.funcName = "prod" ,
+	.funcDesc = "\tReturns a product of all the given expressions",
+	.paramDesc = "\tAny amount of expressions",
+	.exampleDesc = "\t\"prod(5,3,4)\" returns 60",
+	.call = stlFuncs::prod
 	},
 
-	{"cntDigits" ,
-	"\tReturns the amount of digits that a given value has in its decimal form",
-	"\tOne parameter, any expression",
-	"\t\"cntDigits(150)\" returns 3",
-	stlFuncs::cntDigits
+	{.funcName = "cntDigits" ,
+	.funcDesc = "\tReturns the amount of digits that a given value has in its decimal form",
+	.paramDesc = "\tOne parameter, any expression",
+	.exampleDesc = "\t\"cntDigits(150)\" returns 3",
+	.call = stlFuncs::cntDigits
 	},
 
-	{"showMyFunctions",
-	"\tShows user-defined functions",
-	"\tNo parameters, they are ignored",
-	"\t\"f(x) = x\n\t\"showMyFunctions()\"\" prints f(x) and its info",
-	stlFuncs::showMyFunctions
+	{.funcName = "showMyFunctions",
+	.funcDesc = "\tShows user-defined functions",
+	.paramDesc = "\tNo parameters, they are ignored",
+	.exampleDesc = "\t\"f(x) = x\n\t\"showMyFunctions()\"\" prints f(x) and its info",
+	.call = stlFuncs::showMyFunctions
 	},
 
-	{"execFile",
-	"\tExecutes a given file line by line",
-	"\tOnly one parameter, has to be a variable, which is the name to the file, including extension",
-	"\t\"execFile(test1.txt)\" executes contents of a \"test.txt\" file",
-	stlFuncs::execFile
+	{.funcName = "execFile",
+	.funcDesc = "\tExecutes a given file line by line",
+	.paramDesc = "\tOnly one parameter, has to be a variable, which is the name to the file, including extension",
+	.exampleDesc = "\t\"execFile(test1.txt)\" executes contents of a \"test.txt\" file",
+	.call = stlFuncs::execFile
 	},
 
-	{"save",
-	"\tSaves variables and functions to a file, that will be loaded at the next startup",
-	"\tNone, any are ignored",
-	"",
-	stlFuncs::save
+	{.funcName = "save",
+	.funcDesc = "\tSaves variables and functions to a file, that will be loaded at the next startup",
+	.paramDesc = "\tNone, any are ignored",
+	.exampleDesc = "",
+	.call = stlFuncs::save
 	},
-	{"clearSave",
-	"\tDeletes the save file made by \"save()\"",
-	"\tNone, any are ignored",
-	"",
-	stlFuncs::clearSave
+	{.funcName = "clearSave",
+	.funcDesc = "\tDeletes the save file made by \"save()\"",
+	.paramDesc = "\tNone, any are ignored",
+	.exampleDesc = "",
+	.call = stlFuncs::clearSave
 	},
 	
-	{"mod",
-	"\tReturns remainder of the division between 2 parameters",
-	"\tTwo parameters, any expressions",
-	"\t\"mod(5,3)\" returns 2, because its the remainder of division 5 / 3",
-	stlFuncs::mod
+	{.funcName = "mod",
+	.funcDesc = "\tReturns remainder of the division between 2 parameters",
+	.paramDesc = "\tTwo parameters, any expressions",
+	.exampleDesc = "\t\"mod(5,3)\" returns 2, because its the remainder of division 5 / 3",
+	.call = stlFuncs::mod
 	},
 	
-	{"pow",
-	"\tReturns first parameter exponentiated to second parameter",
-	"\tTwo parameters, any expressions",
-	"\t\"pow(2,3)\" returns 8 becase 2^3",
-	stlFuncs::pow
+	{.funcName = "pow",
+	.funcDesc = "\tReturns first parameter exponentiated to second parameter",
+	.paramDesc = "\tTwo parameters, any expressions",
+	.exampleDesc = "\t\"pow(2,3)\" returns 8 becase 2^3",
+	.call = stlFuncs::pow
 	},
 	
-	{ "lexerOutput",
-	"\tToggles if lexer output should be printed to the console",
-	"\tOnly one parameter, any expression that evaluates to either 0 or 1, if its something else it ignores it",
-	"\t\"lexerOutput(1)\" now lexer output will be shown in console",
-	stlFuncs::lexerOutput
+	{ .funcName = "lexerOutput",
+	.funcDesc = "\tToggles if lexer output should be printed to the console",
+	.paramDesc = "\tOnly one parameter, any expression that evaluates to either 0 or 1, if its something else it ignores it",
+	.exampleDesc = "\t\"lexerOutput(1)\" now lexer output will be shown in console",
+	.call = stlFuncs::lexerOutput
 	},
 
-	{ "parserOutput",
-	"\tToggles if parser output should be printed to the console",
-	"\tOnly one parameter, any expression that evaluates to either 0 or 1, if its something else it ignores it",
-	"\t\"parserOutput(1)\" now parser output will be shown in console",
-	stlFuncs::parserOutput
+	{ .funcName = "parserOutput",
+	.funcDesc = "\tToggles if parser output should be printed to the console",
+	.paramDesc = "\tOnly one parameter, any expression that evaluates to either 0 or 1, if its something else it ignores it",
+	.exampleDesc = "\t\"parserOutput(1)\" now parser output will be shown in console",
+	.call = stlFuncs::parserOutput
 	},
-  { "print",
-  	"\tPrints a string provided to the console",
-  	"\tOnly one parameter, if its something else it ignores it",
-  	"\t\"print(\"hello\")\" will print hello to console",
-  	stlFuncs::print
+  { .funcName = "print",
+  	.funcDesc = "\tPrints a string provided to the console",
+  	.paramDesc = "\tOnly one parameter, if its something else it ignores it",
+  	.exampleDesc = "\t\"print(\"hello\")\" will print hello to console",
+  	.call = stlFuncs::print
 	},
-  { "toString",
-  "\tConverts a BigInt to string",
-  "\tOnly one parameter, if its something else it ignores it",
-  "\t\"a = toString(26)\" will make a = \"26\"",
-  stlFuncs::toString
+  { .funcName = "toString",
+  .funcDesc = "\tConverts a BigInt to string",
+  .paramDesc = "\tOnly one parameter, if its something else it ignores it",
+  .exampleDesc = "\t\"a = toString(26)\" will make a = \"26\"",
+  .call = stlFuncs::toString
     },
-  { "strConcat",
-"\tMerges 2 strings",
-"\tTwo parameters, first string and second string",
-"\t\"a = strConcat(\"hello \",\"world\")\" will make a = \"hello world\"",
-stlFuncs::strConcat
+  { .funcName = "strConcat",
+.funcDesc = "\tMerges 2 strings",
+.paramDesc = "\tTwo parameters, first string and second string",
+.exampleDesc = "\t\"a = strConcat(\"hello \",\"world\")\" will make a = \"hello world\"",
+.call = stlFuncs::strConcat
 	},
-{ "stoi",
-"\tConverts string to int",
-"\tOne parameter, a string",
-"\t\"a = stoi(\"123\")\" will make a = 123",
-stlFuncs::stoi
+{ .funcName = "stoi",
+.funcDesc = "\tConverts string to int",
+.paramDesc = "\tOne parameter, a string",
+.exampleDesc = "\t\"a = stoi(\"123\")\" will make a = 123",
+.call = stlFuncs::stoi
 },
-{ "fopen",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-stlFuncs::fopen
+
+{ .funcName = "fopen",
+.funcDesc = "\tTODO: FINISH",
+.paramDesc = "\tTODO: FINISH",
+.exampleDesc = "\tTODO: FINISH",
+.call = stlFuncs::fopen
 },
-{ "fread",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-stlFuncs::fread
+{ .funcName = "fread",
+.funcDesc = "\tTODO: FINISH",
+.paramDesc = "\tTODO: FINISH",
+.exampleDesc = "\tTODO: FINISH",
+.call = stlFuncs::fread
 },
-{ "fclose",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-stlFuncs::fclose
+{ .funcName = "fclose",
+.funcDesc = "\tTODO: FINISH",
+.paramDesc = "\tTODO: FINISH",
+.exampleDesc = "\tTODO: FINISH",
+.call = stlFuncs::fclose
 },
-{ "fhasline",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-stlFuncs::fhasline
+{ .funcName = "fhasline",
+.funcDesc = "\tTODO: FINISH",
+.paramDesc = "\tTODO: FINISH",
+.exampleDesc = "\tTODO: FINISH",
+.call = stlFuncs::fhasline
 },
-{ "fgetline",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-stlFuncs::fgetline
+{ .funcName = "fgetline",
+.funcDesc = "\tTODO: FINISH",
+.paramDesc = "\tTODO: FINISH",
+.exampleDesc = "\tTODO: FINISH",
+.call = stlFuncs::fgetline
 },
-{ "fhaschar",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-stlFuncs::fhaschar
+{ .funcName = "fhaschar",
+.funcDesc = "\tTODO: FINISH",
+.paramDesc = "\tTODO: FINISH",
+.exampleDesc = "\tTODO: FINISH",
+.call = stlFuncs::fhaschar
 },
-{ "fgetchar",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-stlFuncs::fgetchar
+{ .funcName = "fgetchar",
+.funcDesc = "\tTODO: FINISH",
+.paramDesc = "\tTODO: FINISH",
+.exampleDesc = "\tTODO: FINISH",
+.call = stlFuncs::fgetchar
 },
-{ "fresetcursor",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-stlFuncs::fresetcursor
+{ .funcName = "fresetcursor",
+.funcDesc = "\tTODO: FINISH",
+.paramDesc = "\tTODO: FINISH",
+.exampleDesc = "\tTODO: FINISH",
+.call = stlFuncs::fresetcursor
 },
-{ "fgetcursor",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-"\tTODO: FINISH",
-stlFuncs::fgetcursor
+{ .funcName = "fgetcursor",
+.funcDesc = "\tTODO: FINISH",
+.paramDesc = "\tTODO: FINISH",
+.exampleDesc = "\tTODO: FINISH",
+.call = stlFuncs::fgetcursor
+},
+{ .funcName = "fwrite",
+.funcDesc = "\tTODO: FINISH",
+.paramDesc = "\tTODO: FINISH",
+.exampleDesc = "\tTODO: FINISH",
+.call = stlFuncs::fwrite
 }
 };
 

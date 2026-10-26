@@ -26,6 +26,7 @@ public:
 enum class OpenFileMode {
     Read,
     Write,
+    WriteAppend,
     Any
 };
 
@@ -42,6 +43,7 @@ public:
     char getChar();
     bool hasNextChar();
     void resetCursor();
+    void writeContent(std::string_view s);
     [[nodiscard]] int64_t getCursor() const noexcept {return m_curReadChar;}
     void close() override;
     [[nodiscard]] HandleType getHandleType() const noexcept override;

@@ -194,3 +194,16 @@ uint64_t EvalCtx::getFileResourceCursor(uint64_t handle) {
 	}
 	throw EvalException("No such resource with this handle","This handle given does not exist, use fopen(...) first");
 }
+
+void EvalCtx::writeToFileResource(uint64_t handle,std::string_view s) {
+	if (resourceExists(handle)) {
+		if (getResourceType(handle) != HandleType::File) {
+			throw EvalException("Incorrect handle type","This handle is not a handle to a file");
+		}
+
+		auto fileHandle = dynamic_cast<FileHandle*>(getResource(handle));
+		fileHandle->writeContent(s);
+		return;
+	}
+	throw EvalException("No such resource with this handle","This handle given does not exist, use fopen(...) first");
+}
