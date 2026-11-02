@@ -131,3 +131,10 @@ std::string BigInt::getStringFromChunks() const {
 	}
 	return val;
 }
+
+uint64_t BigInt::getFirstChunk() const noexcept {
+	if (chunks.size() == 1) {
+		return chunks[0];
+	}
+	else return 0;
+}

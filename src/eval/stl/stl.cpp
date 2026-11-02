@@ -99,7 +99,30 @@ chunkDisplayMode getChunkDisplayModeFromBigInt(BigInt& bi) {
 /*
 	implementation of stl functions, all of them based on bigint implementation
 */
+
+static std::optional<FileHandle*> getFileHandle(BigInt& b,EvalCtx& eCtx) {
+	uint64_t handle = b.getFirstChunk();
+	if (handle == 0) return std::nullopt;
+	if (!eCtx.handles.contains(handle)) return std::nullopt;
+
+	return dynamic_cast<FileHandle*>(eCtx.handles[handle].get());
+}
+
+static std::optional<uint64_t> getFileHandleIndex(BigInt& b,EvalCtx& eCtx) {
+	uint64_t handle = b.getFirstChunk();
+	if (handle == 0) return std::nullopt;
+	if (!eCtx.handles.contains(handle)) return std::nullopt;
+
+	return handle;
+}
+
 namespace stlFuncs {
+
+	EvalException invalidHandleException(std::string_view s) {
+		return {"Invalid handle",s.data()};
+	}
+
+
 
 	funcReturn voidReturn() {
 		return {.value = BigInt(0),.hasValue =false};
@@ -456,10 +479,11 @@ namespace stlFuncs {
 	funcReturn fread(ExprNodes& args, EvalCtx& eCtx) {
 		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fread(), expected 1", "Check out \"?fread()\" to see the correct function parameters");
 		BigInt bHandle = args[0]->eval(eCtx);
-		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
-		if (!eCtx.handles.contains(handle)) return voidReturn(); //TODO: PROBABLY MAKE IT LOOK BETTER
-		auto fileHandle = reinterpret_cast<FileHandle*>(eCtx.handles[handle].get());
-		std::string content = fileHandle->getContent();
+
+		const auto fileHandle = getFileHandle(bHandle,eCtx);
+		if (!fileHandle) throw invalidHandleException(std::format("Handle '{}' does not exist, used in fread()",bHandle.getFirstChunk()));
+
+		std::string content = fileHandle.value()->getContent();
 		BigInt a;
 		a.writeStringToChunks(content);
 
@@ -468,9 +492,12 @@ namespace stlFuncs {
 	funcReturn fclose(ExprNodes& args, EvalCtx& eCtx) {
 		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fclose(), expected 1", "Check out \"?fclose()\" to see the correct function parameters");
 		BigInt bHandle = args[0]->eval(eCtx);
-		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
-		if (!eCtx.closeFileResource(handle)) {
-			//TODO: NOTIFY ABOUT RESOURCE NOT EXISTING
+
+		const auto handleIndex = getFileHandleIndex(bHandle,eCtx);
+		if (!handleIndex) throw invalidHandleException(std::format("Handle '{}' does not exist, used in fclose()",bHandle.getFirstChunk()));
+
+		if (!eCtx.closeFileResource(handleIndex.value())) {
+			throw invalidHandleException("This handle does not exist");
 		}
 		eCtx.shouldPrint = false;
 		return voidReturn();
@@ -478,8 +505,10 @@ namespace stlFuncs {
 	funcReturn fgetline(ExprNodes& args, EvalCtx& eCtx) {
 		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fgetline(), expected 1", "Check out \"?fgetline()\" to see the correct function parameters");
 		BigInt bHandle = args[0]->eval(eCtx);
-		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
-		std::string line = eCtx.getFileResourceNextLine(handle);
+		const auto handleIndex = getFileHandleIndex(bHandle,eCtx);
+		if (!handleIndex) throw invalidHandleException(std::format("Handle '{}' does not exist, used in fgetline()",bHandle.getFirstChunk()));
+
+		std::string line = eCtx.getFileResourceNextLine(handleIndex.value());
 		BigInt ret = {};
 		ret.writeStringToChunks(line);
 		return {.value = ret, .hasValue = true};
@@ -487,8 +516,11 @@ namespace stlFuncs {
 	funcReturn fhasline(ExprNodes& args, EvalCtx& eCtx) {
 		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fhasline(), expected 1", "Check out \"?fhasline()\" to see the correct function parameters");
 		BigInt bHandle = args[0]->eval(eCtx);
-		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
-		bool hasNextLine = eCtx.hasFileResourceNextLine(handle);
+
+		const auto handleIndex = getFileHandleIndex(bHandle,eCtx);
+		if (!handleIndex) throw invalidHandleException(std::format("Handle '{}' does not exist, used in fhasline()",bHandle.getFirstChunk()));
+
+		bool hasNextLine = eCtx.hasFileResourceNextLine(handleIndex.value());
 		if (hasNextLine) {
 			return {.value = BigInt(1), .hasValue = true};
 		}
@@ -500,8 +532,11 @@ namespace stlFuncs {
 	funcReturn fgetchar(ExprNodes& args, EvalCtx& eCtx) {
 		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fgetchar(), expected 1", "Check out \"?fgetchar()\" to see the correct function parameters");
 		BigInt bHandle = args[0]->eval(eCtx);
-		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
-		char c = eCtx.getFileResourceNextChar(handle);
+
+		const auto handleIndex = getFileHandleIndex(bHandle,eCtx);
+		if (!handleIndex) throw invalidHandleException(std::format("Handle '{}' does not exist, used in fgetchar()",bHandle.getFirstChunk()));
+
+		char c = eCtx.getFileResourceNextChar(handleIndex.value());
 		BigInt ret = {};
 		ret.writeStringToChunks(std::string{c});
 		return {.value = ret, .hasValue = true};
@@ -509,8 +544,11 @@ namespace stlFuncs {
 	funcReturn fhaschar(ExprNodes& args, EvalCtx& eCtx) {
 		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fhaschar(), expected 1", "Check out \"?fhaschar()\" to see the correct function parameters");
 		BigInt bHandle = args[0]->eval(eCtx);
-		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
-		bool hasNextChar = eCtx.hasFileResourceNextChar(handle);
+
+		const auto handleIndex = getFileHandleIndex(bHandle,eCtx);
+		if (!handleIndex) throw invalidHandleException(std::format("Handle '{}' does not exist, used in fhaschar()",bHandle.getFirstChunk()));
+
+		bool hasNextChar = eCtx.hasFileResourceNextChar(handleIndex.value());
 		if (hasNextChar) {
 			return {.value = BigInt(1), .hasValue = true};
 		}
@@ -521,15 +559,21 @@ namespace stlFuncs {
 	funcReturn fresetcursor(ExprNodes& args, EvalCtx& eCtx) {
 		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fresetcursor(), expected 1", "Check out \"?fresetcursor()\" to see the correct function parameters");
 		BigInt bHandle = args[0]->eval(eCtx);
-		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
-		eCtx.resetFileResourceCursor(handle);
+
+		const auto handleIndex = getFileHandleIndex(bHandle,eCtx);
+		if (!handleIndex) throw invalidHandleException(std::format("Handle '{}' does not exist, used in fresetcursor()",bHandle.getFirstChunk()));
+
+		eCtx.resetFileResourceCursor(handleIndex.value());
 		return voidReturn();
 	}
 	funcReturn fgetcursor(ExprNodes& args, EvalCtx& eCtx) {
 		if (args.size() != 1) throw EvalException("Wrong amount of arguments in fgetcursor(), expected 1", "Check out \"?fgetcursor()\" to see the correct function parameters");
 		BigInt bHandle = args[0]->eval(eCtx);
-		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
-		uint64_t cursor = eCtx.getFileResourceCursor(handle);
+
+		const auto handleIndex = getFileHandleIndex(bHandle,eCtx);
+		if (!handleIndex) throw invalidHandleException(std::format("Handle '{}' does not exist, used in fgetcursor()",bHandle.getFirstChunk()));
+
+		uint64_t cursor = eCtx.getFileResourceCursor(handleIndex.value());
 		return {.value = BigInt(cursor), .hasValue = true};
 	}
 
@@ -538,8 +582,11 @@ namespace stlFuncs {
 		BigInt bHandle = args[0]->eval(eCtx);
 		std::string str = args[1]->eval(eCtx).getStringFromChunks();
 		str.pop_back(); //remove \0
-		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
-		eCtx.writeToFileResource(handle,str);
+
+		const auto handleIndex = getFileHandleIndex(bHandle,eCtx);
+		if (!handleIndex) throw invalidHandleException(std::format("Handle '{}' does not exist, used in fwrite()",bHandle.getFirstChunk()));
+
+		eCtx.writeToFileResource(handleIndex.value(),str);
 		eCtx.shouldPrint = false;
 		return voidReturn();
 	}

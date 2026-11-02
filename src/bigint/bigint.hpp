@@ -84,7 +84,7 @@ public:
 	void reserveChunks(size_t count);
 	void writeStringToChunks(std::string literal);
 	[[nodiscard]] std::string getStringFromChunks() const;
-	[[nodiscard]] uint64_t getFirstChunk() const noexcept {return chunks[0];} //TODO: MAYBE SOME SAFETY HERE
+	[[nodiscard]] uint64_t getFirstChunk() const noexcept;
 	friend BigInt add(BigInt& a, const BigInt& b);
 	friend BigInt subtract(BigInt& a, BigInt& b);
 	friend BigInt abs(const BigInt& a);

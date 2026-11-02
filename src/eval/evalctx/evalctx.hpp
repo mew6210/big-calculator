@@ -23,7 +23,7 @@ struct EvalCtx {
 	bool showLexerOutput = false;
 	bool showParserOutput = false;
 	std::unordered_map<uint64_t,handlePtr> handles;
-	inline static int curHandleIndex = 0;
+	inline static int curHandleIndex = 1;
 
 	BigInt getVar(const std::string& name);
 	std::optional<BigInt> findVar(const std::string& name);
