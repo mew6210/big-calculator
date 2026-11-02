@@ -472,7 +472,7 @@ namespace stlFuncs {
 		if (!eCtx.closeFileResource(handle)) {
 			//TODO: NOTIFY ABOUT RESOURCE NOT EXISTING
 		}
-
+		eCtx.shouldPrint = false;
 		return voidReturn();
 	}
 	funcReturn fgetline(ExprNodes& args, EvalCtx& eCtx) {
@@ -540,7 +540,7 @@ namespace stlFuncs {
 		str.pop_back(); //remove \0
 		uint64_t handle = bHandle.getFirstChunk(); //TODO: MAKE SURE IT HAS ONE CHUNK, AND ONLY ONE
 		eCtx.writeToFileResource(handle,str);
-
+		eCtx.shouldPrint = false;
 		return voidReturn();
 	}
 
