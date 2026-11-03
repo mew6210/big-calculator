@@ -103,7 +103,12 @@ chunkDisplayMode getChunkDisplayModeFromBigInt(BigInt& bi) {
 static std::optional<FileHandle*> getFileHandle(BigInt& b,EvalCtx& eCtx) {
 	uint64_t handle = b.getFirstChunk();
 	if (handle == 0) return std::nullopt;
-	if (!eCtx.handles.contains(handle)) return std::nullopt;
+	if (!eCtx.handles.contains(handle)) {
+		if (eCtx.parentCtx) {
+			return getFileHandle(b,*eCtx.parentCtx);
+		}
+		else return std::nullopt;
+	}
 
 	return dynamic_cast<FileHandle*>(eCtx.handles[handle].get());
 }
@@ -111,7 +116,12 @@ static std::optional<FileHandle*> getFileHandle(BigInt& b,EvalCtx& eCtx) {
 static std::optional<uint64_t> getFileHandleIndex(BigInt& b,EvalCtx& eCtx) {
 	uint64_t handle = b.getFirstChunk();
 	if (handle == 0) return std::nullopt;
-	if (!eCtx.handles.contains(handle)) return std::nullopt;
+	if (!eCtx.handles.contains(handle)) {
+		if (eCtx.parentCtx) {
+			return getFileHandleIndex(b,*eCtx.parentCtx);
+		}
+		else return std::nullopt;
+	}
 
 	return handle;
 }

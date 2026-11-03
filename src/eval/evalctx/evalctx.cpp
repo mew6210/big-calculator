@@ -112,7 +112,7 @@ uint64_t EvalCtx::createFileResource(const std::filesystem::path& path, std::str
 
 bool EvalCtx::closeFileResource(uint64_t handle) {
 	if (resourceExists(handle)) {
-		handles.erase(handle); //TODO: make this go to parent ctx too
+		eraseHandle(handle);
 		return true;
 	}
 	else return false;
@@ -220,4 +220,16 @@ std::string EvalCtx::getHandlesFormattedStr() const noexcept {
 	}
 
 	return handlesStr;
+}
+
+void EvalCtx::eraseHandle(uint64_t handle) {
+	if (handles.contains(handle)) {
+		handles.erase(handle);
+	}
+	else if (parentCtx) {
+		parentCtx->eraseHandle(handle);
+	}
+	else return;
+
+
 }

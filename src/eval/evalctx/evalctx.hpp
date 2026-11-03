@@ -48,6 +48,7 @@ struct EvalCtx {
 	uint64_t getFileResourceCursor(uint64_t handle);
 	void writeToFileResource(uint64_t handle,std::string_view);
 	[[nodiscard]] std::string getHandlesFormattedStr() const noexcept;
+	void eraseHandle(uint64_t handle);
 
 };
 
