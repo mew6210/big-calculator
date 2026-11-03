@@ -104,10 +104,10 @@ HandleType EvalCtx::getResourceType(uint64_t handle) {
 }
 
 uint64_t EvalCtx::createFileResource(const std::filesystem::path& path, std::string_view mode) {
-	curHandleIndex++;
 	auto fHandle = std::make_unique<FileHandle>(path,mode);
 	handles.insert({curHandleIndex,std::move(fHandle)});
-	return curHandleIndex;
+	curHandleIndex++;
+	return curHandleIndex-1;
 }
 
 bool EvalCtx::closeFileResource(uint64_t handle) {
@@ -206,4 +206,18 @@ void EvalCtx::writeToFileResource(uint64_t handle,std::string_view s) {
 		return;
 	}
 	throw EvalException("No such resource with this handle","This handle given does not exist, use fopen(...) first");
+}
+
+std::string EvalCtx::getHandlesFormattedStr() const noexcept {
+	std::string handlesStr;
+
+	for (auto& [key,value]: handles) {
+		handlesStr+=std::format("{}: {}\n",key,value->getHandleDescription());
+	}
+
+	if (parentCtx) {
+		handlesStr+=parentCtx->getHandlesFormattedStr();
+	}
+
+	return handlesStr;
 }

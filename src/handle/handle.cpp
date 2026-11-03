@@ -18,7 +18,7 @@ std::string FileHandle::getContent() {
 
 //TODO: Those modes work more like a suggestion than actual setting XD
 FileHandle::FileHandle(const std::filesystem::path& path, std::string_view mode) {
-
+    m_path = path;
     if (mode == "r" || mode == "read") {
         m_file.open(path,std::ios::in);
         //std::cout<<"File opened for reading!\n";
@@ -101,6 +101,20 @@ std::string FileHandle::getLine() {
     std::getline(m_file, line);
     m_curReadChar = m_file.tellg();
     return line;
+}
+
+static std::string OpenFileModeToStr(OpenFileMode mode) {
+    switch (mode) {
+    case OpenFileMode::Read: return "Read";
+    case OpenFileMode::Write: return "Write";
+    case OpenFileMode::WriteAppend: return "Append";
+    case OpenFileMode::Any: return "Any";
+    }
+    return "Should never happen";
+}
+
+std::string FileHandle::getHandleDescription() const noexcept {
+    return std::format("File Handle, path: {}, mode: {}",m_path.string(),OpenFileModeToStr(m_mode));
 }
 
 void FileHandle::close() {

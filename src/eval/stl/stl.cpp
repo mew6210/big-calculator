@@ -591,6 +591,14 @@ namespace stlFuncs {
 		return voidReturn();
 	}
 
+	funcReturn showHandles(ExprNodes& args,EvalCtx& eCtx) {
+		if (!args.empty()) throw EvalException("Wrong amount of arguments in showHandles(), expected 0", "Check out \"?showHandles()\" to see the correct function parameters");
+		std::string print = eCtx.getHandlesFormattedStr();
+		std::cout<<print;
+		eCtx.shouldPrint = false;
+		return voidReturn();
+	}
+
 }
 
 /*
@@ -819,6 +827,12 @@ std::vector<stlFunc> stlFunctions = {
 .paramDesc = "\tTODO: FINISH",
 .exampleDesc = "\tTODO: FINISH",
 .call = stlFuncs::fwrite
+},
+{ .funcName = "showHandles",
+.funcDesc = "\tTODO: FINISH",
+.paramDesc = "\tTODO: FINISH",
+.exampleDesc = "\tTODO: FINISH",
+.call = stlFuncs::showHandles
 }
 };
 
