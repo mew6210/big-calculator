@@ -102,7 +102,7 @@ void FileHandle::resetCursor() {
 }
 
 void FileHandle::writeContent(std::string_view s) {
-    if (m_mode != OpenFileMode::Write && m_mode != OpenFileMode::Any) {
+    if (m_mode != OpenFileMode::Write && m_mode != OpenFileMode::WriteAppend && m_mode != OpenFileMode::Any) {
         throw EvalException("Tried file writing in not a writing mode",
             "If you want to write to a file, only use files created like that: 'file = fopen(...,\"w | app\")'");
     }

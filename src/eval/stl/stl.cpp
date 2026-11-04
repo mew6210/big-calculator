@@ -574,6 +574,7 @@ namespace stlFuncs {
 		if (!handleIndex) throw invalidHandleException(std::format("Handle '{}' does not exist, used in fresetcursor()",bHandle.getFirstChunk()));
 
 		eCtx.resetFileResourceCursor(handleIndex.value());
+		eCtx.shouldPrint = false;
 		return voidReturn();
 	}
 	funcReturn fgetcursor(ExprNodes& args, EvalCtx& eCtx) {
