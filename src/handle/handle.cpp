@@ -16,7 +16,6 @@ std::string FileHandle::getContent() {
     };
 }
 
-//TODO: Those modes work more like a suggestion than actual setting XD
 FileHandle::FileHandle(const std::filesystem::path& path, std::string_view mode) {
     m_path = path;
     if (mode == "r" || mode == "read") {
@@ -56,6 +55,10 @@ FileHandle::FileHandle(const std::filesystem::path& path, std::string_view mode)
 }
 
 bool FileHandle::hasNextLine() {
+    if (m_mode != OpenFileMode::Read && m_mode != OpenFileMode::Any) {
+        throw EvalException("Tried file reading in not a reading mode",
+            "If you want to read from a file, only use files created like that: 'file = fopen(...,\"r\")'");
+    }
     std::string line;
     auto pos = m_file.tellg();
     bool res = static_cast<bool>(std::getline(m_file, line));
@@ -65,6 +68,10 @@ bool FileHandle::hasNextLine() {
 }
 
 char FileHandle::getChar() {
+    if (m_mode != OpenFileMode::Read && m_mode != OpenFileMode::Any) {
+        throw EvalException("Tried file reading in not a reading mode",
+            "If you want to read from a file, only use files created like that: 'file = fopen(...,\"r\")'");
+    }
     m_file.seekg(m_curReadChar);
     int c = m_file.get();
     m_curReadChar = m_file.tellg();
@@ -79,6 +86,10 @@ char FileHandle::getChar() {
 }
 
 bool FileHandle::hasNextChar() {
+    if (m_mode != OpenFileMode::Read && m_mode != OpenFileMode::Any) {
+        throw EvalException("Tried file reading in not a reading mode",
+            "If you want to read from a file, only use files created like that: 'file = fopen(...,\"r\")'");
+    }
     auto pos = m_file.tellg();
     bool res = m_file.peek() != std::char_traits<char>::eof();
     m_file.clear();
@@ -91,11 +102,19 @@ void FileHandle::resetCursor() {
 }
 
 void FileHandle::writeContent(std::string_view s) {
+    if (m_mode != OpenFileMode::Write && m_mode != OpenFileMode::Any) {
+        throw EvalException("Tried file writing in not a writing mode",
+            "If you want to write to a file, only use files created like that: 'file = fopen(...,\"w | app\")'");
+    }
     m_file<<s;
     m_file.flush();
 }
 
 std::string FileHandle::getLine() {
+    if (m_mode != OpenFileMode::Read && m_mode != OpenFileMode::Any) {
+        throw EvalException("Tried file reading in not a reading mode",
+            "If you want to read from a file, only use files created like that: 'file = fopen(...,\"r\")'");
+    }
     std::string line;
     m_file.seekg(m_curReadChar);
     std::getline(m_file, line);
