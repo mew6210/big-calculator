@@ -19,6 +19,9 @@ set(SOURCES
  "src/bigint/operations/divide.cpp" 
   
  "src/eval/eval.cpp"
- "src/astnodes/astoper.cpp" "src/eval/evalException.hpp"  "src/eval/evalctx/evalctx.cpp" "src/eval/stl/stl.cpp" )
+ "src/astnodes/astoper.cpp" "src/eval/evalException.hpp"  "src/eval/evalctx/evalctx.cpp" "src/eval/stl/stl.cpp"
+        src/handle/handle.hpp
+        src/handle/handle.cpp
+)
 
 add_executable(${PROJECT_NAME} ${SOURCES})

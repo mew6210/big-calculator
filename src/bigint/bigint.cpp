@@ -7,6 +7,19 @@ BigInt::BigInt(const chunkInt& val) {
 	else isPositive = true;
 }
 
+BigInt::BigInt(const uChunkInt& val) {
+	chunks.resize(1);
+	chunks[0] = val;
+	isPositive = true;
+}
+
+BigInt::BigInt(int val) {
+	chunks.resize(1);
+	chunks[0] = abs(val);
+	if (val < 0) isPositive = false;
+	else isPositive = true;
+}
+
 BigInt::BigInt() {
 	chunks = {};
 	chunks.push_back(0);
@@ -117,4 +130,11 @@ std::string BigInt::getStringFromChunks() const {
 		index++;
 	}
 	return val;
+}
+
+uint64_t BigInt::getFirstChunk() const noexcept {
+	if (chunks.size() == 1) {
+		return chunks[0];
+	}
+	else return 0;
 }

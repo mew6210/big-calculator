@@ -78,3 +78,158 @@ void EvalCtx::assignFunc(UserFunc& userFunc) {
 void EvalCtx::setParent(EvalCtx& eCtx) {
 	parentCtx = &eCtx;
 }
+
+bool EvalCtx::resourceExists(uint64_t handle) {
+	if (handles.contains(handle)) return true;
+	if (parentCtx) {
+		return parentCtx->resourceExists(handle);
+	}
+	return false;
+}
+
+Handle* EvalCtx::getResource(uint64_t handle) {
+	if (handles.contains(handle)) return handles[handle].get();
+	if (parentCtx) {
+		return parentCtx->getResource(handle);
+	}
+	return nullptr;
+}
+
+HandleType EvalCtx::getResourceType(uint64_t handle) {
+	if (handles.contains(handle)) return handles[handle]->getHandleType();
+	if (parentCtx) {
+		return parentCtx->getResourceType(handle);
+	}
+	return HandleType::Null;
+}
+
+uint64_t EvalCtx::createFileResource(const std::filesystem::path& path, std::string_view mode) {
+	auto fHandle = std::make_unique<FileHandle>(path,mode);
+	handles.insert({curHandleIndex,std::move(fHandle)});
+	curHandleIndex++;
+	return curHandleIndex-1;
+}
+
+bool EvalCtx::closeFileResource(uint64_t handle) {
+	if (resourceExists(handle)) {
+		eraseHandle(handle);
+		return true;
+	}
+	else return false;
+}
+
+std::string EvalCtx::getFileResourceNextLine(uint64_t handle) {
+	if (resourceExists(handle)) {
+		if (getResourceType(handle) != HandleType::File) {
+			throw EvalException("Incorrect handle type","This handle is not a handle to a file");
+			return "";
+		}
+		auto fileHandle = dynamic_cast<FileHandle*>(getResource(handle));
+		return fileHandle->getLine();
+	}
+	throw EvalException("No such resource with this handle","This handle given does not exist, use fopen(...) first");
+	return "";
+}
+
+bool EvalCtx::hasFileResourceNextLine(uint64_t handle) {
+	if (resourceExists(handle)) {
+		if (getResourceType(handle) != HandleType::File) {
+			throw EvalException("Incorrect handle type","This handle is not a handle to a file");
+			return false;
+		}
+		auto fileHandle = dynamic_cast<FileHandle*>(getResource(handle));
+		return fileHandle->hasNextLine();
+	}
+	throw EvalException("No such resource with this handle","This handle given does not exist, use fopen(...) first");
+	return false;
+}
+
+char EvalCtx::getFileResourceNextChar(uint64_t handle) {
+	if (resourceExists(handle)) {
+		if (getResourceType(handle) != HandleType::File) {
+			throw EvalException("Incorrect handle type","This handle is not a handle to a file");
+			return '\0';
+		}
+		auto fileHandle = dynamic_cast<FileHandle*>(getResource(handle));
+		return fileHandle->getChar();
+	}
+	throw EvalException("No such resource with this handle","This handle given does not exist, use fopen(...) first");
+	return '\0';
+}
+
+bool EvalCtx::hasFileResourceNextChar(uint64_t handle) {
+	if (resourceExists(handle)) {
+		if (getResourceType(handle) != HandleType::File) {
+			throw EvalException("Incorrect handle type","This handle is not a handle to a file");
+			return false;
+		}
+		auto fileHandle = dynamic_cast<FileHandle*>(getResource(handle));
+		return fileHandle->hasNextChar();
+	}
+	throw EvalException("No such resource with this handle","This handle given does not exist, use fopen(...) first");
+	return false;
+}
+
+void EvalCtx::resetFileResourceCursor(uint64_t handle) {
+	if (resourceExists(handle)) {
+		if (getResourceType(handle) != HandleType::File) {
+			throw EvalException("Incorrect handle type","This handle is not a handle to a file");
+			return;
+		}
+		auto fileHandle = dynamic_cast<FileHandle*>(getResource(handle));
+		fileHandle->resetCursor();
+		return;
+	}
+	throw EvalException("No such resource with this handle","This handle given does not exist, use fopen(...) first");
+	return;
+}
+
+uint64_t EvalCtx::getFileResourceCursor(uint64_t handle) {
+	if (resourceExists(handle)) {
+		if (getResourceType(handle) != HandleType::File) {
+			throw EvalException("Incorrect handle type","This handle is not a handle to a file");
+		}
+		auto fileHandle = dynamic_cast<FileHandle*>(getResource(handle));
+		return fileHandle->getCursor();
+	}
+	throw EvalException("No such resource with this handle","This handle given does not exist, use fopen(...) first");
+}
+
+void EvalCtx::writeToFileResource(uint64_t handle,std::string_view s) {
+	if (resourceExists(handle)) {
+		if (getResourceType(handle) != HandleType::File) {
+			throw EvalException("Incorrect handle type","This handle is not a handle to a file");
+		}
+
+		auto fileHandle = dynamic_cast<FileHandle*>(getResource(handle));
+		fileHandle->writeContent(s);
+		return;
+	}
+	throw EvalException("No such resource with this handle","This handle given does not exist, use fopen(...) first");
+}
+
+std::string EvalCtx::getHandlesFormattedStr() const noexcept {
+	std::string handlesStr;
+
+	for (auto& [key,value]: handles) {
+		handlesStr+=std::format("{}: {}\n",key,value->getHandleDescription());
+	}
+
+	if (parentCtx) {
+		handlesStr+=parentCtx->getHandlesFormattedStr();
+	}
+
+	return handlesStr;
+}
+
+void EvalCtx::eraseHandle(uint64_t handle) {
+	if (handles.contains(handle)) {
+		handles.erase(handle);
+	}
+	else if (parentCtx) {
+		parentCtx->eraseHandle(handle);
+	}
+	else return;
+
+
+}
