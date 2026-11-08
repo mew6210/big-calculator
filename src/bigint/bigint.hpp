@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <cstdint>
 
 typedef uint64_t uChunkInt;
 typedef int64_t chunkInt;

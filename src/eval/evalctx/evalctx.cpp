@@ -1,6 +1,7 @@
 #include "evalctx.hpp"
 
 #include <algorithm>
+#include <format>
 
 #include "../evalException.hpp"
 

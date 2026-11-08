@@ -1,4 +1,5 @@
 #include "../bigint.hpp"
+#include <limits>
 
 std::numeric_limits<uChunkInt> CHUNKINTLIMIT2;
 

@@ -1,6 +1,7 @@
 #include "core.hpp"
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 void introduce(){
     std::cout<<"Arbitrary precision integer calculator\n";
@@ -39,6 +40,21 @@ void AppState::handleFileLoad() {
     fileName = "";
 }
 
+void AppState::printOutput(const BigInt& ret) {
+
+    if (!isSeeded()) {
+        if (evaluator.evalCtx.shouldPrint) ret.print();
+        evaluator.evalCtx.shouldPrint = true;
+    }
+    else {
+        if (evaluator.evalCtx.shouldPrint) ret.print();
+        evaluator.evalCtx.shouldPrint = true;
+        std::cout<<"Done! Seed: "<<seed<<"\n";
+    }
+
+
+}
+
 //lexer wrapper
 void AppState::lex(){
     tokens = lexer.getTokensFromString(src);
@@ -56,12 +72,12 @@ void AppState::parse(){
 //evaluator wrapper
 void AppState::eval(){
     evaluator.setSrc(src);
+    evaluator.setSeed(seed);
     auto root = parser.getRoot();       //setASTRoot only takes lvalues, so this variable is actually necessary XD
     evaluator.setASTRoot(root);
     try {
         const BigInt ret = evaluator.eval();
-        if (evaluator.evalCtx.shouldPrint) ret.print();
-        evaluator.evalCtx.shouldPrint = true;
+        printOutput(ret);
     }catch (ReturnException& ret) {
         printError(ErrMsg{ret.getSrc(),0,"Return outside block statement","Only blocks can return something, like so: {return 3;}",ErrType::Evaluator});
         return;
@@ -108,10 +124,27 @@ void handleInteractiveMode() {
     }
 }
 
+void handleInteractiveModeWithSeed(const char* seed) {
+    AppState state = initApp();
+    state.setSeed(seed);
+    checkForStart(state);   //check for saved things
+    std::string line;
+    while (true) {
+        std::getline(std::cin, line);
+        state.setSrc(line);
+        state.execute();
+    }
+}
+
 
 bool isStrFile(const char* c){
     if (!c) return false;
     return std::strchr(c, '.') != nullptr;
+}
+
+bool isSeeded(const char* c) {
+    if (strcmp(c,"--seeded") == 0 || strcmp(c,"-s") == 0) return true;
+    else return false;
 }
 
 void handleFileExecution(const char* c) {
@@ -145,9 +178,17 @@ void handleCmdArgs(int argc, char** argv) {
     switch (argc) {
     case 1: handleInteractiveMode(); return;
     case 2: {
-        if (isStrFile(argv[1])) { handleFileExecution(argv[1]); return; }
+        if (isStrFile(argv[1])) {
+            handleFileExecution(argv[1]);
+            return;
+        }
         else break;
     
+    }break;
+    case 3: {
+        if (isSeeded(argv[1])) {
+            handleInteractiveModeWithSeed(argv[2]);
+        }
     }break;
     default: break;
     }
