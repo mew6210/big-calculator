@@ -9,6 +9,7 @@ class AppState {
 	Evaluator evaluator;
 	std::string src;
 	std::vector<Token> tokens;
+	std::string seed;
 
 	void lex();
 	void parse();
@@ -21,7 +22,8 @@ public:
 	
 	//could be std::filesystem::path to make it more secure
 	void setFileToExec(const std::string& s) { evaluator.evalCtx.fileToExec = s; }
-	
+	void setSeed(const std::string& s){seed = s;}
+
 	void execute();
 	void executeFile() { handleFileLoad(); }
 	void setSrc(const std::string& s) { src = s; }

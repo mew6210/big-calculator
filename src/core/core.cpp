@@ -56,6 +56,7 @@ void AppState::parse(){
 //evaluator wrapper
 void AppState::eval(){
     evaluator.setSrc(src);
+    evaluator.setSeed(seed);
     auto root = parser.getRoot();       //setASTRoot only takes lvalues, so this variable is actually necessary XD
     evaluator.setASTRoot(root);
     try {
@@ -108,10 +109,29 @@ void handleInteractiveMode() {
     }
 }
 
+void handleInteractiveModeWithSeed(const char* seed) {
+    AppState state = initApp();
+    state.setSeed(seed);
+    checkForStart(state);   //check for saved things
+    std::string line;
+    while (true) {
+        std::cout << ">";
+        std::getline(std::cin, line);
+
+        state.setSrc(line);
+        state.execute();
+    }
+}
+
 
 bool isStrFile(const char* c){
     if (!c) return false;
     return std::strchr(c, '.') != nullptr;
+}
+
+bool isSeeded(const char* c) {
+    if (strcmp(c,"--seeded") == 0 || strcmp(c,"-s") == 0) return true;
+    else return false;
 }
 
 void handleFileExecution(const char* c) {
@@ -145,9 +165,17 @@ void handleCmdArgs(int argc, char** argv) {
     switch (argc) {
     case 1: handleInteractiveMode(); return;
     case 2: {
-        if (isStrFile(argv[1])) { handleFileExecution(argv[1]); return; }
+        if (isStrFile(argv[1])) {
+            handleFileExecution(argv[1]);
+            return;
+        }
         else break;
     
+    }break;
+    case 3: {
+        if (isSeeded(argv[1])) {
+            handleInteractiveModeWithSeed(argv[2]);
+        }
     }break;
     default: break;
     }

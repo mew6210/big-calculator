@@ -3,9 +3,12 @@
 #include <map>
 struct Evaluator {
 	std::string src;
+	std::string seed;
 	std::unique_ptr<ExprNode> ASTRoot;
 	EvalCtx evalCtx;
 
+	void setSeed(const std::string_view s){seed = s;}
+	[[nodiscard]] bool isSeeded() const noexcept {if (seed.empty()) return false; else return true;}
 	void handleAssignVar(BinaryExprNode* ASTRootAssignNode);
 	void handleAssignUserFunc(BinaryExprNode* ASTRootAssignNode);
  	[[nodiscard("Printing the result is handled outside the eval, so you should probably use the eval output")]] BigInt eval();
