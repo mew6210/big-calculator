@@ -39,6 +39,21 @@ void AppState::handleFileLoad() {
     fileName = "";
 }
 
+void AppState::printOutput(const BigInt& ret) {
+
+    if (!isSeeded()) {
+        if (evaluator.evalCtx.shouldPrint) ret.print();
+        evaluator.evalCtx.shouldPrint = true;
+    }
+    else {
+        if (evaluator.evalCtx.shouldPrint) ret.print();
+        evaluator.evalCtx.shouldPrint = true;
+        std::cout<<"Done! Seed: "<<seed<<"\n";
+    }
+
+
+}
+
 //lexer wrapper
 void AppState::lex(){
     tokens = lexer.getTokensFromString(src);
@@ -61,8 +76,7 @@ void AppState::eval(){
     evaluator.setASTRoot(root);
     try {
         const BigInt ret = evaluator.eval();
-        if (evaluator.evalCtx.shouldPrint) ret.print();
-        evaluator.evalCtx.shouldPrint = true;
+        printOutput(ret);
     }catch (ReturnException& ret) {
         printError(ErrMsg{ret.getSrc(),0,"Return outside block statement","Only blocks can return something, like so: {return 3;}",ErrType::Evaluator});
         return;
@@ -115,9 +129,7 @@ void handleInteractiveModeWithSeed(const char* seed) {
     checkForStart(state);   //check for saved things
     std::string line;
     while (true) {
-        std::cout << ">";
         std::getline(std::cin, line);
-
         state.setSrc(line);
         state.execute();
     }
