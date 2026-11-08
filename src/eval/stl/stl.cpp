@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <fstream>
 #include <cstdio>
+#include <format>
 
 using ExprNodes = std::vector<std::unique_ptr<ExprNode>>;
 

@@ -1,6 +1,7 @@
 #include "core.hpp"
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 void introduce(){
     std::cout<<"Arbitrary precision integer calculator\n";

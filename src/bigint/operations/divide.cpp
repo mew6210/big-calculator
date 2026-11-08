@@ -3,6 +3,7 @@
 #include <bitset>
 #include <cstdint>
 #include <iostream>
+#include <algorithm>
 
 
 /*
