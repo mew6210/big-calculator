@@ -2,6 +2,20 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <cctype>
+
+namespace trim {
+    inline void ltrim(std::string& s) {
+        s.erase(0, s.find_first_not_of(" \t\r\n\f\v"));
+    }
+    inline void rtrim(std::string& s) {
+        s.erase(s.find_last_not_of(" \t\r\n\f\v") + 1);
+    }
+    inline void trim(std::string& s) {
+        rtrim(s);
+        ltrim(s);
+    }
+}
 
 void introduce(){
     std::cout<<"Arbitrary precision integer calculator\n";
@@ -74,10 +88,12 @@ void AppState::executeMbcFile(std::ifstream& file) {
     std::string stmt;
     std::string line;
     while (std::getline(file, line)) {
-        if (line.empty() || line == "\n" || line =="\n\r" || std::ranges::all_of(line,isspace)) {
+        trim::trim(line);
+        if (line.empty() || std::ranges::all_of(line,isspace)) {
             lines.push_back(stmt);
             stmt.clear();
         }
+        if (line == "\\" || line == "/") continue;
         else {
             stmt+=line;
         }
