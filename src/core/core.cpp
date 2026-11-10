@@ -3,6 +3,7 @@
 #include <fstream>
 #include <cstring>
 #include <cctype>
+#include <algorithm>
 
 namespace trim {
     inline void ltrim(std::string& s) {
