@@ -18,6 +18,8 @@ class AppState {
 	void handleFileLoad();
 	void printOutput(const BigInt&);
 
+	void executeTxtFile(std::ifstream&);
+	void executeMbcFile(std::ifstream&);
 public:
 	AppState(){}
 	
