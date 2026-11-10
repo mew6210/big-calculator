@@ -20,6 +20,10 @@ void AppState::handleFileLoad() {
     evaluator.evalCtx.fileToExec = "";
 
     if (fileName.empty()) return; //if no file to execute, just leave
+    if (fileName.size() < 4) {
+        std::cout<<"Error: File should have an extension '.txt' or '.mbc'";
+        return;
+    }
 
     std::ifstream file(fileName);
 
@@ -27,17 +31,14 @@ void AppState::handleFileLoad() {
         std::cout << "Error: Could not open \"" << fileName << "\" \n";
     }
 
-    std::vector<std::string> lines;
-    std::string line;
-    while (std::getline(file, line)) {
-        lines.push_back(line);
+    if (fileName.ends_with(".txt"))
+        executeTxtFile(file);
+    else if (fileName.ends_with(".mbc"))
+        executeMbcFile(file);
+    else {
+        std::cout << "Error: File should have an extension '.txt' or '.mbc'";
     }
 
-    for (const auto& lineFromLines : lines) {
-        setSrc(lineFromLines);
-        execute();
-    }
-    fileName = "";
 }
 
 void AppState::printOutput(const BigInt& ret) {
@@ -53,6 +54,40 @@ void AppState::printOutput(const BigInt& ret) {
     }
 
 
+}
+
+void AppState::executeTxtFile(std::ifstream& file) {
+    std::vector<std::string> lines;
+    std::string line;
+    while (std::getline(file, line)) {
+        lines.push_back(line);
+    }
+
+    for (const auto& lineFromLines : lines) {
+        setSrc(lineFromLines);
+        execute();
+    }
+}
+
+void AppState::executeMbcFile(std::ifstream& file) {
+    std::vector<std::string> lines;
+    std::string stmt;
+    std::string line;
+    while (std::getline(file, line)) {
+        if (line.empty() || line == "\n" || line =="\n\r" || std::ranges::all_of(line,isspace)) {
+            lines.push_back(stmt);
+            stmt.clear();
+        }
+        else {
+            stmt+=line;
+        }
+    }
+    lines.push_back(stmt);
+
+    for (const auto& lineFromLines : lines) {
+        setSrc(lineFromLines);
+        execute();
+    }
 }
 
 //lexer wrapper
