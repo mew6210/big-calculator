@@ -86,8 +86,10 @@ void BigInt::print() const {
 	std::cout << this->toString() << "\n";
 }
 
-//TODO: maybe add bounds checking just to be safe
 uint8_t BigInt::getByteValue(size_t byteIndex) const {
+	if (byteIndex >= chunks.size() * 8) {
+		return '\0';
+	}
 	size_t chunkIndex = byteIndex / 8;
 	size_t byteInChunkIndex = byteIndex % 8;
 
